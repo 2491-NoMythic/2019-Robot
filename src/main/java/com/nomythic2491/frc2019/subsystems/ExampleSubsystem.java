@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.subsystems;
+package com.nomythic2491.frc2019.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 

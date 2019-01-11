@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot;
+package com.nomythic2491.frc2019;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into

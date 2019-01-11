@@ -11,5 +11,7 @@
     ".project": true
   },
   "wpilib.online": true,
-  "java.home": "/Users/lobo/frc2019/jdk"
+  "java.home": "/Users/lobo/frc2019/jdk",
+  "java.dependency.packagePresentation": "hierarchical",
+  "wpilib.autoSaveOnDeploy": true
 }
