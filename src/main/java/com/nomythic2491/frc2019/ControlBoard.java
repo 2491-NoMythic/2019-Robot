@@ -1,6 +1,7 @@
 package com.nomythic2491.frc2019;
 
 import com.nomythic2491.frc2019.IControlBoard;
+import com.nomythic2491.frc2019.Controllers.*;
 
 public class ControlBoard implements IControlBoard {
 
