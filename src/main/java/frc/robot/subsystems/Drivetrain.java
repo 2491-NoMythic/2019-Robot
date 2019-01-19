@@ -15,6 +15,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import frc.robot.settings.Constants;
+import frc.robot.settings.Variables;
+import sun.security.jca.GetInstance;
 
 
 
@@ -30,8 +33,29 @@ public class Drivetrain extends PIDSubsystem {
   private double currentPIDOutput;
 
   private static Drivetrain instance;
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+
+  public static Drivetrain GetInstance() {
+    if (instance == null) {
+      instance = new Drivetrain();
+    }
+    return instance;
+  }
+
+  private Drivetrain() {
+    super("Drive", Variables.ProportionalRotate, Variables.integralRotate, Variables.derivativeRotate);
+
+    try {
+      leftMaster = new TalonSRX(Constants.driveTalonLeftChannel);
+      rightMaster = new TalonSRX(Constants.driveTalonRightChannel);
+      leftFollower = new VictorSPX(Constants.driveVictorLeftChannel);
+      rightFollower = new VictorSPX(Constants.driveVictorRightChannel);
+    }
+    catch (Exception e) {
+      DriverStation.reportError("TalonSRX instantiation failure! Check CAN Bus, TalonSRX Decive ID's, and TalonSRX power", Variables.debugMode);
+
+      if (Variables.debugMode) {System.out.println(e);}
+    }
+  }
 
   @Override
   public void initDefaultCommand() {
