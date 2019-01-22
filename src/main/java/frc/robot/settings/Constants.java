@@ -11,6 +11,9 @@ public class Constants {
   public static final int driveVictorLeftChannel = 2491;
   public static final int driveVictorRightChannel = 2491;
 
+  public static final double driveEncoderToInches = 1 / Constants.wheelDiameter * Math.PI / 4096.0;
+  public static final double wheelDiameter = 2491; //This is very, very important! Change this before trying to use the encoders to do anything.
+
   //Climber
   public static final int climberRodTalonLeftChannel = 2491;
   public static final int climberRodTalonRightChannel = 2491;

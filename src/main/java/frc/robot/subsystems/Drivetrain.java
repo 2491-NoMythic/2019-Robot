@@ -151,4 +151,69 @@ public class Drivetrain extends PIDSubsystem {
   public void driveRightPercentOutput(double speed) {
     rightMaster.set(ControlMode.PercentOutput, speed);
   }
+
+  /**
+   * Stops the drivetrain wheels
+   */
+  public void stop() {
+    drivePercentOutput(0);
+  }
+
+  /**
+   * Sets left and right encoders to 0
+   */
+  public void resetEncoders() {
+    resetLeftEncoder();
+    resetRightEncoder();
+  }
+  
+  /**
+   * Sets the left encoder to 0
+   */
+  public void resetLeftEncoder() {
+		leftMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+  }
+  
+  /**
+   * Sets the right encoder to 0
+   */
+  public void resetRightEncoder() {
+		rightMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+  }
+  
+  /**
+	 * @return The value of the left drive encoder in inches
+	 */
+	public double getLeftEncoderDistance() {
+		return leftMaster.getSelectedSensorPosition(0) * Constants.driveEncoderToInches;
+	}
+	
+	/**
+   * Gets the left encoder value in ticks (4096 per rotation)
+   */
+	public double getLeftEncoderDistanceRaw() {
+		return leftMaster.getSelectedSensorPosition(0);
+	}
+	
+  /**
+   * Gets the right encoder value in ticks (4096 per rotation)
+   * @return
+   */
+  public double getRightEncoderDistanceRaw() {
+		return rightMaster.getSelectedSensorPosition(0);
+	}
+	
+	/**
+	 * @return The value of the right drive encoder in inches
+	 */
+	public double getRightEncoderDistance() {
+		return rightMaster.getSelectedSensorPosition(0) * Constants.driveEncoderToInches;
+	}
+	
+	/**
+	 * @return The average value of the two encoders in inches
+	 */
+	public double getDistance() {
+		return (getRightEncoderDistance() + getLeftEncoderDistance()) / 2;
+	}
 }
