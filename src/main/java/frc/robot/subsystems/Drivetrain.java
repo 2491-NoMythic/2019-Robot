@@ -8,6 +8,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -80,5 +81,74 @@ public class Drivetrain extends PIDSubsystem {
   //Add gyro stuff later
   protected void usePIDOutput(double output) {
     
+  }
+
+  /**
+   * Drives both sides of the robot at the same speed
+   * @param speed Speed of all drivetrain wheels in inches per second
+   */
+  public void driveVelocity(double speed) {
+    driveLeftVelocity(speed);
+    driveRightVelocity(speed);
+  }
+
+  /**
+   * Drives each side of the robot at different speeds
+   * @param leftSpeed Speed of left wheels in inches per second
+   * @param rightSpeed Speed of right wheels in inches per second
+   */
+  public void driveVelocity(double leftSpeed, double rightSpeed) {
+    driveLeftVelocity(leftSpeed);
+    driveRightVelocity(rightSpeed);
+  }
+  
+  /**
+   * Drives the left side of the robot
+   * @param speed Speed of left wheels in inches per second
+   */
+  public void driveLeftVelocity(double speed) {
+    leftMaster.set(ControlMode.Velocity, speed);
+  }
+
+  /**
+   * Drives the right side of the robot
+   * @param speed Speed of the right wheels in inches per second
+   */
+  public void driveRightVelocity(double speed) {
+    rightMaster.set(ControlMode.Velocity, speed);
+  }
+
+  /**
+   * Drives both sides of the robot at the same speed, ranging from -1 to 1
+   * @param speed Speed of all drivetrain wheels, ranging from -1 to 1
+   */
+  public void drivePercentOutput(double speed) {
+    drivePercentOutput(speed, speed);
+  }
+  
+  /**
+   * Drives each side of the robot at a given speed, ranging from -1 to 1
+   * @param leftSpeed Speed of the left wheels from -1 to 1
+   * @param rightSpeed Speed of the right wheels from -1 to 1
+   */
+  public void drivePercentOutput(double leftSpeed, double rightSpeed) {
+    driveLeftPercentOutput(leftSpeed);
+    driveRightPercentOutput(rightSpeed);
+  }
+
+  /**
+   * Drives the left side of the robot at a given speed, ranging from -1 to 1
+   * @param speed Speed of the left wheels from -1 to 1
+   */
+  public void driveLeftPercentOutput(double speed) {
+    leftMaster.set(ControlMode.PercentOutput, speed);
+  }
+
+  /**
+   * Drives the right side of the robot at a given speed, ranging from -1 to 1
+   * @param speed Speed of the right wheels from -1 to 1
+   */
+  public void driveRightPercentOutput(double speed) {
+    rightMaster.set(ControlMode.PercentOutput, speed);
   }
 }
