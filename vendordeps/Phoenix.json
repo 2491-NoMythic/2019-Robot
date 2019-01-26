@@ -1,11 +1,7 @@
 {
     "fileName": "Phoenix.json",
     "name": "CTRE-Phoenix",
-<<<<<<< HEAD
-    "version": "5.12.0",
-=======
     "version": "5.12.1",
->>>>>>> Dev
     "uuid": "ab676553-b602-441f-a38d-f1296eff6537",
     "mavenUrls": [
         "http://devsite.ctr-electronics.com/maven/release/"
@@ -15,31 +11,19 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "api-java",
-<<<<<<< HEAD
-            "version": "5.12.0"
-=======
             "version": "5.12.1"
->>>>>>> Dev
         },
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "wpiapi-java",
-<<<<<<< HEAD
-            "version": "5.12.0"
-=======
             "version": "5.12.1"
->>>>>>> Dev
         }
     ],
     "jniDependencies": [
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "cci",
-<<<<<<< HEAD
-            "version": "5.12.0",
-=======
             "version": "5.12.1",
->>>>>>> Dev
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
@@ -53,11 +37,7 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "wpiapi-cpp",
-<<<<<<< HEAD
-            "version": "5.12.0",
-=======
             "version": "5.12.1",
->>>>>>> Dev
             "libName": "CTRE_Phoenix_WPI",
             "headerClassifier": "headers",
             "sharedLibrary": false,
@@ -71,11 +51,7 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "api-cpp",
-<<<<<<< HEAD
-            "version": "5.12.0",
-=======
             "version": "5.12.1",
->>>>>>> Dev
             "libName": "CTRE_Phoenix",
             "headerClassifier": "headers",
             "sharedLibrary": false,
@@ -89,11 +65,7 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "cci",
-<<<<<<< HEAD
-            "version": "5.12.0",
-=======
             "version": "5.12.1",
->>>>>>> Dev
             "libName": "CTRE_PhoenixCCI",
             "headerClassifier": "headers",
             "sharedLibrary": false,
@@ -107,11 +79,7 @@
         {
             "groupId": "com.ctre.phoenix",
             "artifactId": "core",
-<<<<<<< HEAD
-            "version": "5.12.0",
-=======
             "version": "5.12.1",
->>>>>>> Dev
             "libName": "CTRE_PhoenixCore",
             "headerClassifier": "headers"
         }
