@@ -397,11 +397,17 @@ public class Drivetrain extends Subsystem {
         return tv.getDouble(0) == 1;
     }
 
+    /**
+     * Sets the robot pipeline to the necessary setting
+     */
     public void setVisionMode() {
         limelight.getEntry("ledMode").setNumber(0);
         limelight.getEntry("camMode").setNumber(0);
     }
 
+    /**
+     * Sets the driverstation pipeline to the necessary settings
+     */
     public void setCameraMode() {
         limelight.getEntry("ledMode").setNumber(1);
         limelight.getEntry("camMode").setNumber(1);

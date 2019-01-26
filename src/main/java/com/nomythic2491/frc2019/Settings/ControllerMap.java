@@ -10,17 +10,14 @@ package com.nomythic2491.frc2019.Settings;
 /**
  * Add your docs here.
  */
-public class Variables {
-    // PID
-    public static double proportionalRotate = 2491;
-    public static double integralRotate = 2491;
-    public static double derivativeRotate = 2491;
-
-    public static boolean useGyroPID;
-
-    // debug Mode
-    public static boolean debugMode = false;
-
+public class ControllerMap {
     //Controllers
-    public static boolean isTwoStick = false;
+    public static final int driveControllerLeft = 0;
+    public static final int driveControllerRight = 1;
+    
+    //Left drive controller
+    public static final int driveMainAxisLeft = 1;
+
+    //Right drive controller
+    public static final int driveMainAxisRight = 1;
 }
