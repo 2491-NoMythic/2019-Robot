@@ -44,13 +44,7 @@ public class Drivetrain extends Subsystem {
         mRightSlave = VictorSPXFactory.createPermanentSlaveTalon(Constants.kRightDriveSlaveId,
                 Constants.kRightDriveMasterId);
         mRightSlave.setInverted(true);
-
-        // Configures Talon feedback sensors
-        mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kVelocitySlotId,
-                Constants.kTimeoutMs);
-        mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kVelocitySlotId,
-                Constants.kTimeoutMs);
-
+        
         // Corrects sensor direction to match throttle direction
         mLeftMaster.setSensorPhase(true);
         mRightMaster.setSensorPhase(true);
@@ -104,8 +98,7 @@ public class Drivetrain extends Subsystem {
         talon.setSensorPhase(true);
         talon.enableVoltageCompensation(true);
         talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
-        // Constants.kLongCANTimeoutMs);
+        // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs);
         talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
         talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
         talon.configNeutralDeadband(0.04, 0);
@@ -241,7 +234,7 @@ public class Drivetrain extends Subsystem {
      * @return The value of the left drive encoder in inches
      */
     public double getLeftEncoderDistance() {
-        return mLeftMaster.getSelectedSensorPosition(0) * Constants.driveEncoderToInches;
+        return mLeftMaster.getSelectedSensorPosition(0) * Constants.kDriveEncoderToInches;
     }
 
     /**
@@ -264,7 +257,7 @@ public class Drivetrain extends Subsystem {
      * @return The value of the right drive encoder in inches
      */
     public double getRightEncoderDistance() {
-        return mRightMaster.getSelectedSensorPosition(0) * Constants.driveEncoderToInches;
+        return mRightMaster.getSelectedSensorPosition(0) * Constants.kDriveEncoderToInches;
     }
 
     /**
