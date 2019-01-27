@@ -44,15 +44,13 @@ public class Drivetrain extends Subsystem {
         mRightSlave = VictorSPXFactory.createPermanentSlaveTalon(Constants.kRightDriveSlaveId,
                 Constants.kRightDriveMasterId);
         mRightSlave.setInverted(true);
-        
+
         // Corrects sensor direction to match throttle direction
         mLeftMaster.setSensorPhase(true);
         mRightMaster.setSensorPhase(true);
 
         /* Configures FPID constants for Talon's Velocity mode */
-        setTalonPID(Constants.kVelocitykP, Constants.kVelocitykI, Constants.kVelocitykD);
-
-        setTalonF(Constants.kVelocitykF);
+        setTalonPIDF(Constants.kVelocitykP, Constants.kVelocitykI, Constants.kVelocitykD, Constants.kVelocitykF);
 
         /**
          * Instantiates the gyro
@@ -68,7 +66,6 @@ public class Drivetrain extends Subsystem {
         }
 
         resetGyro();
-        velocity = new StringBuilder();
 
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
         limelight.getEntry("ledMode").setNumber(0);
@@ -104,11 +101,7 @@ public class Drivetrain extends Subsystem {
         talon.configNeutralDeadband(0.04, 0);
     }
 
-    @Override
-    protected void initDefaultCommand() {
-    }
-
-    public void setTalonPID(double proportional, double iterative, double derivative) {
+    private void setTalonPIDF(double proportional, double iterative, double derivative, double feedForward) {
         mLeftMaster.config_kP(Constants.kVelocitySlotId, proportional, Constants.kTimeoutMs);
         mRightMaster.config_kP(Constants.kVelocitySlotId, proportional, Constants.kTimeoutMs);
 
@@ -332,24 +325,6 @@ public class Drivetrain extends Subsystem {
      */
     public AHRS getGyro() {
         return gyro;
-    }
-
-    /**
-     * Gets the master left talon
-     * 
-     * @return The master left talon
-     */
-    public TalonSRX getLeftTalon() {
-        return mLeftMaster;
-    }
-
-    /**
-     * Gets the master right talon
-     * 
-     * @return The master right talon
-     */
-    public TalonSRX getRightTalon() {
-        return mRightMaster;
     }
 
     /**

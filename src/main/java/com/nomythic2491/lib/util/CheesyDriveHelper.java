@@ -1,18 +1,19 @@
 package com.nomythic2491.lib.util;
 
-
 /**
- * Helper class to implement "Cheesy Drive". "Cheesy Drive" simply means that the "turning" stick controls the curvature
- * of the robot's path rather than its rate of heading change. This helps make the robot more controllable at high
- * speeds. Also handles the robot's quick turn functionality - "quick turn" overrides constant-curvature turning for
- * turn-in-place maneuvers.
+ * Helper class to implement "Cheesy Drive". "Cheesy Drive" simply means that
+ * the "turning" stick controls the curvature of the robot's path rather than
+ * its rate of heading change. This helps make the robot more controllable at
+ * high speeds. Also handles the robot's quick turn functionality - "quick turn"
+ * overrides constant-curvature turning for turn-in-place maneuvers.
  */
 public class CheesyDriveHelper {
 
     private static final double kThrottleDeadband = 0.02;
     private static final double kWheelDeadband = 0.02;
 
-    // These factor determine how fast the wheel traverses the "non linear" sine curve.
+    // These factor determine how fast the wheel traverses the "non linear" sine
+    // curve.
     private static final double kHighWheelNonLinearity = 0.65;
     private static final double kLowWheelNonLinearity = 0.5;
 
@@ -34,8 +35,7 @@ public class CheesyDriveHelper {
     private double mQuickStopAccumlator = 0.0;
     private double mNegInertiaAccumlator = 0.0;
 
-    public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn,
-                                   boolean isHighGear) {
+    public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn, boolean isHighGear) {
 
         wheel = handleDeadband(wheel, kWheelDeadband);
         throttle = handleDeadband(throttle, kThrottleDeadband);
