@@ -25,8 +25,8 @@ public class Constants {
                                                            // use the encoders to do anything.
 
     // Climber
-    public static final int kRackMasterId = 2491;
-    public static final int kRackSlaveId = 2491;
+    public static final int kPoleMasterId = 2491;
+    public static final int kPoleSlaveId = 2491;
     public static final int kRollerJointId = 2491; //not used for progned
 
     // Box
