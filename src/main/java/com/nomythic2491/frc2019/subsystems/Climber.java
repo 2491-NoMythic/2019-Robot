@@ -25,7 +25,7 @@ public class Climber extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   private static Climber instance;
-  private TalonSRX rightClimber, leftClimber;
+  private TalonSRX mRightClimber, mLeftClimber;
 
   public static Climber getInstance() {
     if (instance == null) {
@@ -35,30 +35,30 @@ public class Climber extends Subsystem {
   }
 
   private Climber() {
-    rightClimber = TalonSRXFactory.createDefaultTalon(Constants.kPoleMasterId); 
-    configureMaster(rightClimber, true);
+    mRightClimber = TalonSRXFactory.createDefaultTalon(Constants.kPoleMasterId);
+    configureMaster(mRightClimber, true);
 
-    leftClimber = TalonSRXFactory.createDefaultTalon(Constants.kPoleSlaveId);
-    leftClimber.setInverted(true);
-
-  }
-  
-  public void driveVelocity(double speed){
-    rightClimber.set(ControlMode.Velocity, speed);
+    mLeftClimber = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
+    mLeftClimber.setInverted(false);
 
   }
 
+  public void driveVelocity(double speed) {
+    mRightClimber.set(ControlMode.Velocity, speed);
+  }
 
+  public void drivePercentOutput(double speed) {
+    mRightClimber.set(ControlMode.PercentOutput, speed);
+  }
 
-  // Elias --- this stuff is all copied from Drivetrain.java and we might not need it
+  // Elias --- this stuff is all copied from Drivetrain.java and we might not need
+  // it
   // but its here for now i guess
   private void configureMaster(TalonSRX talon, boolean left) {
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
-    final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
-            100); // primary closed-loop, 100 ms timeout
+    final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100);
     if (sensorPresent != ErrorCode.OK) {
-        DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent,
-                false);
+      DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent, false);
     }
     talon.setInverted(!left);
     talon.setSensorPhase(true);
@@ -69,7 +69,7 @@ public class Climber extends Subsystem {
     talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
     talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
     talon.configNeutralDeadband(0.04, 0);
-}
+  }
 
   @Override
   public void initDefaultCommand() {

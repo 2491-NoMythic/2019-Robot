@@ -5,19 +5,16 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.Drivetrain;
+package com.nomythic2491.frc2019.commands.Climber;
 
-import com.nomythic2491.frc2019.Settings.ControllerMap;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class Drive extends CommandBase {
-
-  private double currentLeftSpeed, currentRightSpeed;
-
-  public Drive() {
-    requires(drivetrain);
+public class AutomaticClimb extends CommandBase {
+  public AutomaticClimb() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+    requires(climber);
+    requires(magicbox);
   }
 
   // Called just before this Command runs the first time
@@ -28,11 +25,6 @@ public class Drive extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    currentLeftSpeed = -oi.getAxisDeadzonedSquared(ControllerMap.driveControllerLeft, ControllerMap.driveMainAxisLeft,
-        0.1);
-    currentRightSpeed = -oi.getAxisDeadzonedSquared(ControllerMap.driveControllerRight,
-        ControllerMap.driveMainAxisRight, 0.1);
-    drivetrain.drivePercentOutput(currentLeftSpeed, currentRightSpeed);
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -44,13 +36,11 @@ public class Drive extends CommandBase {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    drivetrain.stop();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    end();
   }
 }

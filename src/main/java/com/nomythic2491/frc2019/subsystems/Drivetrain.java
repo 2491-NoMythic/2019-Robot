@@ -76,7 +76,7 @@ public class Drivetrain extends Subsystem {
         tv = limelight.getEntry("tv");
     }
 
-    public static Drivetrain GetInstance() {
+    public static Drivetrain getInstance() {
         if (mInstance == null) {
             mInstance = new Drivetrain();
         }
@@ -95,7 +95,8 @@ public class Drivetrain extends Subsystem {
         talon.setSensorPhase(true);
         talon.enableVoltageCompensation(true);
         talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs);
+        // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
+        // Constants.kLongCANTimeoutMs);
         talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
         talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
         talon.configNeutralDeadband(0.04, 0);
@@ -381,5 +382,6 @@ public class Drivetrain extends Subsystem {
         limelight.getEntry("camMode").setNumber(1);
     }
 
-    public void initDefaultCommand() {}
+    public void initDefaultCommand() {
+    }
 }
