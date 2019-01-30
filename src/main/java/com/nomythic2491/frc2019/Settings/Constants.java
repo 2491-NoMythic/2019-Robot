@@ -30,8 +30,13 @@ public class Constants {
     public static final int kRollerJointId = 2491; //not used for progned
 
     // Box
-    public static final int kLeftHatchChannel = 2491;
-    public static final int kRightHatchChannel = 2491;
+    public static final int kLeftHatchOutChannel = 2491;
+    public static final int kLeftHatchInChannel = 2491;
+    public static final int kRightHatchInChannel = 2491;
+    public static final int kRightHatchOutChannel = 2491;
     public static final int kIntakeRollerId = 2491;
+    public static final int kRotator = 2491;
+    public static final int kElevatorLeft = 2491;
+    public static final int kElevatorRight = 2491;
 
 }
