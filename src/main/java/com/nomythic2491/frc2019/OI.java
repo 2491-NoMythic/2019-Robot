@@ -7,11 +7,16 @@
 
 package com.nomythic2491.frc2019;
 
+import com.nomythic2491.frc2019.Settings.ControllerMap;
+
+import edu.wpi.first.wpilibj.Joystick;
+
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
+  private final Joystick[] controllers = new Joystick[2];
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
   //// joystick.
@@ -39,4 +44,16 @@ public class OI {
   // Start the command when the button is released and let it run the command
   // until it is finished as determined by it's isFinished method.
   // button.whenReleased(new ExampleCommand());
+  public void init()
+  {
+    controllers[0] = new Joystick(ControllerMap.driveControllerLeft);
+    controllers[1] = new Joystick(ControllerMap.driveControllerRight);
+
+  }
+
+  public double getAxisDeadzonedSquared(int joystickID, int axisID, double deadzone) {
+		double result = controllers[joystickID].getRawAxis(axisID);
+		result = result * Math.abs(result);
+		return Math.abs(result) > deadzone ? result : 0;
+	}
 }

@@ -45,20 +45,12 @@ public class Drivetrain extends Subsystem {
                 Constants.kRightDriveMasterId);
         mRightSlave.setInverted(true);
 
-        // Configures Talon feedback sensors
-        mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kVelocitySlotId,
-                Constants.kTimeoutMs);
-        mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kVelocitySlotId,
-                Constants.kTimeoutMs);
-
         // Corrects sensor direction to match throttle direction
         mLeftMaster.setSensorPhase(true);
         mRightMaster.setSensorPhase(true);
 
         /* Configures FPID constants for Talon's Velocity mode */
-        setTalonPID(Constants.kVelocitykP, Constants.kVelocitykI, Constants.kVelocitykD);
-
-        setTalonF(Constants.kVelocitykF);
+        setTalonPIDF(Constants.kVelocitykP, Constants.kVelocitykI, Constants.kVelocitykD, Constants.kVelocitykF);
 
         /**
          * Instantiates the gyro
@@ -74,7 +66,6 @@ public class Drivetrain extends Subsystem {
         }
 
         resetGyro();
-        velocity = new StringBuilder();
 
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
         limelight.getEntry("ledMode").setNumber(0);
@@ -104,18 +95,13 @@ public class Drivetrain extends Subsystem {
         talon.setSensorPhase(true);
         talon.enableVoltageCompensation(true);
         talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
-        // Constants.kLongCANTimeoutMs);
+        // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs);
         talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
         talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
         talon.configNeutralDeadband(0.04, 0);
     }
 
-    @Override
-    protected void initDefaultCommand() {
-    }
-
-    public void setTalonPID(double proportional, double iterative, double derivative) {
+    private void setTalonPIDF(double proportional, double iterative, double derivative, double feedForward) {
         mLeftMaster.config_kP(Constants.kVelocitySlotId, proportional, Constants.kTimeoutMs);
         mRightMaster.config_kP(Constants.kVelocitySlotId, proportional, Constants.kTimeoutMs);
 
@@ -241,7 +227,7 @@ public class Drivetrain extends Subsystem {
      * @return The value of the left drive encoder in inches
      */
     public double getLeftEncoderDistance() {
-        return mLeftMaster.getSelectedSensorPosition(0) * Constants.driveEncoderToInches;
+        return mLeftMaster.getSelectedSensorPosition(0) * Constants.kDriveEncoderToInches;
     }
 
     /**
@@ -264,7 +250,7 @@ public class Drivetrain extends Subsystem {
      * @return The value of the right drive encoder in inches
      */
     public double getRightEncoderDistance() {
-        return mRightMaster.getSelectedSensorPosition(0) * Constants.driveEncoderToInches;
+        return mRightMaster.getSelectedSensorPosition(0) * Constants.kDriveEncoderToInches;
     }
 
     /**
@@ -342,24 +328,6 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
-     * Gets the master left talon
-     * 
-     * @return The master left talon
-     */
-    public TalonSRX getLeftTalon() {
-        return mLeftMaster;
-    }
-
-    /**
-     * Gets the master right talon
-     * 
-     * @return The master right talon
-     */
-    public TalonSRX getRightTalon() {
-        return mRightMaster;
-    }
-
-    /**
      * Gives the displacement of the target from the center point of the limelight
      * on the x-axis
      * 
@@ -397,13 +365,21 @@ public class Drivetrain extends Subsystem {
         return tv.getDouble(0) == 1;
     }
 
+    /**
+     * Sets the robot pipeline to the necessary setting
+     */
     public void setVisionMode() {
         limelight.getEntry("ledMode").setNumber(0);
         limelight.getEntry("camMode").setNumber(0);
     }
 
+    /**
+     * Sets the driverstation pipeline to the necessary settings
+     */
     public void setCameraMode() {
         limelight.getEntry("ledMode").setNumber(1);
         limelight.getEntry("camMode").setNumber(1);
     }
+
+    public void initDefaultCommand() {}
 }
