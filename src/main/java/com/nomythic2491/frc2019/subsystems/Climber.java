@@ -50,7 +50,7 @@ public class Climber extends Subsystem {
 
 
 
-  // Elias --- this stuff is all copied from Drivertrain and we might not need it
+  // Elias --- this stuff is all copied from Drivetrain.java and we might not need it
   // but its here for now i guess
   private void configureMaster(TalonSRX talon, boolean left) {
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
