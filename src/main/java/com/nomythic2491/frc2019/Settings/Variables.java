@@ -21,6 +21,14 @@ public class Variables {
     // debug Mode
     public static boolean debugMode = false;
 
+    //Acceleration Number
+    public static double linearAccelerationValue = 0.05;
+
+    /*
+    The degree of acceleration where 1st degree is linear
+    */
+    public static int degreeofaccel = 1;
+
     //Controllers
     public static boolean isTwoStick = false;
 }

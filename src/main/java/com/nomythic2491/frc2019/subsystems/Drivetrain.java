@@ -11,6 +11,7 @@ import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.lib.drivers.VictorSPXFactory;
+import com.nomythic2491.frc2019.commands.Drivetrain.Drive;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -383,5 +384,6 @@ public class Drivetrain extends Subsystem {
     }
 
     public void initDefaultCommand() {
+        setDefaultCommand(new Drive());
     }
 }
