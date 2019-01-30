@@ -38,6 +38,7 @@ public class Drive extends CommandBase {
 
     //Left Joystick
     switch(Variables.degreeofaccel){
+      //Linear Drive
       case 1:
         double rightDeltay = (currentLeftSpeed - lastLeftSpeed);
         double signOfValue = (rightDeltay / Math.abs(rightDeltay));
@@ -48,11 +49,13 @@ public class Drive extends CommandBase {
             
           }
         }
+      //No editing factor to speed rate.  
       default:
     }
 
     //Right Joystick
     switch(Variables.degreeofaccel){
+      //Linear Drive
       case 1:
       double rightDeltay = (currentRightSpeed - lastRightSpeed);
       double signOfRightValue = (rightDeltay / Math.abs(rightDeltay));
@@ -62,7 +65,8 @@ public class Drive extends CommandBase {
 					currentRightSpeed = lastRightSpeed + (Variables.linearAccelerationValue * signOfRightValue);
 				}
 				// if the difference between the numbers is positive it is going up
-			}
+      }
+      //No editing factor to speed rate
       default:
     }
 
