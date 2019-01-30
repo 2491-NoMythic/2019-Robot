@@ -7,6 +7,7 @@
 
 package com.nomythic2491.frc2019.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
 
@@ -19,7 +20,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class MagicBox extends Subsystem {
   
   private static MagicBox instance;
-  private TalonSRX intake, rotator, elevatorLeft, elevatorRight;
+  private TalonSRX intake, rotateIntake, elevatorLeft, elevatorRight;
   private DoubleSolenoid spindleRight, spindleLeft;
 
   public static MagicBox getInstance() {
@@ -31,12 +32,45 @@ public class MagicBox extends Subsystem {
 
   private MagicBox() {
     intake = new TalonSRX(Constants.kIntakeRollerId);
-    rotator = new TalonSRX(Constants.kRotator);
+    rotateIntake = new TalonSRX(Constants.kRotator);
     elevatorRight = new TalonSRX(Constants.kElevatorRight);
     elevatorLeft = new TalonSRX(Constants.kElevatorLeft);
     spindleRight = new DoubleSolenoid(Constants.kRightHatchOutChannel, Constants.kRightHatchInChannel);
     spindleLeft = new DoubleSolenoid(Constants.kLeftHatchOutChannel, Constants.kLeftHatchInChannel);
   }
+
+  /**
+   * Runs the intake at a given speed
+   * @param speed How fast it goes on a scale of -1 to 1
+   */
+  public void runIntake(double speed) {
+    intake.set(ControlMode.PercentOutput, speed);
+  }
+
+  /**
+   * Elevates the intake at a specified speed
+   * @param speed How fast it goes on a scale of -1 to 1
+   */
+  public void elevateIntake(double speed){
+    elevatorLeft.set(ControlMode.PercentOutput, speed);
+    elevatorRight.set(ControlMode.PercentOutput, speed);
+  }
+
+  /**
+   * Rotates the intake at a speed
+   * @param speed How fast it goes on a scale of -1 to 1
+   */
+  public void rotateIntake(double speed){
+    rotateIntake.set(ControlMode.PercentOutput, speed);
+  }
+
+  /**
+   * Stops the elevator from moving
+   */
+  public void stopElevator(){
+    elevateIntake(0);
+  }
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
