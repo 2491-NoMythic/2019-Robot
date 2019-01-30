@@ -380,4 +380,6 @@ public class Drivetrain extends Subsystem {
         limelight.getEntry("ledMode").setNumber(1);
         limelight.getEntry("camMode").setNumber(1);
     }
+
+    public void initDefaultCommand() {}
 }
