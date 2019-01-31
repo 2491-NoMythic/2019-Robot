@@ -14,17 +14,17 @@ public class CheesyDriveHelper {
 
     // These factor determine how fast the wheel traverses the "non linear" sine
     // curve.
-    private static final double kHighWheelNonLinearity = 0.65;
+    // private static final double kHighWheelNonLinearity = 0.65;
     private static final double kLowWheelNonLinearity = 0.5;
 
-    private static final double kHighNegInertiaScalar = 4.0;
+    // private static final double kHighNegInertiaScalar = 4.0;
 
     private static final double kLowNegInertiaThreshold = 0.65;
     private static final double kLowNegInertiaTurnScalar = 3.5;
     private static final double kLowNegInertiaCloseScalar = 4.0;
     private static final double kLowNegInertiaFarScalar = 5.0;
 
-    private static final double kHighSensitivity = 0.65;
+    // private static final double kHighSensitivity = 0.65;
     private static final double kLowSensitiity = 0.65;
 
     private static final double kQuickStopDeadband = 0.5;
@@ -35,29 +35,29 @@ public class CheesyDriveHelper {
     private double mQuickStopAccumlator = 0.0;
     private double mNegInertiaAccumlator = 0.0;
 
-    public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn, boolean isHighGear) {
+    public DriveSignal cheesyDrive(double throttle, double turn, boolean isQuickTurn) {
 
-        wheel = handleDeadband(wheel, kWheelDeadband);
+        turn = handleDeadband(turn, kWheelDeadband);
         throttle = handleDeadband(throttle, kThrottleDeadband);
 
-        double negInertia = wheel - mOldWheel;
-        mOldWheel = wheel;
+        double negInertia = turn - mOldWheel;
+        mOldWheel = turn;
 
         double wheelNonLinearity;
-        if (isHighGear) {
-            wheelNonLinearity = kHighWheelNonLinearity;
-            final double denominator = Math.sin(Math.PI / 2.0 * wheelNonLinearity);
-            // Apply a sin function that's scaled to make it feel better.
-            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
-            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
-        } else {
-            wheelNonLinearity = kLowWheelNonLinearity;
-            final double denominator = Math.sin(Math.PI / 2.0 * wheelNonLinearity);
-            // Apply a sin function that's scaled to make it feel better.
-            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
-            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
-            wheel = Math.sin(Math.PI / 2.0 * wheelNonLinearity * wheel) / denominator;
-        }
+        /*
+         * if (isHighGear) { wheelNonLinearity = kHighWheelNonLinearity; final double
+         * denominator = Math.sin(Math.PI / 2.0 * wheelNonLinearity); // Apply a sin
+         * function that's scaled to make it feel better. turn = Math.sin(Math.PI / 2.0
+         * * wheelNonLinearity * turn) / denominator; turn = Math.sin(Math.PI / 2.0 *
+         * wheelNonLinearity * turn) / denominator; } else {
+         */
+        wheelNonLinearity = kLowWheelNonLinearity;
+        final double denominator = Math.sin(Math.PI / 2.0 * wheelNonLinearity);
+        // Apply a sin function that's scaled to make it feel better.
+        turn = Math.sin(Math.PI / 2.0 * wheelNonLinearity * turn) / denominator;
+        turn = Math.sin(Math.PI / 2.0 * wheelNonLinearity * turn) / denominator;
+        turn = Math.sin(Math.PI / 2.0 * wheelNonLinearity * turn) / denominator;
+        // }
 
         double leftPwm, rightPwm, overPower;
         double sensitivity;
@@ -67,27 +67,27 @@ public class CheesyDriveHelper {
 
         // Negative inertia!
         double negInertiaScalar;
-        if (isHighGear) {
-            negInertiaScalar = kHighNegInertiaScalar;
-            sensitivity = kHighSensitivity;
+        /*
+         * if (isHighGear) { negInertiaScalar = kHighNegInertiaScalar; sensitivity =
+         * kHighSensitivity; } else {
+         */
+        if (turn * negInertia > 0) {
+            // If we are moving away from 0.0, aka, trying to get more wheel.
+            negInertiaScalar = kLowNegInertiaTurnScalar;
         } else {
-            if (wheel * negInertia > 0) {
-                // If we are moving away from 0.0, aka, trying to get more wheel.
-                negInertiaScalar = kLowNegInertiaTurnScalar;
+            // Otherwise, we are attempting to go back to 0.0.
+            if (Math.abs(turn) > kLowNegInertiaThreshold) {
+                negInertiaScalar = kLowNegInertiaFarScalar;
             } else {
-                // Otherwise, we are attempting to go back to 0.0.
-                if (Math.abs(wheel) > kLowNegInertiaThreshold) {
-                    negInertiaScalar = kLowNegInertiaFarScalar;
-                } else {
-                    negInertiaScalar = kLowNegInertiaCloseScalar;
-                }
+                negInertiaScalar = kLowNegInertiaCloseScalar;
             }
-            sensitivity = kLowSensitiity;
         }
+        sensitivity = kLowSensitiity;
+        // }
         double negInertiaPower = negInertia * negInertiaScalar;
         mNegInertiaAccumlator += negInertiaPower;
 
-        wheel = wheel + mNegInertiaAccumlator;
+        turn = turn + mNegInertiaAccumlator;
         if (mNegInertiaAccumlator > 1) {
             mNegInertiaAccumlator -= 1;
         } else if (mNegInertiaAccumlator < -1) {
@@ -102,13 +102,13 @@ public class CheesyDriveHelper {
             if (Math.abs(linearPower) < kQuickStopDeadband) {
                 double alpha = kQuickStopWeight;
                 mQuickStopAccumlator = (1 - alpha) * mQuickStopAccumlator
-                        + alpha * Util.limit(wheel, 1.0) * kQuickStopScalar;
+                        + alpha * Util.limit(turn, 1.0) * kQuickStopScalar;
             }
             overPower = 1.0;
-            angularPower = wheel;
+            angularPower = turn;
         } else {
             overPower = 0.0;
-            angularPower = Math.abs(throttle) * wheel * sensitivity - mQuickStopAccumlator;
+            angularPower = Math.abs(throttle) * turn * sensitivity - mQuickStopAccumlator;
             if (mQuickStopAccumlator > 1) {
                 mQuickStopAccumlator -= 1;
             } else if (mQuickStopAccumlator < -1) {
