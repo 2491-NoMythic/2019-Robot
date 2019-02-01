@@ -50,7 +50,6 @@ public class Climber extends Subsystem {
   public void drivePercentOutput(double speed) {
     mRightClimber.set(ControlMode.PercentOutput, speed);
   }
-
   // Elias --- this stuff is all copied from Drivetrain.java and we might not need
   // it
   // but its here for now i guess
@@ -69,6 +68,54 @@ public class Climber extends Subsystem {
     talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
     talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
     talon.configNeutralDeadband(0.04, 0);
+  }
+
+  public void resetEncoders() {
+    resetRightEncoder();
+    resetLeftEncoder();
+  }
+
+  private void resetRightEncoder() {
+   mRightClimber.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);}
+
+  private void resetLeftEncoder() {
+    mLeftClimber.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);}
+    
+   /**
+     * @return The value of the left drive encoder in inches
+     */
+    public double getLeftEncoderDistance() {
+      return mLeftClimber.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
+  }
+
+  /**
+   * Gets the left encoder value in ticks (4096 per rotation)
+   */
+  public double getLeftEncoderDistanceRaw() {
+      return mLeftClimber.getSelectedSensorPosition(0);
+  }
+
+  /**
+   * Gets the right encoder value in ticks (4096 per rotation)
+   * 
+   * @return
+   */
+  public double getRightEncoderDistanceRaw() {
+      return mRightClimber.getSelectedSensorPosition(0);
+  }
+
+  /**
+   * @return The value of the right drive encoder in inches
+   */
+  public double getRightEncoderDistance() {
+      return mRightClimber.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
+  }
+
+  /**
+   * @return The average value of the two encoders in inches
+   */
+  public double getDistance() {
+      return (getRightEncoderDistance() + getLeftEncoderDistance()) / 2;
   }
 
   @Override
