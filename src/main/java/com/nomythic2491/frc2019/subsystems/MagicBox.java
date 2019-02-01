@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -70,6 +71,57 @@ public class MagicBox extends Subsystem {
   public void stopElevator(){
     elevateIntake(0);
   }
+
+  /**
+  * Stops the intake from moving
+  */
+  public void stopIntake(){
+    runIntake(0);
+  }
+
+/**
+ * Extends the right solenoid
+ */
+  public void extendRightSolenoid(){
+    spindleRight.set(Value.kForward);
+  }
+
+/**
+ * Retracts the right solenoid
+ */
+  public void retractRightSolenoid(){
+    spindleRight.set(Value.kReverse);
+  }
+
+  /**
+ * Extends the left solenoid
+ */
+public void extendLeftSolenoid(){
+  spindleLeft.set(Value.kForward);
+}
+
+/**
+* Retracts the left solenoid
+*/
+public void retractLeftSolenoid(){
+  spindleLeft.set(Value.kReverse);
+}
+
+/**
+ * Determines what position the right solenoid is in
+ * @return The right solenoid's position
+ */
+public boolean rightExtended(){
+  return spindleRight.get() == Value.kForward || spindleRight.get() == Value.kOff;
+}
+
+/**
+ * Determines what position the left solenoid is in
+ * @return The left solenoid's position
+ */
+public boolean leftExtended(){
+  return spindleLeft.get() == Value.kForward || spindleLeft.get() == Value.kOff;
+}
 
   @Override
   public void initDefaultCommand() {

@@ -38,5 +38,6 @@ public class Constants {
     public static final int kRotator = 2491;
     public static final int kElevatorLeft = 2491;
     public static final int kElevatorRight = 2491;
+    public static final double kHatchPickupPause = 0.25;
 
 }
