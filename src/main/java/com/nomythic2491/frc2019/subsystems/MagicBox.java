@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -28,6 +29,8 @@ public class MagicBox extends Subsystem {
   private static MagicBox instance;
   private TalonSRX intake, rotateIntake, elevatorLeft, elevatorRight;
   private DoubleSolenoid spindleRight, spindleLeft;
+
+  DigitalInput limitSwitch = new DigitalInput(1);
 
   private MagicBox() {
     intake = TalonSRXFactory.createDefaultTalon(Constants.kIntakeRollerId);
@@ -76,6 +79,21 @@ public class MagicBox extends Subsystem {
   public void elevateIntake(double speed) {
     elevatorLeft.set(ControlMode.PercentOutput, speed);
     elevatorRight.set(ControlMode.PercentOutput, speed);
+  }
+
+  /**
+   * Gets the elevator height from the left talon
+   * @return The height of the elevator
+   */
+  public double getElevatorHeight() {
+    return elevatorLeft.getSelectedSensorPosition(0);
+  }
+  
+  /**
+   * Resets the elevator encoder
+   */
+  public void resetElevatorEncoder() {
+    elevatorLeft.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
   }
 
   /**
@@ -153,6 +171,26 @@ public class MagicBox extends Subsystem {
     }
     return instance;
   }
+
+  /**
+   * Determines whether the elevator is in the lowest position
+   * @return Whether the elevator is in the lowest position
+   */
+  public boolean isElevatorDown() {
+    return limitSwitch.get();
+  }
+
+  /**
+   * Determines whether the elevator is in the highest position
+   * @return Whether the elevator is in the highest position
+   */
+  public boolean isElevatorUp() {
+    return getElevatorHeight() >= (Constants.kElevatorMaxHeight - Constants.kElevatorUncertainty);
+  }
+
+  //public boolean isElevatorRising() {
+  //  return elevatorLeft.get
+  //}
 
   @Override
   public void initDefaultCommand() {
