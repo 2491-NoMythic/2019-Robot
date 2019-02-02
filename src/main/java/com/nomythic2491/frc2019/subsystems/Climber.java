@@ -45,7 +45,7 @@ public class Climber extends Subsystem {
     mLeftClimber = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
     mLeftClimber.setInverted(false);
 
-    mClimberSolenoid = new DoubleSolenoid(Constants.kClimberForward,Constants.kClimberOff);
+    mClimberSolenoid = new DoubleSolenoid(Constants.kClimberForward, Constants.kClimberOff);
 
   }
 
@@ -127,8 +127,10 @@ public class Climber extends Subsystem {
     return (getRightEncoderDistance() + getLeftEncoderDistance()) / 2;
 
   }
-  Public Void setClimbPosition()
-    @Override
+
+  public void setClimbPostition(){}
+
+  @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
