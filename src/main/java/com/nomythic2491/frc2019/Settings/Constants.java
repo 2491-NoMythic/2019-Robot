@@ -50,4 +50,17 @@ public class Constants {
     public static final double kElevatorUncertainty = 2491;
     public static final double kElevatorVelocity = 2491;
 
+    //Fork
+    public static final int kElevator = 2491;
+    public static final int kIntakeLeft = 2491;
+    public static final int kIntakeRight = 2491;
+    public static final int kLeftHatchInChannelBox = 2491;
+    public static final int kLeftHatchOutChannelBox = 2491;
+    public static final int kRightHatchOutChannelBox = 2491;
+    public static final int kRightHatchInChannelBox = 2491;
+    public static final int kLeftPivotInChannel = 2491;
+    public static final int kLeftPivotOutChannel = 2491;
+    public static final int kRightPivotInChannel = 2491;
+    public static final int kRightPivotOutChannel= 2491;
+
 }
