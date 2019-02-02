@@ -29,6 +29,7 @@ public class MagicBox extends Subsystem {
   private static MagicBox instance;
   private TalonSRX intake, rotateIntake, elevatorLeft, elevatorRight;
   private DoubleSolenoid spindleRight, spindleLeft;
+  public boolean isElevatorRising;
 
   DigitalInput limitSwitch = new DigitalInput(1);
 
@@ -187,10 +188,6 @@ public class MagicBox extends Subsystem {
   public boolean isElevatorUp() {
     return getElevatorHeight() >= (Constants.kElevatorMaxHeight - Constants.kElevatorUncertainty);
   }
-
-  //public boolean isElevatorRising() {
-  //  return elevatorLeft.get
-  //}
 
   @Override
   public void initDefaultCommand() {

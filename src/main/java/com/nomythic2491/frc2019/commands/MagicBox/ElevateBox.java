@@ -7,30 +7,65 @@
 
 package com.nomythic2491.frc2019.commands.MagicBox;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
+import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class ElevateBox extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
+public class ElevateBox extends CommandBase {
   public ElevateBox() {
-    addSequential(new BeginBoxElevation());
-    addSequential(new EndBoxElevation());
-    // Add Commands here:
-    // e.g. addSequential(new Command1());
-    // addSequential(new Command2());
-    // these will run in order.
+    requires(magicbox);
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
+  }
 
-    // To run multiple commands at the same time,
-    // use addParallel()
-    // e.g. addParallel(new Command1());
-    // addSequential(new Command2());
-    // Command1 and Command2 will run in parallel.
+  // Called just before this Command runs the first time
+  @Override
+  protected void initialize() {
+    if (magicbox.isElevatorDown()) {
+      magicbox.elevateIntake(Constants.kElevatorVelocity);
+      magicbox.isElevatorRising = true;
+    }
 
-    // A command group will require all of the subsystems that each member
-    // would require.
-    // e.g. if Command1 requires chassis, and Command2 requires arm,
-    // a CommandGroup containing them would require both the chassis and the
-    // arm.
+    else if (magicbox.isElevatorUp()) {
+      magicbox.elevateIntake(-Constants.kElevatorVelocity);
+      magicbox.isElevatorRising = false;
+    }
+
+    else {
+      System.out.println("An error has occurred with the elevator. It may not be in position, or the encoder might be disconnected.");
+    }
+  }
+  
+
+  // Called repeatedly when this Command is scheduled to run
+  @Override
+  protected void execute() {
+    if (magicbox.isElevatorRising && !magicbox.isElevatorUp()) {
+      magicbox.elevateIntake(Constants.kElevatorVelocity);
+    }
+
+    else if (magicbox.isElevatorRising == false && !magicbox.isElevatorDown()) {
+      magicbox.elevateIntake(-Constants.kElevatorVelocity);
+    }
+
+    else {}
+  }
+
+  // Make this return true when this Command no longer needs to run execute()
+  @Override
+  protected boolean isFinished() {
+    return ((magicbox.isElevatorRising == true && magicbox.isElevatorUp()) || (magicbox.isElevatorRising == false && magicbox.isElevatorDown()));
+  }
+
+  // Called once after isFinished returns true
+  @Override
+  protected void end() {
+    magicbox.elevateIntake(0);
+  }
+
+  // Called when another command which requires one or more of the same
+  // subsystems is scheduled to run
+  @Override
+  protected void interrupted() {
+    end();
   }
 }
