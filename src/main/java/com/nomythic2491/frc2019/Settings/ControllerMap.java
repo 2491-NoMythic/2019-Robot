@@ -14,10 +14,15 @@ public class ControllerMap {
     //Controllers
     public static final int driveControllerLeft = 0;
     public static final int driveControllerRight = 1;
+    public static final int operatorController = 2;
     
     //Left drive controller
     public static final int driveMainAxisLeft = 1;
 
     //Right drive controller
     public static final int driveMainAxisRight = 1;
+
+    //Operator controller
+    public static final int runIntakeManual = 1;
+    public static final int hatchButton = 2;
 }

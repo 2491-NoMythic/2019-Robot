@@ -5,20 +5,40 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.Drivetrain;
+package com.nomythic2491.frc2019.commands.MagicBox;
 
+import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class AutoLineup extends CommandBase {
-  public AutoLineup() {
+import edu.wpi.first.wpilibj.Timer;
+
+public class HatchPickup extends CommandBase{
+
+  Timer timer;
+
+  public HatchPickup() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(drivetrain);
+    requires(magicbox);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    timer.reset();
+    if (magicbox.leftExtended()) {
+      magicbox.extendRightSolenoid();
+      timer.delay(Constants.kHatchPickupPause);
+      magicbox.retractLeftSolenoid();
+    }
+    else if (magicbox.rightExtended()) {
+      magicbox.extendLeftSolenoid();
+      timer.delay(Constants.kHatchPickupPause);
+      magicbox.retractRightSolenoid();
+    }
+    else {
+      System.out.println("Error in the hatch pickup system");
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -29,7 +49,7 @@ public class AutoLineup extends CommandBase {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   // Called once after isFinished returns true
@@ -41,5 +61,6 @@ public class AutoLineup extends CommandBase {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

@@ -5,15 +5,14 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.Drivetrain;
+package com.nomythic2491.frc2019.commands.MagicBox;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class AutoLineup extends CommandBase {
-  public AutoLineup() {
+public class OutputCargoManual extends CommandBase {
+  public OutputCargoManual() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(drivetrain);
   }
 
   // Called just before this Command runs the first time

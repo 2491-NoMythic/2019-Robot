@@ -5,15 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.Drivetrain;
+package com.nomythic2491.frc2019.commands.MagicBox;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class AutoLineup extends CommandBase {
-  public AutoLineup() {
+public class EndBoxElevation extends CommandBase {
+  public EndBoxElevation() {
+    requires(magicbox);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(drivetrain);
   }
 
   // Called just before this Command runs the first time
@@ -35,11 +35,13 @@ public class AutoLineup extends CommandBase {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    magicbox.elevateIntake(0);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

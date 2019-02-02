@@ -28,6 +28,11 @@ public class Constants {
     public static final int kPoleMasterId = 2491;
     public static final int kPoleSlaveId = 2491;
     public static final int kRollerJointId = 2491; //not used for progned
+    public static final int kPoleEncoderDifference = 2491;
+    public static final int kClimberForward = 2491;
+    public static final int kClimberOff = 2491; 
+
+    public static final double kClimberEncoderToInches = 1;
 
     // Box
     public static final int kLeftHatchOutChannel = 2491;
@@ -38,6 +43,12 @@ public class Constants {
     public static final int kRotator = 2491;
     public static final int kElevatorLeft = 2491;
     public static final int kElevatorRight = 2491;
+    
+    public static final double kHatchPickupPause = 0.25;
+    //public static final double kElevatorGroundHeight = 0; //Limit switch will remove this
+    public static final double kElevatorMaxHeight = 2491;
+    public static final double kElevatorUncertainty = 2491;
+    public static final double kElevatorVelocity = 2491;
 
     //Fork
     public static final int kElevator = 2491;
