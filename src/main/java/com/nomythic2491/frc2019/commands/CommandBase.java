@@ -9,6 +9,7 @@ package com.nomythic2491.frc2019.commands;
 
 import com.nomythic2491.frc2019.OI;
 import com.nomythic2491.frc2019.subsystems.Drivetrain;
+import com.nomythic2491.frc2019.subsystems.Fork;
 import com.nomythic2491.frc2019.subsystems.MagicBox;
 import com.nomythic2491.frc2019.subsystems.Climber;
 
@@ -19,6 +20,7 @@ public abstract class CommandBase extends Command {
 	protected static Drivetrain drivetrain;
 	protected static MagicBox magicbox;
 	protected static Climber climber;
+	protected static Fork fork;
 
 	public static void init() {
 		oi = new OI();
@@ -26,6 +28,7 @@ public abstract class CommandBase extends Command {
 		drivetrain = Drivetrain.getInstance();
 		magicbox = MagicBox.getInstance();
 		climber = climber.getInstance();
+		fork = fork.getInstance();
 
 		oi.init();
 		// This MUST be here. If the OI creates Commands (which it very likely

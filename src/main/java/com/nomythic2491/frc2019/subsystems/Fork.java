@@ -91,6 +91,13 @@ public class Fork extends Subsystem {
     }
 
     /**
+    * Stops intake motors
+    */
+    public void stopIntake() {
+        runIntake(0);
+    }
+
+    /**
     * Stops the elevator from moving
     */
     public void stopElevator(){

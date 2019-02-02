@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 public class OI {
   private final Joystick[] controllers = new Joystick[2];
   Button pickupHatch;
+  Button manualCargoPickup;
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
   //// joystick.
@@ -53,6 +54,7 @@ public class OI {
     controllers[1] = new Joystick(ControllerMap.driveControllerRight);
 
     pickupHatch = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.hatchButton);
+    manualCargoPickup = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.manualCargoPickup);
 
   }
 
