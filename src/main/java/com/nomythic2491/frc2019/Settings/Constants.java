@@ -33,6 +33,7 @@ public class Constants {
     public static final int kClimberOff = 2491; 
 
     public static final double kClimberEncoderToInches = 1;
+    
 
     // Box
     public static final int kLeftHatchOutChannel = 2491;
