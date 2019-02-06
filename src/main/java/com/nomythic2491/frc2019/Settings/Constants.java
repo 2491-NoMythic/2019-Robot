@@ -37,10 +37,8 @@ public class Constants {
     
 
     // Box
-    public static final int kLeftHatchOutChannel = 2491;
-    public static final int kLeftHatchInChannel = 2491;
-    public static final int kRightHatchInChannel = 2491;
-    public static final int kRightHatchOutChannel = 2491;
+    public static final int kHatchOutChannel = 2491;
+    public static final int kHatchInChannel = 2491;
     public static final int kIntakeRollerId = 2491;
     public static final int kRotator = 2491;
     public static final int kElevatorLeft = 2491;
