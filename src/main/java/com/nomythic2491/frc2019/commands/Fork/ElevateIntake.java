@@ -15,22 +15,32 @@ public class ElevateIntake extends CommandBase {
     }
 
     protected void initialize() {
+        if (isElevatorDown()) {
+         fork.elevateIntake(Constants.kElevatorVelocity);
+         fork.isElevatorRising = true;
+      }
+      
+      else if (isElevatorUp()) {
+         fork.elevateIntake(-Constants.kElevatorVelocity);
+         fork.isElevatorRising = false;
+        }
+      
+      else {
+         System.out.println("An error has occurred with the elevator. It may not be in position, or the encoder might be disconnected.");
+        }
     }
 
     protected void execute() {
-
-
-
         if (!oi.getButton(ControllerMap.operatorController, ControllerMap.toggleElevation)) {
-
-            if (isElevatorDown()== true) {
-
+            if (fork.isElevatorRising == false && !isElevatorDown()) {
+                fork.elevateIntake(Constants.kElevatorVelocity);
             }
-            else if (isElevatorUp() == true) {
 
+            else if (fork.isElevatorRising && !isElevatorUp()) {
+                fork.elevateIntake(-Constants.kElevatorVelocity);
             }
+
             else {
-                System.out.println("An error has occurred with the elevator. It may not be in position, or the encoder might be disconnected.");
             }
         }
         else {
