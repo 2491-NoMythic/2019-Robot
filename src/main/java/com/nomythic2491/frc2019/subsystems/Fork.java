@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -18,6 +19,7 @@ public class Fork extends Subsystem {
     private static Fork instance;
     private TalonSRX elevator, intakeLeft, intakeRight;
     private DoubleSolenoid hatchLeft, hatchRight, pivotLeft, pivotRight;
+    public boolean isElevatorRising;
 
     public static Fork getInstance() {
         if (instance == null) {
@@ -72,6 +74,10 @@ public class Fork extends Subsystem {
         elevator.set(ControlMode.PercentOutput, speed);
     }
 
+    public double getElevatorHeight() {
+        return elevator.getSelectedSensorPosition(0);
+    }
+
     /**
      * Toggles the double solenoids responsible for picking up hatches
      * @param position Is available in either kForward or kReverse
@@ -103,6 +109,10 @@ public class Fork extends Subsystem {
     public void stopElevator(){
         elevateIntake(0);
     }
+
+    public void resetElevatorEncoder() {
+        elevator.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+      }
 
     @Override
     protected void initDefaultCommand() {
