@@ -26,7 +26,7 @@ public class Climber extends Subsystem {
   // here. Call these from Commands.
   private static Climber instance;
   private TalonSRX mRightClimberTalon, mLeftClimberTalon;
-  private Solenoid climberRightSolenoid, climberLeftSolenoid;
+  private Solenoid mClimberRightSolenoid, mClimberLeftSolenoid;
 
   public static Climber getInstance() {
     if (instance == null) {
@@ -42,8 +42,8 @@ public class Climber extends Subsystem {
     mLeftClimberTalon = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
     mLeftClimberTalon.setInverted(false);
 
-    climberRightSolenoid = new Solenoid(Constants.kClimberForward, Constants.kClimberOff);
-    climberLeftSolenoid = new Solenoid(Constants.kClimberForward, Constants.kClimberOff);
+    mClimberRightSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kRightSolenoidChannel);
+    mClimberLeftSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kLeftSolenoidChannel);
 
 
   }
@@ -93,14 +93,30 @@ public class Climber extends Subsystem {
    * @return The value of the left drive encoder in inches
    */
   public double getLeftEncoderDistance() {
-    return mLeftClimberTalon.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
+    try
+    {
+      return mLeftClimberTalon.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
+    }
+    catch(Exception e)
+    {
+    System.out.println("Failed to get left climber encoder distance.");
+    return -1;  
+   }
   }
 
   /**
    * Gets the left encoder value in ticks (4096 per rotation)
    */
   public double getLeftEncoderDistanceRaw() {
-    return mLeftClimberTalon.getSelectedSensorPosition(0);
+    try
+    {
+      return mLeftClimberTalon.getSelectedSensorPosition(0);
+    }
+    catch(Exception e)
+    {
+      System.out.println("Failed to get left climber encoder distance raw.");
+      return -1;  
+    }
   }
 
   /**
@@ -109,7 +125,15 @@ public class Climber extends Subsystem {
    * @return
    */
   public double getRightEncoderDistanceRaw() {
-    return mRightClimberTalon.getSelectedSensorPosition(0);
+    try 
+    {
+      return mRightClimberTalon.getSelectedSensorPosition(0);
+    }
+    catch(Exception e)
+    {
+      System.out.println("Failed to get right climber encoder distance raw.");
+      return -1;  
+    }
   }
 
   /**
@@ -136,13 +160,13 @@ public class Climber extends Subsystem {
   }
 
   public void deploySkid() {
-    climberRightSolenoid.set(true);
-    climberLeftSolenoid.set(true);
+    mClimberRightSolenoid.set(true);
+    mClimberLeftSolenoid.set(true);
   }
 
   public void unDeploySkid() {
-    climberRightSolenoid.set(false);
-    climberLeftSolenoid.set(false);
+    mClimberRightSolenoid.set(false);
+    mClimberLeftSolenoid.set(false);
   }
 
   @Override
