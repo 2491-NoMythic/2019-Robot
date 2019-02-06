@@ -7,15 +7,15 @@
 
 package com.nomythic2491.frc2019.commands.MagicBox;
 
+import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class HatchPickup extends CommandBase{
-
+public class IntakeCargoUntilSuccess extends CommandBase {
+  
   /**
-   * Runs the hatch pickup intake system.
-   * If it is activated, it deactivates and vice versa.
+   * Runs the cargo intake until cargo appears in the magic box.
    */
-  public HatchPickup() {
+  public IntakeCargoUntilSuccess() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(magicbox);
@@ -24,28 +24,24 @@ public class HatchPickup extends CommandBase{
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if (magicbox.hatchIntakeExtended()) {
-      magicbox.extendSolenoid();
-    }
-    else {
-      magicbox.retractSolenoid();
-    }
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    magicbox.runIntake(Constants.kCargoIntakeVelocity);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return magicbox.isCargoIn();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    magicbox.runIntake(0);
   }
 
   // Called when another command which requires one or more of the same

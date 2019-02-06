@@ -29,9 +29,10 @@ public class MagicBox extends Subsystem {
   private static MagicBox instance;
   private TalonSRX intake, rotateIntake, elevatorLeft, elevatorRight;
   private DoubleSolenoid spindle;
-  public boolean isElevatorRising;
+  public boolean isElevatorRising, isBoxFlippedUp;
 
-  DigitalInput limitSwitch = new DigitalInput(1);
+  DigitalInput elevatorLimitSwitch = new DigitalInput(1);
+  DigitalInput cargoLimitSwitch = new DigitalInput(2);
 
   private MagicBox() {
     intake = TalonSRXFactory.createDefaultTalon(Constants.kIntakeRollerId);
@@ -69,6 +70,14 @@ public class MagicBox extends Subsystem {
    */
   public void runIntake(double speed) {
     intake.set(ControlMode.PercentOutput, speed);
+  }
+
+  /**
+   * Uses a limit switch to determine if cargo is in the intake
+   * @return Whether or not cargo is in the intake
+   */
+  public boolean isCargoIn() {
+    return cargoLimitSwitch.get();
   }
 
   /**
@@ -154,7 +163,7 @@ public class MagicBox extends Subsystem {
    * @return Whether the elevator is in the lowest position
    */
   public boolean isElevatorDown() {
-    return limitSwitch.get();
+    return elevatorLimitSwitch.get();
   }
 
   /**
