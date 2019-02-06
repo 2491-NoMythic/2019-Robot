@@ -28,7 +28,7 @@ public class MagicBox extends Subsystem {
 
   private static MagicBox instance;
   private TalonSRX intake, rotateIntake, elevatorLeft, elevatorRight;
-  private DoubleSolenoid spindleRight, spindleLeft;
+  private DoubleSolenoid spindle;
   public boolean isElevatorRising;
 
   DigitalInput limitSwitch = new DigitalInput(1);
@@ -40,8 +40,7 @@ public class MagicBox extends Subsystem {
     configureMaster(elevatorLeft, true);
     elevatorRight = TalonSRXFactory.createPermanentSlaveTalon(Constants.kElevatorRight, Constants.kElevatorLeft);
     elevatorRight.setInverted(false);
-    spindleRight = new DoubleSolenoid(Constants.kRightHatchOutChannel, Constants.kRightHatchInChannel);
-    spindleLeft = new DoubleSolenoid(Constants.kLeftHatchOutChannel, Constants.kLeftHatchInChannel);
+    spindle = new DoubleSolenoid(Constants.kHatchOutChannel, Constants.kHatchInChannel);
   }
 
   private void configureMaster(TalonSRX talon, boolean left) {
@@ -121,49 +120,26 @@ public class MagicBox extends Subsystem {
   }
 
   /**
-   * Extends the right solenoid
+   * Extends the hatch intake solenoid
    */
-  public void extendRightSolenoid() {
-    spindleRight.set(Value.kForward);
+  public void extendSolenoid() {
+    spindle.set(Value.kForward);
   }
 
   /**
-   * Retracts the right solenoid
+   * Retracts the hatch intake solenoid
    */
-  public void retractRightSolenoid() {
-    spindleRight.set(Value.kReverse);
+  public void retractSolenoid() {
+    spindle.set(Value.kReverse);
   }
 
   /**
-   * Extends the left solenoid
-   */
-  public void extendLeftSolenoid() {
-    spindleLeft.set(Value.kForward);
-  }
-
-  /**
-   * Retracts the left solenoid
-   */
-  public void retractLeftSolenoid() {
-    spindleLeft.set(Value.kReverse);
-  }
-
-  /**
-   * Determines what position the right solenoid is in
+   * Determines what position the hatch intake solenoid is in
    * 
-   * @return The right solenoid's position
+   * @return The hatch intake solenoid's position
    */
-  public boolean rightExtended() {
-    return spindleRight.get() == Value.kForward || spindleRight.get() == Value.kOff;
-  }
-
-  /**
-   * Determines what position the left solenoid is in
-   * 
-   * @return The left solenoid's position
-   */
-  public boolean leftExtended() {
-    return spindleLeft.get() == Value.kForward || spindleLeft.get() == Value.kOff;
+  public boolean hatchIntakeExtended() {
+    return spindle.get() == Value.kForward || spindle.get() == Value.kOff;
   }
 
   public static MagicBox getInstance() {
