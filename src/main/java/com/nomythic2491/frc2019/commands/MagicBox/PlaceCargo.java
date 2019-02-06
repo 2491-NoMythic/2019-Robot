@@ -10,62 +10,44 @@ package com.nomythic2491.frc2019.commands.MagicBox;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class ElevateBox extends CommandBase {
-  
+import edu.wpi.first.wpilibj.Timer;
+
+public class PlaceCargo extends CommandBase {
+
+  Timer timer;
+
   /**
-   * Raises/lowers the magic box along the bars
+   * Runs the intake backwards to push the cargo out of the magic box
    */
-  public ElevateBox() {
-    requires(magicbox);
+  public PlaceCargo() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+    requires(magicbox);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if (magicbox.isElevatorDown()) {
-      magicbox.elevateIntake(Constants.kElevatorVelocity);
-      magicbox.isElevatorRising = true;
-    }
-
-    else if (magicbox.isElevatorUp()) {
-      magicbox.elevateIntake(-Constants.kElevatorVelocity);
-      magicbox.isElevatorRising = false;
-    }
-
-    else {
-      System.out.println("An error has occurred with the elevator. It may not be in position, or the encoder might be disconnected.");
-    }
+    timer.reset();
   }
-  
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if (magicbox.isElevatorRising && !magicbox.isElevatorUp()) {
-      magicbox.elevateIntake(Constants.kElevatorVelocity);
-    }
-
-    else if (magicbox.isElevatorRising == false && !magicbox.isElevatorDown()) {
-      magicbox.elevateIntake(-Constants.kElevatorVelocity);
-    }
-
-    else {
-      System.out.println("An error has occurred in the intake elevation process.");
-    }
+    timer.start();
+    magicbox.runIntake(Constants.kBoxCargoShootSpeed);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return ((magicbox.isElevatorRising == true && magicbox.isElevatorUp()) || (magicbox.isElevatorRising == false && magicbox.isElevatorDown()));
+    return timer.get() >= 1;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    magicbox.elevateIntake(0);
+    magicbox.stopIntake();
   }
 
   // Called when another command which requires one or more of the same
