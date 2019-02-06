@@ -113,10 +113,18 @@ public class Climber extends Subsystem {
   }
 
   /**
-   * @return The value of the right drive encoder in inches
+   * @return The value of the right drive encoder in inches. If return negative 1 it has failed. 
    */
   public double getRightEncoderDistance() {
-    return mRightClimberTalon.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
+    try
+    {
+      return mRightClimberTalon.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
+    }
+    catch(Exception e)
+    {
+      System.out.println("Failed to get right climber encoder distance.");
+      return -1;  
+    }
   }
 
   /**
