@@ -50,6 +50,7 @@ public class Constants {
     public static final double kElevatorMaxHeight = 2491;
     public static final double kElevatorUncertainty = 2491;
     public static final double kElevatorVelocity = 2491;
+    public static final double kBoxCargoShootSpeed = 2491;
 
     //Fork
     public static final int kElevator = 2491;
