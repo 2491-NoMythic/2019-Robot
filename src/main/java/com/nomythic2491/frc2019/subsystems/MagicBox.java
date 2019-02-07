@@ -18,6 +18,7 @@ import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
+//import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -29,6 +30,7 @@ public class MagicBox extends Subsystem {
   private static MagicBox instance;
   private TalonSRX intake, rotateIntake, elevatorLeft, elevatorRight;
   private DoubleSolenoid spindle;
+  //private Solenoid leftSpindle, rightSpindle; //These will only be needed if we decide that we want to have two solenoids controlling the hatch intake. If it's just one, we don't need these.
   public boolean isElevatorRising, isBoxFlippedUp;
 
   DigitalInput elevatorLimitSwitch = new DigitalInput(1);
@@ -150,6 +152,42 @@ public class MagicBox extends Subsystem {
   public boolean hatchIntakeExtended() {
     return spindle.get() == Value.kForward || spindle.get() == Value.kOff;
   }
+ 
+  /**
+   * Extends the left hatch solenoid
+   */
+  //public void extendLeftHatchSolenoid() {
+  //  leftSpindle.set(true);
+  //}
+
+  /**
+   * Retracts the left hatch solenoid
+   */
+  //public void retractLeftHatchSolenoid() {
+  //  leftSpindle.set(false);
+  //}
+
+  /**
+   * Extends the left hatch solenoid
+   */
+  //public void extendRightHatchSolenoid() {
+  //  rightSpindle.set(true);
+  //}
+
+  /**
+   * Retracts the left hatch solenoid
+   */
+  //public void retractRightHatchSolenoid() {
+  //  rightSpindle.set(false);
+  //}
+
+  /**
+   * Finds out if the left hatch intake solenoid is extended
+   * @return If the solenoid is extended
+   */
+  //public boolean leftSolenoidExtended() {
+  //  return leftSpindle.get();
+  //}
 
   public static MagicBox getInstance() {
     if (instance == null) {

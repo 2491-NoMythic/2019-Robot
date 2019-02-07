@@ -9,7 +9,10 @@ package com.nomythic2491.frc2019.commands.MagicBox;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
 
+//import edu.wpi.first.wpilibj.Timer;
+
 public class HatchPickup extends CommandBase{
+  //private Timer timer;
 
   /**
    * Runs the hatch pickup intake system.
@@ -19,6 +22,7 @@ public class HatchPickup extends CommandBase{
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(magicbox);
+    //timer = new Timer();
   }
 
   // Called just before this Command runs the first time
@@ -30,11 +34,23 @@ public class HatchPickup extends CommandBase{
     else {
       magicbox.retractSolenoid();
     }
+
+    //timer.reset();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    /**if (magicbox.leftSolenoidExtended()) {
+      magicbox.extendRightHatchSolenoid();
+      timer.delay(.25);
+      magicbox.retractLeftHatchSolenoid();
+    }
+    else if (!magicbox.leftSolenoidExtended()) {
+      magicbox.extendLeftHatchSolenoid();
+      timer.delay(.25);
+      magicbox.retractRightHatchSolenoid();
+    }*/
   }
 
   // Make this return true when this Command no longer needs to run execute()
