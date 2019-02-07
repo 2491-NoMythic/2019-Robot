@@ -17,20 +17,16 @@ public class ElevateBox extends CommandBase {
    */
   public ElevateBox() {
     requires(magicbox);
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
     if (magicbox.isElevatorDown()) {
-      magicbox.elevateIntake(Constants.kElevatorVelocity);
       magicbox.isElevatorRising = true;
     }
 
     else if (magicbox.isElevatorUp()) {
-      magicbox.elevateIntake(-Constants.kElevatorVelocity);
       magicbox.isElevatorRising = false;
     }
 
@@ -52,7 +48,7 @@ public class ElevateBox extends CommandBase {
     }
 
     else {
-      System.out.println("An error has occurred in the intake elevation process.");
+      System.out.println("An error has occurred in the intake elevation process. If this error appears every time the command stops, consider removing it.");
     }
   }
 

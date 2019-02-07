@@ -11,6 +11,10 @@ import com.nomythic2491.frc2019.Settings.ControllerMap;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
 public class IntakeCargoManual extends CommandBase {
+  
+  /**
+   * Runs the cargo intake while a button is held
+   */
   public IntakeCargoManual() {
     requires(magicbox);
     // Use requires() here to declare subsystem dependencies

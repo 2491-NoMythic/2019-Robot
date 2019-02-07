@@ -5,31 +5,27 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.MagicBox;
+package com.nomythic2491.frc2019.commands.Fork;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class HatchPickup extends CommandBase{
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
+public class IntakeHatch extends CommandBase {
+  
   /**
-   * Runs the hatch pickup intake system.
-   * If it is activated, it deactivates and vice versa.
+   * Intakes a hatch
    */
-  public HatchPickup() {
+  public IntakeHatch() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(magicbox);
+    requires(fork);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if (magicbox.hatchIntakeExtended()) {
-      magicbox.extendSolenoid();
-    }
-    else {
-      magicbox.retractSolenoid();
-    }
+    fork.hatchIntake(Value.kForward);
   }
 
   // Called repeatedly when this Command is scheduled to run

@@ -5,31 +5,19 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.MagicBox;
+package com.nomythic2491.frc2019.commands.Drivetrain;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class HatchPickup extends CommandBase{
-
-  /**
-   * Runs the hatch pickup intake system.
-   * If it is activated, it deactivates and vice versa.
-   */
-  public HatchPickup() {
+public class ControlPins extends CommandBase{
+  public ControlPins() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(magicbox);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if (magicbox.hatchIntakeExtended()) {
-      magicbox.extendSolenoid();
-    }
-    else {
-      magicbox.retractSolenoid();
-    }
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -40,7 +28,7 @@ public class HatchPickup extends CommandBase{
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   // Called once after isFinished returns true
@@ -52,6 +40,5 @@ public class HatchPickup extends CommandBase{
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    end();
   }
 }
