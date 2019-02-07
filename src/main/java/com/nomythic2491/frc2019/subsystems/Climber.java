@@ -29,7 +29,7 @@ public class Climber extends Subsystem {
   // here. Call these from Commands.
   private static Climber instance;
   private TalonSRX mRightClimberTalon, mLeftClimberTalon;
-  private Solenoid mClimberRightSolenoid, mClimberLeftSolenoid;
+  private Solenoid mClimberSolenoid;
    DigitalInput limitSwitch;
 
   public static Climber getInstance() {
@@ -46,10 +46,8 @@ public class Climber extends Subsystem {
     mLeftClimberTalon = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
     mLeftClimberTalon.setInverted(false);
 
-    mClimberRightSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kRightSolenoidChannel);
-    mClimberLeftSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kLeftSolenoidChannel);
-
-
+    mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSolenoidChannel);
+  
   }
 
   public void driveVelocity(double speed) {
@@ -164,13 +162,11 @@ public class Climber extends Subsystem {
   }
 
   public void deploySkid() {
-    mClimberRightSolenoid.set(true);
-    mClimberLeftSolenoid.set(true);
+    mClimberSolenoid.set(true);
   }
 
   public void unDeploySkid() {
-    mClimberRightSolenoid.set(false);
-    mClimberLeftSolenoid.set(false);
+    mClimberSolenoid.set(false);
   }
 
   public void climberLimitSwitch() {
