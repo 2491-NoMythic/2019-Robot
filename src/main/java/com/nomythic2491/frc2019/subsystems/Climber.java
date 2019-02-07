@@ -15,8 +15,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.frc2019.Settings.Constants;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
+
 
 /**
  * Add your docs here.
@@ -27,6 +30,7 @@ public class Climber extends Subsystem {
   private static Climber instance;
   private TalonSRX mRightClimberTalon, mLeftClimberTalon;
   private Solenoid mClimberRightSolenoid, mClimberLeftSolenoid;
+   DigitalInput limitSwitch;
 
   public static Climber getInstance() {
     if (instance == null) {
@@ -169,9 +173,18 @@ public class Climber extends Subsystem {
     mClimberLeftSolenoid.set(false);
   }
 
+  public void climberLimitSwitch() {
+    limitSwitch = new DigitalInput(1);
+  }
+  public void detectClimberSwitch() {
+    while (limitSwitch.get()) {
+      Timer.delay(10);
+    }
+  }
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
   }
+
 }
