@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Fork extends Subsystem {
 
+    DigitalInput limitSwitch = new DigitalInput(1);
+
     private static Fork instance;
     private TalonSRX elevator, intakeLeft, intakeRight;
     private DoubleSolenoid hatchLeft, hatchRight, pivotLeft, pivotRight;
@@ -108,6 +110,14 @@ public class Fork extends Subsystem {
     */
     public void stopElevator(){
         elevateIntake(0);
+    }
+
+    public boolean isElevatorDown() {
+        return limitSwitch.get();
+    }
+
+    public boolean isElevatorUp() {
+        return getElevatorHeight() >= (Constants.kElevatorMaxHeight - Constants.kElevatorUncertainty);
     }
 
     public void resetElevatorEncoder() {

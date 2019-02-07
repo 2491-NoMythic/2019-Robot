@@ -8,17 +8,13 @@ import com.nomythic2491.frc2019.Settings.Constants;
 
 public class ElevateIntake extends CommandBase {
 
-    DigitalInput limitSwitch = new DigitalInput(1);
-
     public ElevateIntake() {
         requires(fork);
     }
 
     protected void initialize() {
-        if (isElevatorDown()) {
-         fork.elevateIntake(Constants.kElevatorVelocity);
-         fork.isElevatorRising = true;
-      }
+        if (fork.isElevatorDown()) {
+       }
       
       else if (isElevatorUp()) {
          fork.elevateIntake(-Constants.kElevatorVelocity);
@@ -32,7 +28,7 @@ public class ElevateIntake extends CommandBase {
 
     protected void execute() {
         if (!oi.getButton(ControllerMap.operatorController, ControllerMap.toggleElevation)) {
-            if (fork.isElevatorRising == false && !isElevatorDown()) {
+            if (fork.isElevatorRising == false && !fork.isElevatorDown()) {
                 fork.elevateIntake(Constants.kElevatorVelocity);
             }
 
@@ -48,17 +44,13 @@ public class ElevateIntake extends CommandBase {
         }    
     }
 
-    public boolean isElevatorDown() {
-        return limitSwitch.get();
-    }
-
     public boolean isElevatorUp() {
         return fork.getElevatorHeight() >= (Constants.kElevatorMaxHeight - Constants.kElevatorUncertainty);
     }
 
     // Will return true when command does not need further execution
     protected boolean isFinished() {
-        return false;
+        return ((magicbox.isElevatorRising == true && magicbox.isElevatorUp()) || (magicbox.isElevatorRising == false && magicbox.isElevatorDown()));
     }
     
     // Called when isFinished returns true
