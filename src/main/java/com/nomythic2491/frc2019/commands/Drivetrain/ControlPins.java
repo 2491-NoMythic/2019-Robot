@@ -18,7 +18,12 @@ public class ControlPins extends CommandBase{
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    
+    if (drivetrain.controlPinsExtended()) {
+      drivetrain.controlPinsUp();
+    }
+    else {
+      drivetrain.controlPinsDown();
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -29,7 +34,7 @@ public class ControlPins extends CommandBase{
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   // Called once after isFinished returns true
@@ -41,5 +46,6 @@ public class ControlPins extends CommandBase{
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

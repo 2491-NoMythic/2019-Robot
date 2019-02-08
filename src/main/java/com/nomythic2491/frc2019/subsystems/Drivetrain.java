@@ -398,4 +398,8 @@ public class Drivetrain extends Subsystem {
     public void controlPinsUp(){
         controlPins.set(false);
     }
+
+    public boolean controlPinsExtended(){
+        return controlPins.get();
+    }
 }
