@@ -5,52 +5,32 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.MagicBox;
+package com.nomythic2491.frc2019.commands.Fork;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-//import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class HatchPickup extends CommandBase{
-  //private Timer timer;
-
+public class IntakeHatch extends CommandBase {
+  
   /**
-   * Runs the hatch pickup intake system.
-   * If it is activated, it deactivates and vice versa.
+   * Intakes a hatch
    */
-  public HatchPickup() {
+  public IntakeHatch() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(magicbox);
-    //timer = new Timer();
+    requires(fork);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if (magicbox.hatchIntakeExtended()) {
-      magicbox.extendSolenoid();
-    }
-    else {
-      magicbox.retractSolenoid();
-    }
-
-    //timer.reset();
+    fork.hatchIntake(Value.kForward);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    /**if (magicbox.leftSolenoidExtended()) {
-      magicbox.extendRightHatchSolenoid();
-      timer.delay(.25);
-      magicbox.retractLeftHatchSolenoid();
-    }
-    else if (!magicbox.leftSolenoidExtended()) {
-      magicbox.extendLeftHatchSolenoid();
-      timer.delay(.25);
-      magicbox.retractRightHatchSolenoid();
-    }*/
   }
 
   // Make this return true when this Command no longer needs to run execute()

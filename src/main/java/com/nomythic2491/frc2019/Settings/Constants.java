@@ -29,8 +29,8 @@ public class Constants {
     public static final int kPoleSlaveId = 2491;
     public static final int kRollerJointId = 2491; //not used for progned
     public static final int kPoleEncoderDifference = 2491;
-    public static final int kLeftSolenoidChannel = 2491;
-    public static final int kRightSolenoidChannel = 2491; 
+    public static final int kSkidSolenoidChannel = 2491; 
+    public static final int kBrakeSolenoidChannel = 2491;
     public static final int kPCMCANID = 2491;
 
     public static final double kClimberEncoderToInches = 1;

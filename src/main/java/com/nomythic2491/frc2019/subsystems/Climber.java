@@ -15,6 +15,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.frc2019.Settings.Constants;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -26,7 +28,8 @@ public class Climber extends Subsystem {
   // here. Call these from Commands.
   private static Climber instance;
   private TalonSRX mRightClimberTalon, mLeftClimberTalon;
-  private Solenoid mClimberRightSolenoid, mClimberLeftSolenoid;
+  private Solenoid mClimberSolenoid, mBrakeSolenoid;
+   DigitalInput limitSwitch;
 
   public static Climber getInstance() {
     if (instance == null) {
@@ -42,10 +45,10 @@ public class Climber extends Subsystem {
     mLeftClimberTalon = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
     mLeftClimberTalon.setInverted(false);
 
-    mClimberRightSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kRightSolenoidChannel);
-    mClimberLeftSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kLeftSolenoidChannel);
+    mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSkidSolenoidChannel);
+    mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeSolenoidChannel;
 
-
+  
   }
 
   public void driveVelocity(double speed) {
@@ -160,18 +163,26 @@ public class Climber extends Subsystem {
   }
 
   public void deploySkid() {
-    mClimberRightSolenoid.set(true);
-    mClimberLeftSolenoid.set(true);
+    mClimberSolenoid.set(true);
   }
 
   public void unDeploySkid() {
-    mClimberRightSolenoid.set(false);
-    mClimberLeftSolenoid.set(false);
+    mClimberSolenoid.set(false);
   }
 
+  public void climberLimitSwitch() {
+    limitSwitch = new DigitalInput(1);
+  }
+  public void detectClimberSwitch() {
+    while (limitSwitch.get()) {
+      Timer.delay(10);
+    }
+  
+  }
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
   }
+
 }
