@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-
 /**
  * Add your docs here.
  */
@@ -29,7 +28,7 @@ public class Climber extends Subsystem {
   // here. Call these from Commands.
   private static Climber instance;
   private TalonSRX mRightClimberTalon, mLeftClimberTalon;
-  private Solenoid mClimberSolenoid;
+  private Solenoid mClimberSolenoid, mBrakeSolenoid;
    DigitalInput limitSwitch;
 
   public static Climber getInstance() {
@@ -46,7 +45,9 @@ public class Climber extends Subsystem {
     mLeftClimberTalon = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
     mLeftClimberTalon.setInverted(false);
 
-    mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSolenoidChannel);
+    mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSkidSolenoidChannel);
+    mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeSolenoidChannel;
+
   
   }
 
@@ -176,6 +177,7 @@ public class Climber extends Subsystem {
     while (limitSwitch.get()) {
       Timer.delay(10);
     }
+  
   }
   @Override
   public void initDefaultCommand() {
