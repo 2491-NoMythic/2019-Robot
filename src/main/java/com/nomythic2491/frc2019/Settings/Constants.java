@@ -15,6 +15,8 @@ public class Constants {
     public static final double kVelocitykF = 2491;
 
     // Drive
+    public static final int kControlPinsChannel = 2491;
+
     public static int kRightDriveMasterId = 1;
     public static int kRightDriveSlaveId = 0;
     public static int kLeftDriveMasterId = 14;
