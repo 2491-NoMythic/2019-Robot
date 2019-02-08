@@ -71,6 +71,10 @@ public class Fork extends Subsystem {
         intakeLeft.set(ControlMode.PercentOutput, speed);
     }
 
+    public void runOutput(double speed) {
+        intakeLeft.set(ControlMode.PercentOutput, speed);
+    }
+
     /**
     * Elevates the intake at a specified speed
     * @param speed How fast it goes on a scale of -1 to 1
@@ -120,6 +124,13 @@ public class Fork extends Subsystem {
     */
     public void stopIntake() {
         runIntake(0);
+    }
+
+    /**
+    * Stops output motors
+    */
+    public void stopOutput() {
+        runOutput(0);
     }
 
     /**
