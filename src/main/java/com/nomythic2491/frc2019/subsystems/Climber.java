@@ -46,9 +46,8 @@ public class Climber extends Subsystem {
     mLeftClimberTalon.setInverted(false);
 
     mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSkidSolenoidChannel);
-    mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeSolenoidChannel;
+    mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeSolenoidChannel);
 
-  
   }
 
   public void driveVelocity(double speed) {
@@ -162,21 +161,34 @@ public class Climber extends Subsystem {
 
   }
 
-  public void deploySkid() {
+  public void engageSkid() {
     mClimberSolenoid.set(true);
   }
 
-  public void unDeploySkid() {
+  public void disengageSkid() {
     mClimberSolenoid.set(false);
+  }
+
+  public void engageBrake() {
+    mBrakeSolenoid.set(true);
+  }
+
+  public void disengageBrake() {
+    mBrakeSolenoid.set(false);
   }
 
   public void climberLimitSwitch() {
     limitSwitch = new DigitalInput(1);
   }
+
   public void detectClimberSwitch() {
     while (limitSwitch.get()) {
       Timer.delay(10);
+  
     }
+    
+
+
   
   }
   @Override
