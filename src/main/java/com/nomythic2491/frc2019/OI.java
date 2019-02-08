@@ -12,6 +12,7 @@ import com.nomythic2491.frc2019.Settings.ControllerMap;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Command;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -54,8 +55,10 @@ public class OI {
     controllers[1] = new Joystick(ControllerMap.driveControllerRight);
 
     pickupHatch = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.hatchButton);
-    manualCargoPickup = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.manualCargoPickup);
 
+    //ELias!!!! This is definitely wrong!!! Also Command should be an actual command in somewhere!!!
+    manualCargoPickup = new JoystickButton(controllers[ControllerMap.operatorController],ControllerMap.manualCargoPickup);
+		manualCargoPickup.whileHeld(new Command());
   }
 
   /**
