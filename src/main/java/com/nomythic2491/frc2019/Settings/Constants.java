@@ -53,6 +53,7 @@ public class Constants {
     public static final double kElevatorVelocity = 2491;
     public static final double kBoxCargoShootSpeed = 2491;
     public static final double kCargoIntakeVelocity = 2491;
+    public static final double kBoxRotateVelocity = 2491;
 
     //Fork
     public static final int kElevator = 2491;
