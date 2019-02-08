@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- * Add your docs here.
+ * The subsystem of talons, solenoids and limit switches that make up the Magic Box system.
  */
 public class MagicBox extends Subsystem {
 
@@ -31,7 +31,7 @@ public class MagicBox extends Subsystem {
   private TalonSRX intake, rotateIntake, elevatorLeft, elevatorRight;
   private DoubleSolenoid spindle;
   //private Solenoid leftSpindle, rightSpindle; //These will only be needed if we decide that we want to have two solenoids controlling the hatch intake. If it's just one, we don't need these.
-  public boolean isElevatorRising, isBoxFlippedUp;
+  public boolean isElevatorRising, isBoxFlippedDown, isBoxFlippedMiddle;
 
   DigitalInput elevatorLimitSwitch = new DigitalInput(1);
   DigitalInput cargoLimitSwitch = new DigitalInput(2);
