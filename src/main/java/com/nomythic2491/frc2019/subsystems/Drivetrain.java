@@ -30,12 +30,10 @@ public class Drivetrain extends Subsystem {
     public StringBuilder velocity;
     private NetworkTable limelight;
     private NetworkTableEntry tx, ty, ta, tv;
-    private Solenoid controlPinLeft, controlPinRight;
+    private Solenoid controlPins;
 
     private Drivetrain() {
-        controlPinLeft = new Solenoid(Constants.kLeftPinDown, Constants.kLeftPinUp);
-        controlPinRight = new Solenoid(Constants.kRightPinDown, Constants.kRightPinUp);
-
+        
         // Start all Talons in open loop mode.
         mLeftMaster = TalonSRXFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
         configureMaster(mLeftMaster, true);
