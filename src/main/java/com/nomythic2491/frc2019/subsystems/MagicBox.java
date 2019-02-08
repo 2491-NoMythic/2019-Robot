@@ -32,11 +32,16 @@ public class MagicBox extends Subsystem {
   private DoubleSolenoid spindle;
   //private Solenoid leftSpindle, rightSpindle; //These will only be needed if we decide that we want to have two solenoids controlling the hatch intake. If it's just one, we don't need these.
   public boolean isElevatorRising, isBoxFlippedDown, isBoxFlippedMiddle;
+  public enum positionRotate{
+    GROUND,
+    FLAT,
+    BACK
+  }
 
   DigitalInput elevatorLimitSwitch = new DigitalInput(1);
   DigitalInput cargoLimitSwitch = new DigitalInput(2);
 
-  private MagicBox() {
+    private MagicBox() {
     intake = TalonSRXFactory.createDefaultTalon(Constants.kIntakeRollerId);
     rotateIntake = TalonSRXFactory.createDefaultTalon(Constants.kRotator);
     elevatorLeft = TalonSRXFactory.createDefaultTalon(Constants.kElevatorLeft);
@@ -44,6 +49,7 @@ public class MagicBox extends Subsystem {
     elevatorRight = TalonSRXFactory.createPermanentSlaveTalon(Constants.kElevatorRight, Constants.kElevatorLeft);
     elevatorRight.setInverted(false);
     spindle = new DoubleSolenoid(Constants.kHatchOutChannel, Constants.kHatchInChannel);
+  
   }
 
   private void configureMaster(TalonSRX talon, boolean left) {
@@ -151,6 +157,10 @@ public class MagicBox extends Subsystem {
    */
   public boolean hatchIntakeExtended() {
     return spindle.get() == Value.kForward || spindle.get() == Value.kOff;
+  }
+
+  public void rotateIntakeToPosition(positionRotate set){
+
   }
  
   /**
