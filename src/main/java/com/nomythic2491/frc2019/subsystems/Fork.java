@@ -18,10 +18,13 @@ public class Fork extends Subsystem {
 
     DigitalInput limitSwitch = new DigitalInput(1);
 
+
     private static Fork instance;
     private TalonSRX elevator, intakeLeft, intakeRight;
     private DoubleSolenoid hatchLeft, hatchRight, pivotLeft, pivotRight;
     public boolean isElevatorRising;
+    private Value leftPivotValue;
+    private Value rightPivotValue; 
 
     public static Fork getInstance() {
         if (instance == null) {
@@ -38,7 +41,7 @@ public class Fork extends Subsystem {
         hatchLeft = new DoubleSolenoid(Constants.kLeftHatchOutChannelBox, Constants.kLeftHatchInChannelBox);
         hatchRight = new DoubleSolenoid(Constants.kRightHatchOutChannelBox, Constants.kRightHatchInChannelBox);
         pivotLeft = new DoubleSolenoid(Constants.kLeftPivotOutChannel, Constants.kLeftPivotInChannel);
-        pivotRight = new DoubleSolenoid(Constants.kRightPivotOutChannel, Constants.kRightPivotInChannel);
+        pivotRight = new DoubleSolenoid(Constants.kRightPivotOutChannel, Constants.kRightPivotInChannel);   
     }
 
     private void configureMaster(TalonSRX talon, boolean left) {
@@ -93,9 +96,23 @@ public class Fork extends Subsystem {
      * Toggles the double solenoids responsible for pivoting the intake device
      * @param position Is available in either kForward or kReverse
      */
-    public void pivotIntake(Value position) {
-        pivotLeft.set(position);
-        pivotRight.set(position);
+    public void pivotIntake(Value leftPosition, Value rightPosition) {
+        pivotLeft.set(leftPosition);
+        pivotRight.set(rightPosition);
+    }
+
+    public Value getLeftSoleniodPosition() {
+        leftPivotValue = pivotLeft.get();
+        return leftPivotValue;
+    }
+
+    public Value getRightSoleniodPosition() {
+        rightPivotValue = pivotRight.get();
+        return rightPivotValue;
+    }
+
+    public void stopPivot() {
+        pivotIntake(getLeftSoleniodPosition(), getRightSoleniodPosition());
     }
 
     /**
