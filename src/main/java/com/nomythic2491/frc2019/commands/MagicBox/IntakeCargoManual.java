@@ -30,7 +30,7 @@ public class IntakeCargoManual extends CommandBase {
   @Override
   protected void execute() {
     if(!oi.getButton(ControllerMap.operatorController, ControllerMap.runIntakeManual)) {
-			magicbox.runIntake(.25);
+			magicbox.runIntake(oi.getAxisDeadzonedSquared(ControllerMap.operatorController, ControllerMap.cargoOutputAxis, 0.05));
 		}
 		else {
 			magicbox.stopIntake();

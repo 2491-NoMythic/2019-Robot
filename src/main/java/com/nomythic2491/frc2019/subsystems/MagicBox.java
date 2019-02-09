@@ -81,6 +81,15 @@ public class MagicBox extends Subsystem {
   }
 
   /**
+   * Runs the output at a given speed
+   * 
+   * @param speed How fast it goes on a scale of -1 to 1
+   */
+  public void runOutput(double speed) {
+    intake.set(ControlMode.PercentOutput, speed);
+  }
+
+  /**
    * Uses a limit switch to determine if cargo is in the intake
    * @return Whether or not cargo is in the intake
    */
@@ -134,6 +143,13 @@ public class MagicBox extends Subsystem {
    */
   public void stopIntake() {
     runIntake(0);
+  }
+
+  /**
+   * Stops the output from moving
+   */
+  public void stopOutput() {
+    runOutput(0);
   }
 
   /**
