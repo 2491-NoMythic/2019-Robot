@@ -11,6 +11,7 @@ import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -24,6 +25,8 @@ public class Fork extends Subsystem {
     private DoubleSolenoid hatch, pivot;
     public boolean isElevatorRising;
     private Value pivotValue;
+
+    public Solenoid controlPins;
 
     public static Fork getInstance() {
         if (instance == null) {
@@ -146,6 +149,28 @@ public class Fork extends Subsystem {
         elevator.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
       }
 
+ /**
+ * Puts the control pins down
+ */
+public void controlPinsDown(){
+    controlPins.set(true);
+  }
+  
+  /**
+   * Raises the control pins
+   */
+  public void controlPinsUp(){
+      controlPins.set(false);
+  }
+  
+  /**
+   * Determines whether the control pins are up or down
+   * @return The control pin solenoid's value
+   */
+  public boolean controlPinsExtended(){
+      return controlPins.get();
+  }
+  
     @Override
     protected void initDefaultCommand() {
     }
