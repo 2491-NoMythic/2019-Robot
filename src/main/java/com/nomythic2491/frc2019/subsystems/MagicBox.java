@@ -40,8 +40,8 @@ public class MagicBox extends Subsystem {
   
   public Solenoid controlPins;
 
-  DigitalInput elevatorLimitSwitch = new DigitalInput(1);
-  DigitalInput cargoLimitSwitch = new DigitalInput(2);
+  DigitalInput elevatorLimitSwitch = new DigitalInput(0);
+  DigitalInput cargoLimitSwitch = new DigitalInput(1);
 
     private MagicBox() {
     intake = TalonSRXFactory.createDefaultTalon(Constants.kIntakeRollerId);

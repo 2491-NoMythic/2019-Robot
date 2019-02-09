@@ -16,8 +16,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Fork extends Subsystem {
 
-    DigitalInput limitSwitch = new DigitalInput(1);
-
+    DigitalInput limitSwitch = new DigitalInput(0);
 
     private static Fork instance;
     private TalonSRX elevator, intakeLeft, intakeRight;
