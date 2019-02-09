@@ -21,7 +21,7 @@ public class Fork extends Subsystem {
 
     private static Fork instance;
     private TalonSRX elevator, intakeLeft, intakeRight;
-    private DoubleSolenoid hatchLeft, hatchRight, pivot;
+    private DoubleSolenoid hatch, pivot;
     public boolean isElevatorRising;
     private Value pivotValue;
 
@@ -37,8 +37,7 @@ public class Fork extends Subsystem {
         intakeLeft = TalonSRXFactory.createDefaultTalon(Constants.kElevatorLeft);
         configureMaster(intakeLeft, true);
         intakeRight = TalonSRXFactory.createPermanentSlaveTalon(Constants.kElevatorRight, Constants.kElevatorLeft);
-        hatchLeft = new DoubleSolenoid(Constants.kLeftHatchOutChannelBox, Constants.kLeftHatchInChannelBox);
-        hatchRight = new DoubleSolenoid(Constants.kRightHatchOutChannelBox, Constants.kRightHatchInChannelBox);
+        hatch = new DoubleSolenoid(Constants.kRightHatchOutChannelBox, Constants.kRightHatchInChannelBox);
         pivot = new DoubleSolenoid(Constants.kPivotOutChannel, Constants.kPivotInChannel);
     }
 
@@ -90,8 +89,7 @@ public class Fork extends Subsystem {
      * @param position Is available in either kForward or kReverse
      */
     public void hatchIntake(Value position) {
-        hatchLeft.set(position);
-        hatchRight.set(position);
+        hatch.set(position);
     }
 
     /**
