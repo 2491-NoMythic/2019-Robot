@@ -18,7 +18,7 @@ import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
-//import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -37,6 +37,7 @@ public class MagicBox extends Subsystem {
     FLAT,
     BACK
   }
+  
   public Solenoid controlPins;
 
   DigitalInput elevatorLimitSwitch = new DigitalInput(1);
