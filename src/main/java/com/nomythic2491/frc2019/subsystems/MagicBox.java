@@ -51,7 +51,11 @@ public class MagicBox extends Subsystem {
     elevatorRight = TalonSRXFactory.createPermanentSlaveTalon(Constants.kElevatorRight, Constants.kElevatorLeft);
     elevatorRight.setInverted(false);
     spindle = new DoubleSolenoid(Constants.kHatchOutChannel, Constants.kHatchInChannel);
-  
+
+    /**
+     * Configures the Magic Box rotation feedback sensor
+     */
+    rotateIntake.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kVelocitySlotId, Constants.kTimeoutMs);
   }
 
   private void configureMaster(TalonSRX talon, boolean left) {
