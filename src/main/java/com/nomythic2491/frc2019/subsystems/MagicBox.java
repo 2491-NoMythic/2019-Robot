@@ -137,6 +137,10 @@ public class MagicBox extends Subsystem {
     rotateIntake.set(ControlMode.PercentOutput, speed);
   }
 
+  public double getIntakeRotatorPosition() {
+    rotateIntake.getSelectedSensorPosition(0);
+  }
+
   /**
    * Stops the elevator from moving
    */
