@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Fork extends Subsystem {
 
     DigitalInput limitSwitch = new DigitalInput(0);
+    DigitalInput cargoLimitSwitch = new DigitalInput(1);
 
     private static Fork instance;
     private TalonSRX elevator, intakeLeft, intakeRight;
@@ -69,6 +70,10 @@ public class Fork extends Subsystem {
 
     public void runOutput(double speed) {
         intakeLeft.set(ControlMode.PercentOutput, speed);
+    }
+
+    public boolean isCargoIn() {
+        return cargoLimitSwitch.get();
     }
 
     /**
