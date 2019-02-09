@@ -58,10 +58,10 @@ public class OI {
     controllers[1] = new Joystick(ControllerMap.driveControllerRight);
 
     pickupHatch = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.hatchButton);
-
-    //ELias!!!! This is definitely wrong!!! Also Command should be an actual command in somewhere!!!
-    manualCargoPickup = new JoystickButton(controllers[ControllerMap.operatorController],ControllerMap.manualCargoPickup);
-		manualCargoPickup.whileHeld(new Command());
+    manualCargoPickup = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.manualCargoPickup);
+    manualCargoOutput = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.manualCargoOutput);
+    togglePivot = new JoystickButton(controllers[ControllerMap.operatorController],ControllerMap.togglePivot);
+    toggleElevation = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.toggleElevation);
   }
 
   /**
