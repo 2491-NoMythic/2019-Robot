@@ -22,6 +22,9 @@ public class OI {
   private final Joystick[] controllers = new Joystick[2];
   Button pickupHatch;
   Button manualCargoPickup;
+  Button manualCargoOutput;
+  Button togglePivot;
+  Button toggleElevation;
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
   //// joystick.

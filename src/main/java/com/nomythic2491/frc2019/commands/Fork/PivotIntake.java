@@ -17,8 +17,8 @@ public class PivotIntake extends CommandBase {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        if(fork.getLeftSoleniodPosition() == Value.kForward && fork.getRightSoleniodPosition() == Value.kForward) {
-            fork.pivotIntake(Value.kReverse, Value.kReverse);
+        if(fork.getSoleniodPosition() == Value.kForward) {
+            fork.pivotIntake(Value.kReverse);
         }
         else {
             System.out.println("An error has occured with the pivot system. Make sure that the Fork is set to its default position.");
@@ -29,12 +29,12 @@ public class PivotIntake extends CommandBase {
     @Override
     protected void execute() {
         if(!oi.getButton(ControllerMap.operatorController, ControllerMap.togglePivot)) {
-            if(fork.getLeftSoleniodPosition() == Value.kReverse && fork.getRightSoleniodPosition() == Value.kReverse) {
-                fork.pivotIntake(Value.kForward, Value.kForward);
+            if(fork.getSoleniodPosition() == Value.kReverse) {
+                fork.pivotIntake(Value.kForward);
             }
 
-            else if(fork.getLeftSoleniodPosition() == Value.kForward && fork.getRightSoleniodPosition() == Value.kForward) {
-                fork.pivotIntake(Value.kReverse, Value.kReverse);
+            else if(fork.getSoleniodPosition() == Value.kForward) {
+                fork.pivotIntake(Value.kReverse);
             }
 
             else {
@@ -48,11 +48,11 @@ public class PivotIntake extends CommandBase {
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        if(fork.getLeftSoleniodPosition() == Value.kForward && fork.getRightSoleniodPosition() == Value.kForward) {
+        if(fork.getSoleniodPosition() == Value.kForward) {
             return true;
         }
 
-        else if(fork.getLeftSoleniodPosition() == Value.kReverse && fork.getRightSoleniodPosition() == Value.kReverse) {
+        else if(fork.getSoleniodPosition() == Value.kReverse) {
             return true;
         }
 
