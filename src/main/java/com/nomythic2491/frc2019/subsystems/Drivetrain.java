@@ -33,8 +33,7 @@ public class Drivetrain extends Subsystem {
     private Solenoid controlPins;
 
     private Drivetrain() {
-        controlPins = new Solenoid(Constants.kPCMCANID, Constants.kControlPinsChannel);
-
+        
         // Start all Talons in open loop mode.
         mLeftMaster = TalonSRXFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
         configureMaster(mLeftMaster, true);
@@ -389,17 +388,5 @@ public class Drivetrain extends Subsystem {
 
     public void initDefaultCommand() {
         setDefaultCommand(new Drive());
-    }
-
-    public void controlPinsDown(){
-        controlPins.set(true);
-    }
-
-    public void controlPinsUp(){
-        controlPins.set(false);
-    }
-
-    public boolean controlPinsExtended(){
-        return controlPins.get();
     }
 }

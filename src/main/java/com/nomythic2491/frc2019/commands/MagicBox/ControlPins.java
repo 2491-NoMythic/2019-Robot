@@ -19,11 +19,11 @@ public class ControlPins extends CommandBase{
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if (drivetrain.controlPinsExtended()) {
-      drivetrain.controlPinsUp();
+    if (magicbox.controlPinsExtended()) {
+      magicbox.controlPinsUp();
     }
     else {
-      drivetrain.controlPinsDown();
+      magicbox.controlPinsDown();
     }
   }
 
