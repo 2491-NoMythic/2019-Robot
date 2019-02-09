@@ -8,6 +8,7 @@
 package com.nomythic2491.frc2019.commands.Climber;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
+import com.nomythic2491.frc2019.subsystems.MagicBox.positionRotate;
 
 public class AutomaticClimb extends CommandBase {
   public AutomaticClimb() {
@@ -20,6 +21,7 @@ public class AutomaticClimb extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    magicbox.rotateIntakeToPosition(positionRotate.FLAT);
   }
 
   // Called repeatedly when this Command is scheduled to run
