@@ -63,9 +63,6 @@ public class Constants {
     public static final int kLeftHatchOutChannelBox = 2491;
     public static final int kRightHatchOutChannelBox = 2491;
     public static final int kRightHatchInChannelBox = 2491;
-    public static final int kLeftPivotInChannel = 2491;
-    public static final int kLeftPivotOutChannel = 2491;
-    public static final int kRightPivotInChannel = 2491;
-    public static final int kRightPivotOutChannel= 2491;
-
+    public static final int kPivotInChannel = 2491;
+    public static final int kPivotOutChannel = 2491;
 }

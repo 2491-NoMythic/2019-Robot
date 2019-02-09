@@ -21,10 +21,9 @@ public class Fork extends Subsystem {
 
     private static Fork instance;
     private TalonSRX elevator, intakeLeft, intakeRight;
-    private DoubleSolenoid hatchLeft, hatchRight, pivotLeft, pivotRight;
+    private DoubleSolenoid hatchLeft, hatchRight, pivot;
     public boolean isElevatorRising;
-    private Value leftPivotValue;
-    private Value rightPivotValue; 
+    private Value pivotValue;
 
     public static Fork getInstance() {
         if (instance == null) {
@@ -40,8 +39,7 @@ public class Fork extends Subsystem {
         intakeRight = TalonSRXFactory.createPermanentSlaveTalon(Constants.kElevatorRight, Constants.kElevatorLeft);
         hatchLeft = new DoubleSolenoid(Constants.kLeftHatchOutChannelBox, Constants.kLeftHatchInChannelBox);
         hatchRight = new DoubleSolenoid(Constants.kRightHatchOutChannelBox, Constants.kRightHatchInChannelBox);
-        pivotLeft = new DoubleSolenoid(Constants.kLeftPivotOutChannel, Constants.kLeftPivotInChannel);
-        pivotRight = new DoubleSolenoid(Constants.kRightPivotOutChannel, Constants.kRightPivotInChannel);   
+        pivot = new DoubleSolenoid(Constants.kPivotOutChannel, Constants.kPivotInChannel);
     }
 
     private void configureMaster(TalonSRX talon, boolean left) {
@@ -100,23 +98,17 @@ public class Fork extends Subsystem {
      * Toggles the double solenoids responsible for pivoting the intake device
      * @param position Is available in either kForward or kReverse
      */
-    public void pivotIntake(Value leftPosition, Value rightPosition) {
-        pivotLeft.set(leftPosition);
-        pivotRight.set(rightPosition);
+    public void pivotIntake(Value position) {
+        pivot.set(position);
     }
 
-    public Value getLeftSoleniodPosition() {
-        leftPivotValue = pivotLeft.get();
-        return leftPivotValue;
-    }
-
-    public Value getRightSoleniodPosition() {
-        rightPivotValue = pivotRight.get();
-        return rightPivotValue;
+    public Value getSoleniodPosition() {
+        pivotValue = pivot.get();
+        return pivotValue;
     }
 
     public void stopPivot() {
-        pivotIntake(getLeftSoleniodPosition(), getRightSoleniodPosition());
+        pivotIntake(getSoleniodPosition());
     }
 
     /**
