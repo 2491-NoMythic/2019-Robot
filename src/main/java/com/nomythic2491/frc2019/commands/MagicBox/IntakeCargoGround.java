@@ -7,20 +7,22 @@
 
 package com.nomythic2491.frc2019.commands.MagicBox;
 
+import com.nomythic2491.frc2019.Settings.Constants;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class IntakeCargoGround extends CommandGroup {
   /**
-   * Uses MagicBoxMovement and IntakeCargoUntilSuccess to pick up cargo from the ground.
+   * Uses RotateMagicBoxToPosition and IntakeCargoUntilSuccess to pick up cargo from the ground.
    */
   public IntakeCargoGround() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
     // these will run in order.
-    addSequential(new MagicBoxMovement());
+    addSequential(new RotateMagicBoxToPosition(Constants.kBoxTipDownPosition));
     addSequential(new IntakeCargoUntilSuccess());
-    addSequential(new MagicBoxMovement());
+    addSequential(new RotateMagicBoxToPosition(Constants.kBoxTipUpPosition));
 
 
     // To run multiple commands at the same time,

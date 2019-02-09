@@ -138,7 +138,7 @@ public class MagicBox extends Subsystem {
   }
 
   public double getIntakeRotatorPosition() {
-    rotateIntake.getSelectedSensorPosition(0);
+    return rotateIntake.getSelectedSensorPosition(0);
   }
 
   /**
