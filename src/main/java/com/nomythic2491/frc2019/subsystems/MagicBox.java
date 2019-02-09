@@ -37,6 +37,7 @@ public class MagicBox extends Subsystem {
     FLAT,
     BACK
   }
+  public Solenoid controlPins;
 
   DigitalInput elevatorLimitSwitch = new DigitalInput(1);
   DigitalInput cargoLimitSwitch = new DigitalInput(2);
@@ -238,9 +239,31 @@ public class MagicBox extends Subsystem {
     return getElevatorHeight() >= (Constants.kElevatorMaxHeight - Constants.kElevatorUncertainty);
   }
 
+  /**
+ * Puts the control pins down
+ */
+public void controlPinsDown(){
+  controlPins.set(true);
+}
+
+/**
+ * Raises the control pins
+ */
+public void controlPinsUp(){
+    controlPins.set(false);
+}
+
+/**
+ * Determines whether the control pins are up or down
+ * @return The control pin solenoid's value
+ */
+public boolean controlPinsExtended(){
+    return controlPins.get();
+}
+
   @Override
   public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
+  // Set the default command for a subsystem here.
+  // setDefaultCommand(new MySpecialCommand());
   }
 }
