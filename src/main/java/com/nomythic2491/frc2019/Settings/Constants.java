@@ -54,6 +54,9 @@ public class Constants {
     public static final double kBoxCargoShootSpeed = 2491;
     public static final double kCargoIntakeVelocity = 2491;
     public static final double kBoxRotateVelocity = 2491;
+    public static final double kBoxTipDownPosition = 2491; //The position in encoder ticks of the lowest position of the intake rotator
+    public static final double kBoxTipUpPosition = 2491; //The position in encoder ticks of the up position of the intake rotator
+    public static final double kBoxTipBackPosition = 2491; //The position in encoder ticks of the back position of the intake rotator
 
     //Fork
     public static final int kElevator = 2491;
