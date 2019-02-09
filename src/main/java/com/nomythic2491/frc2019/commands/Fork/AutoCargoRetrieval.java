@@ -24,7 +24,7 @@ public class AutoCargoRetrieval extends CommandBase {
 
     // Will return true when command does not need further execution
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     // Called when isFinished returns true
