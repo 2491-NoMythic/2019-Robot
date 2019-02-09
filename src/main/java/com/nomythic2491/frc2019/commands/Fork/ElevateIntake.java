@@ -14,14 +14,14 @@ public class ElevateIntake extends CommandBase {
 
     protected void initialize() {
         if (fork.isElevatorDown()) {
-       }
+            fork.isElevatorRising = true;
+        }
       
-      else if (isElevatorUp()) {
-         fork.elevateIntake(-Constants.kElevatorVelocity);
+        else if (isElevatorUp()) {
          fork.isElevatorRising = false;
         }
       
-      else {
+        else {
          System.out.println("An error has occurred with the elevator. It may not be in position, or the encoder might be disconnected.");
         }
     }
