@@ -1,6 +1,7 @@
 package com.nomythic2491.frc2019;
 
 import com.nomythic2491.frc2019.Controllers.*;
+import com.nomythic2491.lib.util.DriveSignal;
 
 public class ControlBoard implements IControlBoard {
 
@@ -27,28 +28,13 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public double getThrottle() {
-        return mDriveController.getThrottle();
-    }
-
-    @Override
-    public double getTurn() {
-        return mDriveController.getTurn();
+    public DriveSignal getSignal() {
+        return mDriveController.getSignal();
     }
 
     @Override
     public boolean getKillSwitch() {
         return mDriveController.getKillSwitch();
-    }
-
-    @Override
-    public boolean getTankTurnLeft() {
-        return mDriveController.getTankTurnLeft();
-    }
-
-    @Override
-    public boolean getTankTurnRight() {
-        return mDriveController.getTankTurnRight();
     }
 
     @Override

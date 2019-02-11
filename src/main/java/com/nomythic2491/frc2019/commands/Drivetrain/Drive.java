@@ -7,9 +7,11 @@
 
 package com.nomythic2491.frc2019.commands.Drivetrain;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.nomythic2491.frc2019.Settings.ControllerMap;
 import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.frc2019.commands.CommandBase;
+import com.nomythic2491.lib.util.DriveSignal;
 
 public class Drive extends CommandBase {
 
@@ -70,7 +72,7 @@ public class Drive extends CommandBase {
       default:
     }
 
-    drivetrain.drivePercentOutput(currentLeftSpeed, currentRightSpeed);
+    drivetrain.driveDemand(ControlMode.PercentOutput, new DriveSignal(currentLeftSpeed, currentRightSpeed));
     
   }
 

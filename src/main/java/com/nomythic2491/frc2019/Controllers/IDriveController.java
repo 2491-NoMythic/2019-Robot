@@ -1,16 +1,12 @@
 package com.nomythic2491.frc2019.Controllers;
 
+import com.nomythic2491.lib.util.DriveSignal;
+
 public interface IDriveController {
     
-    public double getThrottle();
-
-    public double getTurn();
+    public DriveSignal getSignal();
 
     public boolean getKillSwitch();
-
-    public boolean getTankTurnLeft();
-
-    public boolean getTankTurnRight();
 
     public boolean getSlowSpeed();
 }
