@@ -45,8 +45,8 @@ public class Climber extends Subsystem {
     mLeftClimberTalon = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
     mLeftClimberTalon.setInverted(false);
 
-    mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSkidSolenoidChannel);
-    mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeSolenoidChannel);
+    mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSkidChannel);
+    mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeChannel);
 
   }
 

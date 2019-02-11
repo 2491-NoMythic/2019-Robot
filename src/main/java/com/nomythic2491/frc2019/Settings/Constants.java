@@ -2,8 +2,8 @@ package com.nomythic2491.frc2019.Settings;
 
 public class Constants {
     //Motor Controllers have ID's || Solenoids have Channels
-    
-    // Talon Id's
+
+    // Talons
     public static int kLongCANTimeoutMs;
     public static double kDriveVoltageRampRate;
 
@@ -25,14 +25,13 @@ public class Constants {
     public static final double kDriveEncoderToInches = 1 / Constants.kWheelDiameterInches * Math.PI / 4096.0;
     public static final double kWheelDiameterInches = 2491; // This is very, very important! Change this before trying to
                                                            // use the encoders to do anything.
-
     // Climber
     public static final int kPoleMasterId = 2491;
     public static final int kPoleSlaveId = 2491;
     public static final int kRollerJointId = 2491; //not used for progned
     public static final int kPoleEncoderDifference = 2491;
-    public static final int kSkidSolenoidChannel = 2491; 
-    public static final int kBrakeSolenoidChannel = 2491;
+    public static final int kSkidChannel = 2491; 
+    public static final int kBrakeChannel = 2491;
     public static final int kPCMCANID = 2491;
 
     public static final double kClimberEncoderToInches = 1;
@@ -68,4 +67,10 @@ public class Constants {
     public static final int kRightHatchInChannelBox = 2491;
     public static final int kPivotInChannel = 2491;
     public static final int kPivotOutChannel = 2491;
+
+    //Controllers
+    public static final int kDriverThrottleAxis = 1;
+    public static final int kDriverTurnAxis = 2;
+    public static final double kDeadband = 0.05;
+    public static final int kQuickturnButton = 2;
 }

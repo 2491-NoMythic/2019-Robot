@@ -15,7 +15,7 @@ import com.nomythic2491.lib.util.DriveSignal;
 
 public class Drive extends CommandBase {
 
-  private double turnSpeed, currentLeftSpeed, currentRightSpeed, lastLeftSpeed, lastRightSpeed;	
+  private double currentLeftSpeed, currentRightSpeed, lastLeftSpeed, lastRightSpeed;	
 
 
   public Drive() {
