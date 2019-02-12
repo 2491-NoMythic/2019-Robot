@@ -112,7 +112,6 @@ public class MagicBox extends Subsystem {
    */
   public void elevateIntake(double speed) {
     elevatorLeft.set(ControlMode.PercentOutput, speed);
-    elevatorRight.set(ControlMode.PercentOutput, speed);
   }
 
   /**
