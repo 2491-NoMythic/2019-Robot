@@ -11,6 +11,7 @@ import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.lib.drivers.VictorSPXFactory;
+import com.nomythic2491.lib.util.DriveSignal;
 import com.nomythic2491.frc2019.commands.Drivetrain.Drive;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -23,7 +24,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Drivetrain extends Subsystem {
 
-    private static Drivetrain mInstance;
+    private static Drivetrain mInstance = null;
     private TalonSRX mLeftMaster, mRightMaster;
     private VictorSPX mLeftSlave, mRightSlave;
     private AHRS gyro;
@@ -31,6 +32,13 @@ public class Drivetrain extends Subsystem {
     private NetworkTable limelight;
     private NetworkTableEntry tx, ty, ta, tv;
     private Solenoid controlPins;
+
+    public static Drivetrain getInstance() {
+        if (mInstance == null) {
+            mInstance = new Drivetrain();
+        }
+        return mInstance;
+    }
 
     private Drivetrain() {
         
@@ -80,13 +88,6 @@ public class Drivetrain extends Subsystem {
         tv = limelight.getEntry("tv");
     }
 
-    public static Drivetrain getInstance() {
-        if (mInstance == null) {
-            mInstance = new Drivetrain();
-        }
-        return mInstance;
-    }
-
     private void configureMaster(TalonSRX talon, boolean left) {
         talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
         final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
@@ -115,116 +116,34 @@ public class Drivetrain extends Subsystem {
 
         mLeftMaster.config_kD(Constants.kVelocitySlotId, derivative, Constants.kTimeoutMs);
         mRightMaster.config_kD(Constants.kVelocitySlotId, derivative, Constants.kTimeoutMs);
-    }
 
-    public void setTalonF(double feedForward) {
         mLeftMaster.config_kF(Constants.kVelocitySlotId, feedForward, Constants.kTimeoutMs);
         mRightMaster.config_kF(Constants.kVelocitySlotId, feedForward, Constants.kTimeoutMs);
     }
 
     /**
-     * Drives both sides of the robot at the same speed
+     * Drives each side of the robot at a given DriveSignal in a given ControlMode
      * 
-     * @param speed Speed of all drivetrain wheels in inches per second
+     * @param mode  CTRE ControlMode for the talons
+     * @param signal DriveSignal for the motors
      */
-    public void driveVelocity(double speed) {
-        driveLeftVelocity(speed);
-        driveRightVelocity(speed);
-    }
-
-    /**
-     * Drives each side of the robot at different speeds
-     * 
-     * @param leftSpeed  Speed of left wheels in inches per second
-     * @param rightSpeed Speed of right wheels in inches per second
-     */
-    public void driveVelocity(double leftSpeed, double rightSpeed) {
-        driveLeftVelocity(leftSpeed);
-        driveRightVelocity(rightSpeed);
-    }
-
-    /**
-     * Drives the left side of the robot
-     * 
-     * @param speed Speed of left wheels in inches per second
-     */
-    public void driveLeftVelocity(double speed) {
-        mLeftMaster.set(ControlMode.Velocity, speed);
-    }
-
-    /**
-     * Drives the right side of the robot
-     * 
-     * @param speed Speed of the right wheels in inches per second
-     */
-    public void driveRightVelocity(double speed) {
-        mRightMaster.set(ControlMode.Velocity, speed);
-    }
-
-    /**
-     * Drives both sides of the robot at the same speed, ranging from -1 to 1
-     * 
-     * @param speed Speed of all drivetrain wheels, ranging from -1 to 1
-     */
-    public void drivePercentOutput(double speed) {
-        drivePercentOutput(speed, speed);
-    }
-
-    /**
-     * Drives each side of the robot at a given speed, ranging from -1 to 1
-     * 
-     * @param leftSpeed  Speed of the left wheels from -1 to 1
-     * @param rightSpeed Speed of the right wheels from -1 to 1
-     */
-    public void drivePercentOutput(double leftSpeed, double rightSpeed) {
-        driveLeftPercentOutput(leftSpeed);
-        driveRightPercentOutput(rightSpeed);
-    }
-
-    /**
-     * Drives the left side of the robot at a given speed, ranging from -1 to 1
-     * 
-     * @param speed Speed of the left wheels from -1 to 1
-     */
-    public void driveLeftPercentOutput(double speed) {
-        mLeftMaster.set(ControlMode.PercentOutput, speed);
-    }
-
-    /**
-     * Drives the right side of the robot at a given speed, ranging from -1 to 1
-     * 
-     * @param speed Speed of the right wheels from -1 to 1
-     */
-    public void driveRightPercentOutput(double speed) {
-        mRightMaster.set(ControlMode.PercentOutput, speed);
+    public void driveDemand(ControlMode mode, DriveSignal signal) {
+        mLeftMaster.set(mode, signal.getLeft());
+        mRightMaster.set(mode, signal.getRight());
     }
 
     /**
      * Stops the drivetrain wheels
      */
     public void stop() {
-        drivePercentOutput(0);
+        driveDemand(ControlMode.PercentOutput, DriveSignal.BRAKE);
     }
 
     /**
      * Sets left and right encoders to 0
      */
     public void resetEncoders() {
-        resetLeftEncoder();
-        resetRightEncoder();
-    }
-
-    /**
-     * Sets the left encoder to 0
-     */
-    public void resetLeftEncoder() {
         mLeftMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
-    }
-
-    /**
-     * Sets the right encoder to 0
-     */
-    public void resetRightEncoder() {
         mRightMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
     }
 

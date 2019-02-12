@@ -15,10 +15,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.frc2019.Settings.Constants;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
+
 
 /**
  * Add your docs here.
@@ -45,8 +45,8 @@ public class Climber extends Subsystem {
     mLeftClimberTalon = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
     mLeftClimberTalon.setInverted(false);
 
-    mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSkidSolenoidChannel);
-    mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeSolenoidChannel);
+    mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSkidChannel);
+    mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeChannel);
 
   }
 
@@ -175,22 +175,8 @@ public class Climber extends Subsystem {
 
   public void disengageBrake() {
     mBrakeSolenoid.set(false);
-  }
+}
 
-  public void climberLimitSwitch() {
-    limitSwitch = new DigitalInput(1);
-  }
-
-  public void detectClimberSwitch() {
-    while (limitSwitch.get()) {
-      Timer.delay(10);
-  
-    }
-    
-
-
-  
-  }
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.

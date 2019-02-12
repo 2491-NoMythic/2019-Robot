@@ -8,6 +8,8 @@
 package com.nomythic2491.frc2019.subsystems;
 
 import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motion.SetValueMotionProfile;
+import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
@@ -187,6 +189,34 @@ public class MagicBox extends Subsystem {
 
   public void rotateIntakeToPosition(positionRotate set){
 
+  }
+
+  public void runElevatorMotionProfile(double[][] profile, int totalCount){
+    TrajectoryPoint point = new TrajectoryPoint();
+    elevatorLeft.clearMotionProfileTrajectories();
+    elevatorRight.clearMotionProfileTrajectories();
+    for (int i = 0; i < totalCount; ++i) {
+			/* for each point, fill our structure and pass it to API */
+			point.position = profile[i][0];
+			point.velocity = profile[i][1];
+			point.timeDur = (int) profile[i][2];
+			point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
+			/* set true to not do any position
+      * servo, just velocity feedforward
+		  */
+			point.zeroPos = false;
+			if (i == 0)
+				point.zeroPos = true; /* set this to true on the first point */
+
+			point.isLastPoint = false;
+			if ((i + 1) == totalCount)
+				point.isLastPoint = true; /* set this to true on the last point  */
+
+      elevatorLeft.pushMotionProfileTrajectory(point);
+      elevatorRight.pushMotionProfileTrajectory(point);
+		}
+    elevatorLeft.set(ControlMode.MotionProfile, 1);
+    elevatorRight.set(ControlMode.MotionProfile, 1);
   }
  
   /**

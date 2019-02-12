@@ -5,57 +5,47 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.Drivetrain;
+package com.nomythic2491.frc2019.commands.Fork;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.nomythic2491.frc2019.commands.CommandBase;
-import com.nomythic2491.lib.util.DriveSignal;
 
-public class TurnToPosition extends CommandBase {
-
-  double speed, angle, initialPosition;
-
-  /**
-   * 
-   * @param speed Speed the robot turns at from -1 to 1, positive numbers go right, negative go left
-   * @param angle The angle the robot will turn to from 0 to 360
-   */
-  public TurnToPosition(double speed, double angle) {
+public class ControlPinsFork extends CommandBase {
+  public ControlPinsFork() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(drivetrain);
-    this.speed = speed;
-    this.angle = angle;
+    requires(fork);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    initialPosition = drivetrain.getGyroAngle();
+    if (fork.controlPinsExtended()) {
+      fork.controlPinsUp();
+    }
+    else {
+      fork.controlPinsDown();
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    drivetrain.driveDemand(ControlMode.PercentOutput, new DriveSignal(speed, -speed));
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return drivetrain.getGyroAngle() >= Math.abs(initialPosition + angle);
+    return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    drivetrain.stop();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    end();
   }
 }
