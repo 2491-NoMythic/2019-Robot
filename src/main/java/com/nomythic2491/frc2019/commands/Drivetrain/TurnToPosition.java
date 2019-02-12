@@ -7,7 +7,9 @@
 
 package com.nomythic2491.frc2019.commands.Drivetrain;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.nomythic2491.frc2019.commands.CommandBase;
+import com.nomythic2491.lib.util.DriveSignal;
 
 public class TurnToPosition extends CommandBase {
 
@@ -35,7 +37,7 @@ public class TurnToPosition extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    drivetrain.drivePercentOutput(speed, -speed);
+    drivetrain.driveDemand(ControlMode.PercentOutput, new DriveSignal(speed, -speed));
   }
 
   // Make this return true when this Command no longer needs to run execute()
