@@ -27,8 +27,8 @@ public abstract class CommandBase extends Command {
 
 		drivetrain = Drivetrain.getInstance();
 		magicbox = MagicBox.getInstance();
-		climber = climber.getInstance();
-		fork = fork.getInstance();
+		climber = Climber.getInstance();
+		fork = Fork.getInstance();
 
 		oi.init();
 		// This MUST be here. If the OI creates Commands (which it very likely
