@@ -24,6 +24,7 @@ public class OI {
   Button manualCargoOutput;
   Button togglePivot;
   Button toggleElevation;
+  Button resetClimber;
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
   //// joystick.
@@ -61,6 +62,7 @@ public class OI {
     manualCargoOutput = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.manualCargoOutput);
     togglePivot = new JoystickButton(controllers[ControllerMap.operatorController],ControllerMap.togglePivot);
     toggleElevation = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.toggleElevation);
+    resetClimber = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.resetClimber);
   }
 
   /**

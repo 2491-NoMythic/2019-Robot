@@ -176,6 +176,10 @@ public class Climber extends Subsystem {
   public void disengageBrake() {
     mBrakeSolenoid.set(false);
 }
+public boolean isSkidUp() {
+  return  mClimberSolenoid.get();
+}
+
 
   @Override
   public void initDefaultCommand() {

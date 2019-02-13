@@ -28,6 +28,7 @@ public class Constants {
     // Climber
     public static final int kPoleMasterId = 2491;
     public static final int kPoleSlaveId = 2491;
+    public static final int kClimberVelocity = 2491;
     public static final int kRollerJointId = 2491; //not used for progned
     public static final int kPoleEncoderDifference = 2491;
     public static final int kSkidChannel = 2491; 

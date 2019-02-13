@@ -29,6 +29,7 @@ public class ControllerMap {
     public static final int manualCargoOutput = 2491;
     public static final int toggleElevation = 2491;
     public static final int togglePivot = 2491;
+    public static final int resetClimber = 2491;
 
     //Operator General
     public static final int cargoIntakeAxis = 2491;
