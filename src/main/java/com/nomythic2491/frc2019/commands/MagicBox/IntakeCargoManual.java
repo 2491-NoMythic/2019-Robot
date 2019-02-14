@@ -7,7 +7,7 @@
 
 package com.nomythic2491.frc2019.commands.MagicBox;
 
-import com.nomythic2491.frc2019.Settings.ControllerMap;
+import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
 public class IntakeCargoManual extends CommandBase {
@@ -29,12 +29,7 @@ public class IntakeCargoManual extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(!oi.getButton(ControllerMap.operatorController, ControllerMap.runIntakeManual)) {
-			magicbox.runIntake(oi.getAxisDeadzonedSquared(ControllerMap.operatorController, ControllerMap.cargoOutputAxis, 0.05));
-		}
-		else {
-			magicbox.stopIntake();
-		}
+    magicbox.runIntake(Constants.kBoxCargoIntakeVelocity);
   }
 
   // Make this return true when this Command no longer needs to run execute()

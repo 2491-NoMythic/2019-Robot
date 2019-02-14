@@ -51,8 +51,8 @@ public class Constants {
     public static final double kElevatorMaxHeight = 2491;
     public static final double kElevatorUncertainty = 2491;
     public static final double kElevatorVelocity = 2491;
-    public static final double kBoxCargoShootSpeed = 2491;
-    public static final double kCargoIntakeVelocity = 2491;
+    public static final double kBoxCargoShootSpeed = 2491; //This will have to be negative (assuming kCargoIntakeVelocity is positive)
+    public static final double kBoxCargoIntakeVelocity = 2491;
     public static final double kBoxRotateVelocity = 2491;
     public static final double kBoxTipDownPosition = 2491; //The position in encoder ticks of the lowest position of the intake rotator
     public static final double kBoxTipUpPosition = 2491; //The position in encoder ticks of the up position of the intake rotator
@@ -68,6 +68,7 @@ public class Constants {
     public static final int kRightHatchInChannelBox = 2491;
     public static final int kPivotInChannel = 2491;
     public static final int kPivotOutChannel = 2491;
+    public static final int kForkCargoIntakeVelocity = 2491;
 
     //Controllers
     public static final int kDriverThrottleAxis = 1;
