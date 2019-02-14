@@ -28,15 +28,10 @@ public class HatchPickup extends CommandBase{
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if (magicbox.hatchIntakeExtended()) {
-      magicbox.extendSolenoid();
-    }
-    else {
-      magicbox.retractSolenoid();
+    magicbox.retractSolenoid();
     }
 
     //timer.reset();
-  }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
@@ -56,12 +51,13 @@ public class HatchPickup extends CommandBase{
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    magicbox.extendSolenoid();
   }
 
   // Called when another command which requires one or more of the same
