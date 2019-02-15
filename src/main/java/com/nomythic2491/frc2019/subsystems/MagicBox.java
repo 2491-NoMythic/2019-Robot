@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -25,27 +26,31 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- * The subsystem of talons, solenoids and limit switches that make up the Magic Box system.
+ * The subsystem of talons, solenoids and limit switches that make up the Magic
+ * Box system.
  */
 public class MagicBox extends Subsystem {
 
   private static MagicBox instance;
   private TalonSRX intake, rotateIntake, elevatorLeft, elevatorRight;
   private DoubleSolenoid spindle;
-  //private Solenoid leftSpindle, rightSpindle; //These will only be needed if we decide that we want to have two solenoids controlling the hatch intake. If it's just one, we don't need these.
+  // private Solenoid leftSpindle, rightSpindle; //These will only be needed if we
+  // decide that we want to have two solenoids controlling the hatch intake. If
+  // it's just one, we don't need these.
   public boolean isElevatorRising, isBoxFlippedDown, isBoxFlippedMiddle;
-  public enum positionRotate{
-    GROUND,
-    FLAT,
-    BACK
-  }
-  
   public Solenoid controlPins;
-
   DigitalInput elevatorLimitSwitch = new DigitalInput(0);
   DigitalInput cargoLimitSwitch = new DigitalInput(1);
 
-    private MagicBox() {
+  public enum positionRotate {
+    GROUND, FLAT, BACK
+  }
+
+  public enum positionElevator {
+    UP, DOWN
+  }
+
+  private MagicBox() {
     intake = TalonSRXFactory.createDefaultTalon(Constants.kIntakeRollerId);
     rotateIntake = TalonSRXFactory.createDefaultTalon(Constants.kRotator);
     elevatorLeft = TalonSRXFactory.createDefaultTalon(Constants.kElevatorLeft);
@@ -57,16 +62,19 @@ public class MagicBox extends Subsystem {
     /**
      * Configures the Magic Box rotation feedback sensor
      */
-    rotateIntake.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+    rotateIntake.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kVelocitySlotId,
+        Constants.kTimeoutMs);
   }
 
   private void configureMaster(TalonSRX talon, boolean left) {
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
-    final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
-            100); // primary closed-loop, 100 ms timeout
+    final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100); // primary
+                                                                                                                         // closed-loop,
+                                                                                                                         // 100
+                                                                                                                         // ms
+                                                                                                                         // timeout
     if (sensorPresent != ErrorCode.OK) {
-        DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent,
-                false);
+      DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent, false);
     }
     talon.setInverted(!left);
     talon.setSensorPhase(true);
@@ -77,7 +85,7 @@ public class MagicBox extends Subsystem {
     talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
     talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
     talon.configNeutralDeadband(0.04, 0);
-}
+  }
 
   /**
    * Runs the intake at a given speed
@@ -90,6 +98,7 @@ public class MagicBox extends Subsystem {
 
   /**
    * Uses a limit switch to determine if cargo is in the intake
+   * 
    * @return Whether or not cargo is in the intake
    */
   public boolean isCargoIn() {
@@ -97,36 +106,10 @@ public class MagicBox extends Subsystem {
   }
 
   /**
-   * Elevates the intake at a specified speed
-   * 
-   * @param speed How fast it goes on a scale of -1 to 1
-   */
-  public void elevateIntake(double speed) {
-    elevatorLeft.set(ControlMode.PercentOutput, speed);
-  }
-
-  /**
-   * Gets the elevator height from the left talon
-   * @return The height of the elevator
-   */
-  public double getElevatorHeight() {
-    return elevatorLeft.getSelectedSensorPosition(0);
-  }
-  
-  /**
    * Resets the elevator encoder
    */
   public void resetElevatorEncoder() {
     elevatorLeft.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
-  }
-
-  /**
-   * Rotates the intake at a speed
-   * 
-   * @param speed How fast it goes on a scale of -1 to 1
-   */
-  public void rotateIntake(double speed) {
-    rotateIntake.set(ControlMode.PercentOutput, speed);
   }
 
   public double getIntakeRotatorPosition() {
@@ -134,17 +117,18 @@ public class MagicBox extends Subsystem {
   }
 
   /**
-   * Stops the elevator from moving
-   */
-  public void stopElevator() {
-    elevateIntake(0);
-  }
-
-  /**
    * Stops the intake from moving
    */
   public void stopIntake() {
     runIntake(0);
+  }
+
+  public boolean getIsElevatorRunningMotionProfile(){
+    return elevatorLeft.isMotionProfileFinished();
+  }
+
+  public boolean getIsMagicboxRunningMotionProfile(){
+    return rotateIntake.isMotionProfileFinished();
   }
 
   /**
@@ -166,126 +150,103 @@ public class MagicBox extends Subsystem {
    * 
    * @return The hatch intake solenoid's position
    */
-  public boolean hatchIntakeExtended() {
-    return spindle.get() == Value.kForward || spindle.get() == Value.kOff;
+  public Value hatchIntakeExtended() {
+    return spindle.get();
   }
 
-  public void rotateIntakeToPosition(positionRotate set){
-
-  }
-
-  public void runElevatorMotionProfile(double[][] profile, int totalCount){
+  public void runElevatorMotionProfile(double[][] profile, int totalCount, boolean isInverted) {
     TrajectoryPoint point = new TrajectoryPoint();
     elevatorLeft.clearMotionProfileTrajectories();
-    elevatorRight.clearMotionProfileTrajectories();
     for (int i = 0; i < totalCount; ++i) {
-			/* for each point, fill our structure and pass it to API */
-			point.position = profile[i][0];
-			point.velocity = profile[i][1];
-			point.timeDur = (int) profile[i][2];
-			point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
-			/* set true to not do any position
-      * servo, just velocity feedforward
-		  */
-			point.zeroPos = false;
-			if (i == 0)
-				point.zeroPos = true; /* set this to true on the first point */
+      /* for each point, fill our structure and pass it to API */
+      point.position = profile[i][0];
+      if (isInverted) {
+        point.velocity = -profile[i][1];
+      } else {
+        point.velocity = profile[i][1];
+      }
+      point.timeDur = (int) profile[i][2];
+      point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
+      /*
+       * set true to not do any position servo, just velocity feedforward
+       */
+      point.zeroPos = false;
+      if (i == 0)
+        point.zeroPos = true; /* set this to true on the first point */
 
-			point.isLastPoint = false;
-			if ((i + 1) == totalCount)
-				point.isLastPoint = true; /* set this to true on the last point  */
+      point.isLastPoint = false;
+      if ((i + 1) == totalCount)
+        point.isLastPoint = true; /* set this to true on the last point */
 
       elevatorLeft.pushMotionProfileTrajectory(point);
-      elevatorRight.pushMotionProfileTrajectory(point);
-		}
-    elevatorLeft.set(ControlMode.MotionProfile, 1);
-    elevatorRight.set(ControlMode.MotionProfile, 1);
-  }
- 
-  /**
-   * Extends the left hatch solenoid
-   */
-  //public void extendLeftHatchSolenoid() {
-  //  leftSpindle.set(true);
-  //}
-
-  /**
-   * Retracts the left hatch solenoid
-   */
-  //public void retractLeftHatchSolenoid() {
-  //  leftSpindle.set(false);
-  //}
-
-  /**
-   * Extends the left hatch solenoid
-   */
-  //public void extendRightHatchSolenoid() {
-  //  rightSpindle.set(true);
-  //}
-
-  /**
-   * Retracts the left hatch solenoid
-   */
-  //public void retractRightHatchSolenoid() {
-  //  rightSpindle.set(false);
-  //}
-
-  /**
-   * Finds out if the left hatch intake solenoid is extended
-   * @return If the solenoid is extended
-   */
-  //public boolean leftSolenoidExtended() {
-  //  return leftSpindle.get();
-  //}
-
-  public static MagicBox getInstance() {
-    if (instance == null) {
-      instance = new MagicBox();
     }
-    return instance;
+    elevatorLeft.set(ControlMode.MotionProfile, 1);
+  }
+
+  public void runMagicboxMotionProfile(double[][] profile, int totalCount, boolean isInverted) {
+    TrajectoryPoint point = new TrajectoryPoint();
+    rotateIntake.clearMotionProfileTrajectories();
+    for (int i = 0; i < totalCount; ++i) {
+      /* for each point, fill our structure and pass it to API */
+      point.position = profile[i][0];
+      if (isInverted) {
+        point.velocity = -profile[i][1];
+      } else {
+        point.velocity = profile[i][1];
+      }
+      point.timeDur = (int) profile[i][2];
+      point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
+      /*
+       * set true to not do any position servo, just velocity feedforward
+       */
+      point.zeroPos = false;
+      if (i == 0)
+        point.zeroPos = true; /* set this to true on the first point */
+
+      point.isLastPoint = false;
+      if ((i + 1) == totalCount)
+        point.isLastPoint = true; /* set this to true on the last point */
+
+      rotateIntake.pushMotionProfileTrajectory(point);
+    }
+    rotateIntake.set(ControlMode.MotionProfile, 1);
+  }
+
+  public positionElevator getElevatorPosition() {
+    return Variables.currentElevatorPostion;
+  }
+
+  public positionRotate getMagicBoxPosition() {
+    return Variables.currentMagicboxPosition;
+  }
+
+  public void toggleControlPins() {
+    if (controlPins.get()) {
+      controlPins.set(false);
+    } else {
+      controlPins.set(true);
+    }
   }
 
   /**
-   * Determines whether the elevator is in the lowest position
-   * @return Whether the elevator is in the lowest position
+   * Determines whether the control pins are up or down
+   * 
+   * @return The control pin solenoid's value
    */
-  public boolean isElevatorDown() {
-    return elevatorLimitSwitch.get();
-  }
-
-  /**
-   * Determines whether the elevator is in the highest position
-   * @return Whether the elevator is in the highest position
-   */
-  public boolean isElevatorUp() {
-    return getElevatorHeight() >= (Constants.kElevatorMaxHeight - Constants.kElevatorUncertainty);
-  }
-
-  /**
- * Puts the control pins down
- */
-public void controlPinsDown(){
-  controlPins.set(true);
-}
-
-/**
- * Raises the control pins
- */
-public void controlPinsUp(){
-    controlPins.set(false);
-}
-
-/**
- * Determines whether the control pins are up or down
- * @return The control pin solenoid's value
- */
-public boolean controlPinsExtended(){
+  public boolean controlPinsExtended() {
     return controlPins.get();
-}
+  }
 
   @Override
   public void initDefaultCommand() {
-  // Set the default command for a subsystem here.
-  // setDefaultCommand(new MySpecialCommand());
+    // Set the default command for a subsystem here.
+    // setDefaultCommand(new MySpecialCommand());
+  }
+
+  public static MagicBox getInstance() {
+    if (instance == null){
+      instance = new MagicBox();
+    }
+    return instance;
   }
 }

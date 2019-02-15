@@ -5,25 +5,37 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.Fork;
+package com.nomythic2491.frc2019.commands.MagicBox;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
+import com.nomythic2491.frc2019.subsystems.MagicBox;
+import com.nomythic2491.frc2019.subsystems.MagicBox.positionRotate;
 
-public class ControlPinsFork extends CommandBase {
-  public ControlPinsFork() {
+import edu.wpi.first.wpilibj.command.Command;
+
+public class HatchGroundPickup extends CommandBase {
+  RotateMagicBoxToPosition rToPositionGround, rToPositionFlat;
+
+  public HatchGroundPickup() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(fork);
+    requires(magicbox);
+    rToPositionGround = new RotateMagicBoxToPosition(positionRotate.GROUND);
+    rToPositionFlat = new RotateMagicBoxToPosition(positionRotate.FLAT);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if (fork.controlPinsExtended()) {
-      fork.controlPinsUp();
-    }
-    else {
-      fork.controlPinsDown();
+    if(magicbox.controlPinsExtended()){
+      magicbox.retractSolenoid();
+      rToPositionGround.start();
+      while(magicbox.getIsMagicboxRunningMotionProfile()){}
+      magicbox.extendSolenoid();
+      rToPositionFlat.start();
+      while(magicbox.getIsMagicboxRunningMotionProfile()){}
+    }else{
+      end();
     }
   }
 
@@ -35,7 +47,7 @@ public class ControlPinsFork extends CommandBase {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   // Called once after isFinished returns true
