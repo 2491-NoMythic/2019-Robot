@@ -34,6 +34,7 @@ public class Constants {
     public static final int kSkidChannel = 2491; 
     public static final int kBrakeChannel = 2491;
     public static final int kPCMCANID = 2491;
+    public static final double doneClimbingHeight = 2491;
 
     public static final double kClimberEncoderToInches = 1;
     

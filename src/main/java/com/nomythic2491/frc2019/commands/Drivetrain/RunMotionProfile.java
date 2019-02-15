@@ -11,7 +11,7 @@ import com.nomythic2491.frc2019.commands.CommandBase;
 
 
 public class RunMotionProfile extends CommandBase {
-  public RunMotionProfile() {
+  public RunMotionProfile(double xDistance, double yDistance, double spaceWanted) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }

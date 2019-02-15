@@ -8,6 +8,7 @@
 package com.nomythic2491.frc2019.commands.MagicBox;
 
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.subsystems.MagicBox.positionRotate;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -20,9 +21,9 @@ public class IntakeCargoGround extends CommandGroup {
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
     // these will run in order.
-    addSequential(new RotateMagicBoxToPosition(Constants.kBoxTipDownPosition));
+    addSequential(new RotateMagicBoxToPosition(positionRotate.GROUND));
     addSequential(new IntakeCargoUntilSuccess());
-    addSequential(new RotateMagicBoxToPosition(Constants.kBoxTipUpPosition));
+    addSequential(new RotateMagicBoxToPosition(positionRotate.FLAT));
 
 
     // To run multiple commands at the same time,
