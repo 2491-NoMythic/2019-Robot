@@ -123,6 +123,14 @@ public class MagicBox extends Subsystem {
     runIntake(0);
   }
 
+  public boolean getIsElevatorRunningMotionProfile(){
+    return elevatorLeft.isMotionProfileFinished();
+  }
+
+  public boolean getIsMagicboxRunningMotionProfile(){
+    return rotateIntake.isMotionProfileFinished();
+  }
+
   /**
    * Extends the hatch intake solenoid
    */
