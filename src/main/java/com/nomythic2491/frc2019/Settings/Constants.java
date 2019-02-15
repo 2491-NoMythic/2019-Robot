@@ -17,17 +17,17 @@ public class Constants {
     // Drive
     public static final int kControlPinsChannel = 2491;
 
-    public static int kRightDriveMasterId = 1;
-    public static int kRightDriveSlaveId = 0;
-    public static int kLeftDriveMasterId = 14;
-    public static int kLeftDriveSlaveId = 15;
+    public static int kRightDriveMasterId = 10;
+    public static int kRightDriveSlaveId = 11;
+    public static int kLeftDriveMasterId = 1;
+    public static int kLeftDriveSlaveId = 0;
 
     public static final double kDriveEncoderToInches = 1 / Constants.kWheelDiameterInches * Math.PI / 4096.0;
     public static final double kWheelDiameterInches = 2491; // This is very, very important! Change this before trying to
                                                            // use the encoders to do anything.
     // Climber
-    public static final int kPoleMasterId = 2491;
-    public static final int kPoleSlaveId = 2491;
+    public static final int kPoleMasterId = 2;
+    public static final int kPoleSlaveId = 3;
     public static final int kClimberVelocity = 2491;
     public static final int kRollerJointId = 2491; //not used for progned
     public static final int kPoleEncoderDifference = 2491;
@@ -42,10 +42,10 @@ public class Constants {
     // Box
     public static final int kHatchOutChannel = 2491;
     public static final int kHatchInChannel = 2491;
-    public static final int kIntakeRollerId = 2491;
-    public static final int kRotator = 2491;
-    public static final int kElevatorLeft = 2491;
-    public static final int kElevatorRight = 2491;
+    public static final int kIntakeRollerId = 9;
+    public static final int kRotator = 7;
+    public static final int kElevatorLeft = 6;
+    public static final int kElevatorRight = 8;
     
     public static final double kHatchPickupPause = 0.25;
     //public static final double kElevatorGroundHeight = 0; //Limit switch will remove this
