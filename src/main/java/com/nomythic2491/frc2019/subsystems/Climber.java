@@ -49,12 +49,7 @@ public class Climber extends Subsystem {
     mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeChannel);
 
   }
-
-  public void driveVelocity(double speed) {
-    mRightClimberTalon.set(ControlMode.Velocity, speed);
-  }
-
-  public void drivePercentOutput(double speed) {
+  public void runClimberRacks(double speed) {
     mRightClimberTalon.set(ControlMode.PercentOutput, speed);
   }
 
