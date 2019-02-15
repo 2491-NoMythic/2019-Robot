@@ -23,15 +23,19 @@ public class ControllerMap {
     public static final int driveMainAxisRight = 1;
 
     //Operator controller
-    public static final int runIntakeManual = 1;
-    public static final int hatchButton = 2;
-    public static final int manualCargoPickup = 2491;
-    public static final int manualCargoOutput = 2491;
-    public static final int toggleElevation = 2491;
-    public static final int togglePivot = 2491;
-    public static final int resetClimber = 2491;
+    public static final int hatchButton = 4; //Y
+    public static final int manualCargoPickup = 2; //A
+    public static final int manualCargoOutput = 3; //B
+    public static final int toggleElevation = 7; //Left trigger
+    public static final int resetClimber = 9; //Back
+    
+    public static final int autoClimb = 10; //Start
+    public static final int tipBoxForward = 6; //Right bumper
+    public static final int tipBoxUp = 5; //Left bumper
+    public static final int tipBoxBack = 1; //X
+    public static final int deployLineupPins = 8; //Right trigger
 
     //Operator General
-    public static final int cargoIntakeAxis = 2491;
-    public static final int cargoOutputAxis = 2491;
+    public static final int cargoIntakeAxis = 1;
+    public static final int cargoOutputAxis = 2;
 }
