@@ -62,7 +62,7 @@ public class MagicBox extends Subsystem {
     configureMaster(elevatorMaster, true, 0.04);
 
     elevatorMaster.selectProfileSlot(0, 0);
-    elevatorMaster.config_kF(0, 3325);
+    elevatorMaster.config_kF(0, 0.03923155865);
     elevatorMaster.config_kP(0, 0.25); //.12
     elevatorMaster.config_kI(0, 0.00001); //.00001
     elevatorMaster.config_kD(0, 45); //25
