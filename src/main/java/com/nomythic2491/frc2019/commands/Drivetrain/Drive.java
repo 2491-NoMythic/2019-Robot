@@ -71,7 +71,6 @@ public class Drive extends CommandBase {
       //No editing factor to speed rate
       default:
     }
-
     drivetrain.driveDemand(ControlMode.PercentOutput, new DriveSignal(currentLeftSpeed, currentRightSpeed));
     
   }

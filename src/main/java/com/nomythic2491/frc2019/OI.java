@@ -8,6 +8,7 @@
 package com.nomythic2491.frc2019;
 
 import com.nomythic2491.frc2019.Settings.ControllerMap;
+import com.nomythic2491.frc2019.commands.MagicBox.ElevateBox;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -18,7 +19,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-  private final Joystick[] controllers = new Joystick[2];
+  private final Joystick[] controllers = new Joystick[3];
   Button pickupHatch;
   Button manualCargoPickup;
   Button manualCargoOutput;
@@ -61,6 +62,7 @@ public class OI {
   {
     controllers[0] = new Joystick(ControllerMap.driveControllerLeft);
     controllers[1] = new Joystick(ControllerMap.driveControllerRight);
+    controllers[2] = new Joystick(ControllerMap.operatorController);
 
     pickupHatch = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.hatchButton);
     manualCargoPickup = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.manualCargoPickup);
@@ -68,9 +70,11 @@ public class OI {
     tipBoxForward = new JoystickButton(controllers[ControllerMap.operatorController],ControllerMap.tipBoxForward);
     tipBoxBack = new JoystickButton(controllers[ControllerMap.operatorController],ControllerMap.tipBoxBack);
     tipBoxUp = new JoystickButton(controllers[ControllerMap.operatorController],ControllerMap.tipBoxUp);
-    toggleElevation = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.toggleElevation);
+    toggleElevation = new JoystickButton(controllers[ControllerMap.driveControllerRight], ControllerMap.toggleElevation);
     resetClimber = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.resetClimber);
     deployLineupPins = new JoystickButton(controllers[ControllerMap.operatorController],ControllerMap.deployLineupPins);
+
+    toggleElevation.whenPressed(new ElevateBox());
   }
 
   /**

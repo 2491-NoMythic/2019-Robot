@@ -5,17 +5,17 @@ public class Constants {
 
     // Talons
     public static int kLongCANTimeoutMs;
-    public static double kDriveVoltageRampRate;
+    public static double kDriveVoltageRampRate = 2;
 
-    public static final int kTimeoutMs = 2491;
-    public static final int kVelocitySlotId = 2491;
-    public static final double kVelocitykP = 2491;
-    public static final double kVelocitykI = 2491;
-    public static final double kVelocitykD = 2491;
-    public static final double kVelocitykF = 2491;
+    public static final int kTimeoutMs = 100;
+    public static final int kVelocitySlotId = 0;
+    public static final double kVelocitykP = .5;
+    public static final double kVelocitykI = .001;
+    public static final double kVelocitykD = .001;
+    public static final double kVelocitykF = 1000;
 
     // Drive
-    public static final int kControlPinsChannel = 2491;
+    public static final int kControlPinsChannel = 0;
 
     public static int kRightDriveMasterId = 10;
     public static int kRightDriveSlaveId = 11;
@@ -31,17 +31,17 @@ public class Constants {
     public static final int kClimberVelocity = 2491;
     public static final int kRollerJointId = 2491; //not used for progned
     public static final int kPoleEncoderDifference = 2491;
-    public static final int kSkidChannel = 2491; 
-    public static final int kBrakeChannel = 2491;
-    public static final int kPCMCANID = 2491;
+    public static final int kSkidChannel = 6; 
+    public static final int kBrakeChannel = 3;
+    public static final int kPCMCANID = 0;
     public static final double doneClimbingHeight = 2491;
 
     public static final double kClimberEncoderToInches = 1;
     
 
     // Box
-    public static final int kHatchOutChannel = 2491;
-    public static final int kHatchInChannel = 2491;
+    public static final int kHatchOutChannel = 4;
+    public static final int kHatchInChannel = 5;
     public static final int kIntakeRollerId = 9;
     public static final int kRotator = 7;
     public static final int kElevatorLeft = 6;
@@ -58,18 +58,6 @@ public class Constants {
     public static final double kBoxTipDownPosition = 2491; //The position in encoder ticks of the lowest position of the intake rotator
     public static final double kBoxTipUpPosition = 2491; //The position in encoder ticks of the up position of the intake rotator
     public static final double kBoxTipBackPosition = 2491; //The position in encoder ticks of the back position of the intake rotator
-
-    //Fork
-    public static final int kElevator = 2491;
-    public static final int kIntakeLeft = 2491;
-    public static final int kIntakeRight = 2491;
-    public static final int kLeftHatchInChannelBox = 2491;
-    public static final int kLeftHatchOutChannelBox = 2491;
-    public static final int kRightHatchOutChannelBox = 2491;
-    public static final int kRightHatchInChannelBox = 2491;
-    public static final int kPivotInChannel = 2491;
-    public static final int kPivotOutChannel = 2491;
-    public static final int kForkCargoIntakeVelocity = 2491;
 
     //Controllers
     public static final int kDriverThrottleAxis = 1;

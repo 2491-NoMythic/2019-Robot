@@ -32,7 +32,11 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class MagicBox extends Subsystem {
 
   private static MagicBox instance;
-  private TalonSRX intake, rotateIntake, elevatorLeft, elevatorRight;
+  private TalonSRX intake, rotateIntake;
+  /**
+   * Master is left, Slave is right
+   */
+  private TalonSRX elevatorMaster, elevatorSlave;
   private DoubleSolenoid spindle;
   // private Solenoid leftSpindle, rightSpindle; //These will only be needed if we
   // decide that we want to have two solenoids controlling the hatch intake. If
@@ -42,49 +46,56 @@ public class MagicBox extends Subsystem {
   DigitalInput elevatorLimitSwitch = new DigitalInput(0);
   DigitalInput cargoLimitSwitch = new DigitalInput(1);
 
-  public enum positionRotate {
+  public enum PositionRotate {
     GROUND, FLAT, BACK
   }
 
-  public enum positionElevator {
+  public enum PositionElevator {
     UP, DOWN
   }
 
   private MagicBox() {
     intake = TalonSRXFactory.createDefaultTalon(Constants.kIntakeRollerId);
     rotateIntake = TalonSRXFactory.createDefaultTalon(Constants.kRotator);
-    elevatorLeft = TalonSRXFactory.createDefaultTalon(Constants.kElevatorLeft);
-    configureMaster(elevatorLeft, true);
-    elevatorRight = TalonSRXFactory.createPermanentSlaveTalon(Constants.kElevatorRight, Constants.kElevatorLeft);
-    elevatorRight.setInverted(false);
-    spindle = new DoubleSolenoid(Constants.kHatchOutChannel, Constants.kHatchInChannel);
+    configureMaster(rotateIntake, false, 0.04);
+    elevatorMaster = TalonSRXFactory.createDefaultTalon(Constants.kElevatorLeft);
+    configureMaster(elevatorMaster, true, 0.04);
 
-    /**
-     * Configures the Magic Box rotation feedback sensor
-     */
-    rotateIntake.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kVelocitySlotId,
-        Constants.kTimeoutMs);
+    elevatorMaster.selectProfileSlot(0, 0);
+    elevatorMaster.config_kF(0, 3325);
+    elevatorMaster.config_kP(0, 0.25); //.12
+    elevatorMaster.config_kI(0, 0.00001); //.00001
+    elevatorMaster.config_kD(0, 45); //25
+
+    elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10,100);
+    elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10,100);
+
+    elevatorMaster.configMotionCruiseVelocity(6650);
+    elevatorMaster.configMotionAcceleration(6650);
+
+    elevatorMaster.setSelectedSensorPosition(0);
+
+    elevatorSlave = TalonSRXFactory.createPermanentSlaveTalon(Constants.kElevatorRight, Constants.kElevatorLeft);
+    elevatorSlave.setInverted(true);
+
+    spindle = new DoubleSolenoid(Constants.kHatchOutChannel, Constants.kHatchInChannel);
   }
 
-  private void configureMaster(TalonSRX talon, boolean left) {
+  private void configureMaster(TalonSRX talon, boolean left, double nominalV) {
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
-    final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100); // primary
-                                                                                                                         // closed-loop,
-                                                                                                                         // 100
-                                                                                                                         // ms
-                                                                                                                         // timeout
+    final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100); // primary closed-loop, 100ms timeout
     if (sensorPresent != ErrorCode.OK) {
       DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent, false);
     }
     talon.setInverted(!left);
-    talon.setSensorPhase(true);
+    talon.setSensorPhase(false);
     talon.enableVoltageCompensation(true);
     talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
     // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
     // Constants.kLongCANTimeoutMs);
     talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
     talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
-    talon.configNeutralDeadband(0.04, 0);
+    talon.configNeutralDeadband(nominalV, 100);
   }
 
   /**
@@ -109,7 +120,7 @@ public class MagicBox extends Subsystem {
    * Resets the elevator encoder
    */
   public void resetElevatorEncoder() {
-    elevatorLeft.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+    elevatorMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
   }
 
   public double getIntakeRotatorPosition() {
@@ -123,11 +134,12 @@ public class MagicBox extends Subsystem {
     runIntake(0);
   }
 
-  public boolean getIsElevatorRunningMotionProfile(){
-    return elevatorLeft.isMotionProfileFinished();
+  public boolean getIsElevatorRunningMotionProfile() {
+    return false;
+    // return elevatorLeft.isMotionProfileFinished();
   }
 
-  public boolean getIsMagicboxRunningMotionProfile(){
+  public boolean getIsMagicboxRunningMotionProfile() {
     return rotateIntake.isMotionProfileFinished();
   }
 
@@ -154,69 +166,73 @@ public class MagicBox extends Subsystem {
     return spindle.get();
   }
 
-  public void runElevatorMotionProfile(double[][] profile, int totalCount, boolean isInverted) {
-    TrajectoryPoint point = new TrajectoryPoint();
-    elevatorLeft.clearMotionProfileTrajectories();
-    for (int i = 0; i < totalCount; ++i) {
-      /* for each point, fill our structure and pass it to API */
-      point.position = profile[i][0];
-      if (isInverted) {
-        point.velocity = -profile[i][1];
-      } else {
-        point.velocity = profile[i][1];
-      }
-      point.timeDur = (int) profile[i][2];
-      point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
-      /*
-       * set true to not do any position servo, just velocity feedforward
-       */
-      point.zeroPos = false;
-      if (i == 0)
-        point.zeroPos = true; /* set this to true on the first point */
+  // public void runElevatorMotionProfile(double[][] profile, int totalCount, boolean isInverted) {
+  //   TrajectoryPoint point = new TrajectoryPoint();
+  //   elevatorMaster.clearMotionProfileTrajectories();
+  //   for (int i = 0; i < totalCount; ++i) {
+  //     /* for each point, fill our structure and pass it to API */
+  //     point.position = profile[i][0];
+  //     if (isInverted) {
+  //       point.velocity = -profile[i][1];
+  //     } else {
+  //       point.velocity = profile[i][1];
+  //     }
+  //     point.timeDur = (int) profile[i][2];
+  //     point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
+  //     /*
+  //      * set true to not do any position servo, just velocity feedforward
+  //      */
+  //     point.zeroPos = false;
+  //     if (i == 0)
+  //       point.zeroPos = true; /* set this to true on the first point */
 
-      point.isLastPoint = false;
-      if ((i + 1) == totalCount)
-        point.isLastPoint = true; /* set this to true on the last point */
+  //     point.isLastPoint = false;
+  //     if ((i + 1) == totalCount)
+  //       point.isLastPoint = true; /* set this to true on the last point */
 
-      elevatorLeft.pushMotionProfileTrajectory(point);
-    }
-    elevatorLeft.set(ControlMode.MotionProfile, 1);
+  //     elevatorMaster.pushMotionProfileTrajectory(point);
+  //   }
+  //   elevatorMaster.set(ControlMode.MotionProfile, 1);
+  // }
+
+  public void magicToPoint(double setpoint) {
+    elevatorMaster.set(ControlMode.MotionMagic, setpoint);
   }
 
-  public void runMagicboxMotionProfile(double[][] profile, int totalCount, boolean isInverted) {
-    TrajectoryPoint point = new TrajectoryPoint();
-    rotateIntake.clearMotionProfileTrajectories();
-    for (int i = 0; i < totalCount; ++i) {
-      /* for each point, fill our structure and pass it to API */
-      point.position = profile[i][0];
-      if (isInverted) {
-        point.velocity = -profile[i][1];
-      } else {
-        point.velocity = profile[i][1];
-      }
-      point.timeDur = (int) profile[i][2];
-      point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
-      /*
-       * set true to not do any position servo, just velocity feedforward
-       */
-      point.zeroPos = false;
-      if (i == 0)
-        point.zeroPos = true; /* set this to true on the first point */
+  // public void runMagicboxMotionProfile(double[][] profile, int totalCount, boolean isInverted) {
+  //   TrajectoryPoint point = new TrajectoryPoint();
+  //   rotateIntake.clearMotionProfileTrajectories();
+  //   for (int i = 0; i < totalCount; ++i) {
+  //     /* for each point, fill our structure and pass it to API */
+  //     point.position = profile[i][0];
+  //     if (isInverted) {
+  //       point.velocity = -profile[i][1];
+  //     } else {
+  //       point.velocity = profile[i][1];
+  //     }
+  //     point.timeDur = (int) profile[i][2];
+  //     point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
+  //     /*
+  //      * set true to not do any position servo, just velocity feedforward
+  //      */
+  //     point.zeroPos = false;
+  //     if (i == 0)
+  //       point.zeroPos = true; /* set this to true on the first point */
 
-      point.isLastPoint = false;
-      if ((i + 1) == totalCount)
-        point.isLastPoint = true; /* set this to true on the last point */
+  //     point.isLastPoint = false;
+  //     if ((i + 1) == totalCount)
+  //       point.isLastPoint = true; /* set this to true on the last point */
 
-      rotateIntake.pushMotionProfileTrajectory(point);
-    }
-    rotateIntake.set(ControlMode.MotionProfile, 1);
-  }
+  //     rotateIntake.pushMotionProfileTrajectory(point);
+  //   }
+  //   rotateIntake.set(ControlMode.MotionProfile, 1);
+  // }
 
-  public positionElevator getElevatorPosition() {
+  public PositionElevator getElevatorPosition() {
     return Variables.currentElevatorPostion;
   }
 
-  public positionRotate getMagicBoxPosition() {
+  public PositionRotate getMagicBoxPosition() {
     return Variables.currentMagicboxPosition;
   }
 
@@ -244,9 +260,18 @@ public class MagicBox extends Subsystem {
   }
 
   public static MagicBox getInstance() {
-    if (instance == null){
+    if (instance == null) {
       instance = new MagicBox();
     }
     return instance;
+  }
+
+  public void positon() {
+    System.out.println(elevatorMaster.getSelectedSensorPosition(0));
+    System.out.println(elevatorMaster.getClosedLoopError());
+  }
+
+  @Override
+  public void periodic() {
   }
 }

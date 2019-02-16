@@ -11,7 +11,7 @@ import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.MotionProfiles;
 import com.nomythic2491.frc2019.commands.CommandBase;
 import com.nomythic2491.frc2019.commands.MagicBox.RotateMagicBoxToPosition;
-import com.nomythic2491.frc2019.subsystems.MagicBox.positionRotate;
+import com.nomythic2491.frc2019.subsystems.MagicBox.PositionRotate;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.nomythic2491.lib.util.DriveSignal;
 
@@ -23,7 +23,7 @@ public class AutomaticClimb extends CommandBase {
     requires(climber);
     requires(magicbox);
     requires(drivetrain);
-    rBoxToPositionFlat = new RotateMagicBoxToPosition(positionRotate.FLAT);
+    rBoxToPositionFlat = new RotateMagicBoxToPosition(PositionRotate.FLAT);
   }
 
   // Called just before this Command runs the first time
@@ -36,7 +36,7 @@ public class AutomaticClimb extends CommandBase {
   @Override
   protected void execute() {
     climber.engageSkid();
-    magicbox.runElevatorMotionProfile(MotionProfiles.groundToTop, MotionProfiles.groundToTop.length, false);
+    //magicbox.runElevatorMotionProfile(MotionProfiles.groundToTop, MotionProfiles.groundToTop.length, false);
     climber.runClimberRacks(Constants.kClimberVelocity);
     while(climber.getDistance() < Constants.doneClimbingHeight){}
     climber.runClimberRacks(0);

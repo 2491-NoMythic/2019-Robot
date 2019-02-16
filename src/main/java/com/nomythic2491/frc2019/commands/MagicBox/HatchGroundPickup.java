@@ -9,7 +9,7 @@ package com.nomythic2491.frc2019.commands.MagicBox;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
 import com.nomythic2491.frc2019.subsystems.MagicBox;
-import com.nomythic2491.frc2019.subsystems.MagicBox.positionRotate;
+import com.nomythic2491.frc2019.subsystems.MagicBox.PositionRotate;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -20,8 +20,8 @@ public class HatchGroundPickup extends CommandBase {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(magicbox);
-    rToPositionGround = new RotateMagicBoxToPosition(positionRotate.GROUND);
-    rToPositionFlat = new RotateMagicBoxToPosition(positionRotate.FLAT);
+    rToPositionGround = new RotateMagicBoxToPosition(PositionRotate.GROUND);
+    rToPositionFlat = new RotateMagicBoxToPosition(PositionRotate.FLAT);
   }
 
   // Called just before this Command runs the first time

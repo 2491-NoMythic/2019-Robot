@@ -9,7 +9,7 @@ package com.nomythic2491.frc2019.commands.MagicBox;
 
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.CommandBase;
-import com.nomythic2491.frc2019.subsystems.MagicBox.positionRotate;
+import com.nomythic2491.frc2019.subsystems.MagicBox.PositionRotate;
 
 public class IntakeCargoUntilSuccess extends CommandBase {
 
@@ -22,7 +22,7 @@ public class IntakeCargoUntilSuccess extends CommandBase {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(magicbox);
-    controlMagicbox = new RotateMagicBoxToPosition(positionRotate.GROUND);
+    controlMagicbox = new RotateMagicBoxToPosition(PositionRotate.GROUND);
   }
 
   // Called just before this Command runs the first time
