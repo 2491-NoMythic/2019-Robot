@@ -29,7 +29,7 @@ public class CheesyDriveHelper {
 
     private static final double kQuickStopDeadband = 0.5;
     private static final double kQuickStopWeight = 0.1;
-    private static final double kQuickStopScalar = 5.0;
+    private static final double kQuickStopScalar = 7.0;
 
     private double mOldWheel = 0.0;
     private double mQuickStopAccumlator = 0.0;
@@ -119,8 +119,8 @@ public class CheesyDriveHelper {
         }
 
         rightPwm = leftPwm = linearPower;
-        leftPwm -= angularPower;
-        rightPwm += angularPower;
+        leftPwm += angularPower;
+        rightPwm -= angularPower;
 
         if (leftPwm > 1.0) {
             rightPwm -= overPower * (leftPwm - 1.0);

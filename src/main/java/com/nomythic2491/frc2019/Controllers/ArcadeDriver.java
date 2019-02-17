@@ -28,7 +28,7 @@ public class ArcadeDriver implements IDriveController {
     @Override
     public DriveSignal getSignal() {
         return mHelper.cheesyDrive(
-                mHelper.handleDeadband(mJoystick.getRawAxis(Constants.kDriverThrottleAxis), Constants.kDeadband),
+                mHelper.handleDeadband(-mJoystick.getRawAxis(Constants.kDriverThrottleAxis), Constants.kDeadband),
                 mHelper.handleDeadband(mJoystick.getRawAxis(Constants.kDriverTurnAxis), Constants.kDeadband),
                 mJoystick.getRawButton(Constants.kQuickturnButton));
     }
@@ -41,6 +41,16 @@ public class ArcadeDriver implements IDriveController {
     @Override
     public boolean getSlowSpeed() {
         return mJoystick.getRawButton(0);
+    }
+
+    @Override
+    public boolean getIntakeOut() {
+        return mJoystick.getRawButton(5);
+    }
+
+    @Override
+    public boolean getIntakeIn() {
+        return mJoystick.getRawButton(3);
     }
 
 }
