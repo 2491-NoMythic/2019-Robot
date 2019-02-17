@@ -9,4 +9,8 @@ public interface IDriveController {
     public boolean getKillSwitch();
 
     public boolean getSlowSpeed();
+
+    public boolean getIntakeOut();
+
+    public boolean getIntakeIn();
 }

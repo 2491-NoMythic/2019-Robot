@@ -7,6 +7,7 @@
 
 package com.nomythic2491.frc2019.commands.MagicBox;
 
+import com.nomythic2491.frc2019.ControlBoard;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
@@ -29,7 +30,14 @@ public class IntakeCargoManual extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    magicbox.runIntake(Constants.kBoxCargoIntakeVelocity);
+    if (ControlBoard.getInstance().getIntakeOut()) {
+      magicbox.runIntake(-Constants.kBoxCargoIntakeVelocity);
+    }
+    else if (ControlBoard.getInstance().getIntakeIn()) {
+      magicbox.runIntake(Constants.kBoxCargoIntakeVelocity);
+    } else {
+      magicbox.stopIntake();
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

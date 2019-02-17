@@ -7,47 +7,36 @@
 
 package com.nomythic2491.frc2019.commands.MagicBox;
 
-import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.Settings.MotionProfiles;
-import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.frc2019.commands.CommandBase;
-import com.nomythic2491.frc2019.subsystems.MagicBox.PositionElevator;
 
 public class ElevateBox extends CommandBase {
-  
+  double mTarget;
   /**
    * Raises/lowers the magic box along the bars
    */
-  public ElevateBox() {
+  public ElevateBox(double target) {
     requires(magicbox);
+    mTarget = target/Math.PI * 4096;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    magicbox.resetElevatorEncoder();
-    double input = 12;
-    magicbox.magicToPoint(input/Math.PI * 4096);
-    //magicbox.magicToPoint(8.91);
-    // if (Variables.currentElevatorPostion == PositionElevator.UP){
-    //   magicbox.magicToPoint(0);
-    //   // magicbox.runElevatorMotionProfile(MotionProfiles.ElevatorMotionProfile, MotionProfiles.ElevatorMotionProfile.length, true);
-    // }else{
-    //   magicbox.magicToPoint(8.91);
-    //   // magicbox.runElevatorMotionProfile(MotionProfiles.ElevatorMotionProfile, MotionProfiles.ElevatorMotionProfile.length, false);
-    // }
+    magicbox.magicToPoint(mTarget);
   }
   
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    //System.out.println(magicbox.getElevatorPosition());
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
+
   }
 
   // Called once after isFinished returns true

@@ -14,7 +14,7 @@ public class DriveSignal {
      * @param right Right motor speed
      */
     public DriveSignal(double left, double right) {
-        this(left, right, false);
+        this(left, right, true);
     }
 
     public DriveSignal(double left, double right, boolean brakeMode) {

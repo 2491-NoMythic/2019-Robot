@@ -3,6 +3,7 @@ package com.nomythic2491.frc2019.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -67,15 +68,7 @@ public class Drivetrain extends Subsystem {
         /**
          * Instantiates the gyro
          */
-        try {
-            gyro = new AHRS(Port.kUSB);
-        } catch (Exception e) {
-            DriverStation.reportError("NavX instantiation failure! Check gyro USB cable", Variables.debugMode);
-
-            if (Variables.debugMode) {
-                System.out.println(e);
-            }
-        }
+        gyro = new AHRS(Port.kUSB);
 
         resetGyro();
 
@@ -130,6 +123,8 @@ public class Drivetrain extends Subsystem {
     public void driveDemand(ControlMode mode, DriveSignal signal) {
         mLeftMaster.set(mode, signal.getLeft());
         mRightMaster.set(mode, signal.getRight());
+        mRightMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
+        mLeftMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
     }
 
     /**

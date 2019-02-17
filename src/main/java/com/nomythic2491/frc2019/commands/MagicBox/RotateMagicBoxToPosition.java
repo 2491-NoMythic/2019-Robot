@@ -7,60 +7,39 @@
 
 package com.nomythic2491.frc2019.commands.MagicBox;
 
-import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.Settings.MotionProfiles;
-import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.frc2019.commands.CommandBase;
 import com.nomythic2491.frc2019.subsystems.MagicBox.PositionRotate;
 
 public class RotateMagicBoxToPosition extends CommandBase {
   PositionRotate startingPosition, targetPosition;
   boolean movingForward, movingBackwards;
+  double mTarget;
   
   /**
    * Rotates the Magic Box a specified amount
    * @param position The target position the intake will rotate to, in encoder ticks (4096 per revolution)
    */
-  public RotateMagicBoxToPosition(PositionRotate position) {
-    this.targetPosition = position;
+  public RotateMagicBoxToPosition(double target) {
     requires(magicbox);
+    mTarget = target;//((target * 4096) / 360);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // startingPosition = Variables.currentMagicboxPosition;
-    // if (startingPosition == PositionRotate.GROUND){
-    //   if(targetPosition == PositionRotate.FLAT){
-    //     magicbox.runMagicboxMotionProfile(MotionProfiles.roatateFromFlatToDown, MotionProfiles.roatateFromFlatToDown.length, true);
-    //   } else if(targetPosition == PositionRotate.BACK){
-    //     magicbox.runMagicboxMotionProfile(MotionProfiles.downToBack, MotionProfiles.downToBack.length, true);
-    //   }
-    // }else if (startingPosition == PositionRotate.FLAT){
-    //   if(targetPosition == PositionRotate.GROUND){
-    //     magicbox.runMagicboxMotionProfile(MotionProfiles.roatateFromFlatToDown, MotionProfiles.roatateFromFlatToDown.length, false);
-    //   } else if (targetPosition ==  PositionRotate.BACK){
-    //     magicbox.runMagicboxMotionProfile(MotionProfiles.flatToBack, MotionProfiles.flatToBack.length, true);
-    //   }
-    // }else{
-    //   if(targetPosition == PositionRotate.FLAT){
-    //     magicbox.runMagicboxMotionProfile(MotionProfiles.flatToBack, MotionProfiles.flatToBack.length, false);
-    //   }else if (targetPosition == PositionRotate.GROUND){
-    //     magicbox.runMagicboxMotionProfile(MotionProfiles.downToBack, MotionProfiles.downToBack.length, false);
-    //   }
-    // }
+    magicbox.rotateToPoint(mTarget);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    
+    //System.out.println(magicbox.getIntakeRotatorPosition());
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return magicbox.getIsMagicboxRunningMotionProfile();
+    return true;
   }
 
   // Called once after isFinished returns true

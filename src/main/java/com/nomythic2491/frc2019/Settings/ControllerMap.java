@@ -14,7 +14,7 @@ public class ControllerMap {
     //Controllers
     public static final int driveControllerLeft = 0;
     public static final int driveControllerRight = 1;
-    public static final int operatorController = 2;
+    public static final int operatorController = 0;
     
     //Left drive controller
     public static final int driveMainAxisLeft = 1;

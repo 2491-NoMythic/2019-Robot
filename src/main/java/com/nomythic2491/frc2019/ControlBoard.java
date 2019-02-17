@@ -41,4 +41,14 @@ public class ControlBoard implements IControlBoard {
     public boolean getSlowSpeed() {
         return mDriveController.getSlowSpeed();
     }
+
+    @Override
+    public boolean getIntakeOut() {
+        return mDriveController.getIntakeOut();
+    }
+
+    @Override
+    public boolean getIntakeIn() {
+        return mDriveController.getIntakeIn();
+    }
 }
