@@ -8,8 +8,13 @@ public class DriveSignal {
     protected double mRightMotor;
     protected boolean mBrakeMode;
 
+    /**
+     * Drive the motors at a given speed in percentage of throttle, ranging from -1 to 1
+     * @param left Left motor speed
+     * @param right Right motor speed
+     */
     public DriveSignal(double left, double right) {
-        this(left, right, false);
+        this(left, right, true);
     }
 
     public DriveSignal(double left, double right, boolean brakeMode) {

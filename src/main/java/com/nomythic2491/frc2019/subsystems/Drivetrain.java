@@ -3,6 +3,7 @@ package com.nomythic2491.frc2019.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -11,25 +12,37 @@ import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.lib.drivers.VictorSPXFactory;
+import com.nomythic2491.lib.util.DriveSignal;
+import com.nomythic2491.frc2019.commands.Drivetrain.Drive;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Drivetrain extends Subsystem {
 
-    private static Drivetrain mInstance;
+    private static Drivetrain mInstance = null;
     private TalonSRX mLeftMaster, mRightMaster;
     private VictorSPX mLeftSlave, mRightSlave;
     private AHRS gyro;
     public StringBuilder velocity;
     private NetworkTable limelight;
     private NetworkTableEntry tx, ty, ta, tv;
+    private Solenoid controlPins;
+
+    public static Drivetrain getInstance() {
+        if (mInstance == null) {
+            mInstance = new Drivetrain();
+        }
+        return mInstance;
+    }
 
     private Drivetrain() {
+        
         // Start all Talons in open loop mode.
         mLeftMaster = TalonSRXFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
         configureMaster(mLeftMaster, true);
@@ -45,36 +58,19 @@ public class Drivetrain extends Subsystem {
                 Constants.kRightDriveMasterId);
         mRightSlave.setInverted(true);
 
-        // Configures Talon feedback sensors
-        mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kVelocitySlotId,
-                Constants.kTimeoutMs);
-        mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kVelocitySlotId,
-                Constants.kTimeoutMs);
-
         // Corrects sensor direction to match throttle direction
         mLeftMaster.setSensorPhase(true);
         mRightMaster.setSensorPhase(true);
 
         /* Configures FPID constants for Talon's Velocity mode */
-        setTalonPID(Constants.kVelocitykP, Constants.kVelocitykI, Constants.kVelocitykD);
-
-        setTalonF(Constants.kVelocitykF);
+        setTalonPIDF(Constants.kVelocitykP, Constants.kVelocitykI, Constants.kVelocitykD, Constants.kVelocitykF);
 
         /**
          * Instantiates the gyro
          */
-        try {
-            gyro = new AHRS(Port.kUSB);
-        } catch (Exception e) {
-            DriverStation.reportError("NavX instantiation failure! Check gyro USB cable", Variables.debugMode);
-
-            if (Variables.debugMode) {
-                System.out.println(e);
-            }
-        }
+        gyro = new AHRS(Port.kUSB);
 
         resetGyro();
-        velocity = new StringBuilder();
 
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
         limelight.getEntry("ledMode").setNumber(0);
@@ -83,13 +79,6 @@ public class Drivetrain extends Subsystem {
         ty = limelight.getEntry("ty");
         ta = limelight.getEntry("ta");
         tv = limelight.getEntry("tv");
-    }
-
-    public static Drivetrain GetInstance() {
-        if (mInstance == null) {
-            mInstance = new Drivetrain();
-        }
-        return mInstance;
     }
 
     private void configureMaster(TalonSRX talon, boolean left) {
@@ -111,11 +100,7 @@ public class Drivetrain extends Subsystem {
         talon.configNeutralDeadband(0.04, 0);
     }
 
-    @Override
-    protected void initDefaultCommand() {
-    }
-
-    public void setTalonPID(double proportional, double iterative, double derivative) {
+    private void setTalonPIDF(double proportional, double iterative, double derivative, double feedForward) {
         mLeftMaster.config_kP(Constants.kVelocitySlotId, proportional, Constants.kTimeoutMs);
         mRightMaster.config_kP(Constants.kVelocitySlotId, proportional, Constants.kTimeoutMs);
 
@@ -124,116 +109,36 @@ public class Drivetrain extends Subsystem {
 
         mLeftMaster.config_kD(Constants.kVelocitySlotId, derivative, Constants.kTimeoutMs);
         mRightMaster.config_kD(Constants.kVelocitySlotId, derivative, Constants.kTimeoutMs);
-    }
 
-    public void setTalonF(double feedForward) {
         mLeftMaster.config_kF(Constants.kVelocitySlotId, feedForward, Constants.kTimeoutMs);
         mRightMaster.config_kF(Constants.kVelocitySlotId, feedForward, Constants.kTimeoutMs);
     }
 
     /**
-     * Drives both sides of the robot at the same speed
+     * Drives each side of the robot at a given DriveSignal in a given ControlMode
      * 
-     * @param speed Speed of all drivetrain wheels in inches per second
+     * @param mode  CTRE ControlMode for the talons
+     * @param signal DriveSignal for the motors
      */
-    public void driveVelocity(double speed) {
-        driveLeftVelocity(speed);
-        driveRightVelocity(speed);
-    }
-
-    /**
-     * Drives each side of the robot at different speeds
-     * 
-     * @param leftSpeed  Speed of left wheels in inches per second
-     * @param rightSpeed Speed of right wheels in inches per second
-     */
-    public void driveVelocity(double leftSpeed, double rightSpeed) {
-        driveLeftVelocity(leftSpeed);
-        driveRightVelocity(rightSpeed);
-    }
-
-    /**
-     * Drives the left side of the robot
-     * 
-     * @param speed Speed of left wheels in inches per second
-     */
-    public void driveLeftVelocity(double speed) {
-        mLeftMaster.set(ControlMode.Velocity, speed);
-    }
-
-    /**
-     * Drives the right side of the robot
-     * 
-     * @param speed Speed of the right wheels in inches per second
-     */
-    public void driveRightVelocity(double speed) {
-        mRightMaster.set(ControlMode.Velocity, speed);
-    }
-
-    /**
-     * Drives both sides of the robot at the same speed, ranging from -1 to 1
-     * 
-     * @param speed Speed of all drivetrain wheels, ranging from -1 to 1
-     */
-    public void drivePercentOutput(double speed) {
-        drivePercentOutput(speed, speed);
-    }
-
-    /**
-     * Drives each side of the robot at a given speed, ranging from -1 to 1
-     * 
-     * @param leftSpeed  Speed of the left wheels from -1 to 1
-     * @param rightSpeed Speed of the right wheels from -1 to 1
-     */
-    public void drivePercentOutput(double leftSpeed, double rightSpeed) {
-        driveLeftPercentOutput(leftSpeed);
-        driveRightPercentOutput(rightSpeed);
-    }
-
-    /**
-     * Drives the left side of the robot at a given speed, ranging from -1 to 1
-     * 
-     * @param speed Speed of the left wheels from -1 to 1
-     */
-    public void driveLeftPercentOutput(double speed) {
-        mLeftMaster.set(ControlMode.PercentOutput, speed);
-    }
-
-    /**
-     * Drives the right side of the robot at a given speed, ranging from -1 to 1
-     * 
-     * @param speed Speed of the right wheels from -1 to 1
-     */
-    public void driveRightPercentOutput(double speed) {
-        mRightMaster.set(ControlMode.PercentOutput, speed);
+    public void driveDemand(ControlMode mode, DriveSignal signal) {
+        mLeftMaster.set(mode, signal.getLeft());
+        mRightMaster.set(mode, signal.getRight());
+        mRightMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
+        mLeftMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
     }
 
     /**
      * Stops the drivetrain wheels
      */
     public void stop() {
-        drivePercentOutput(0);
+        driveDemand(ControlMode.PercentOutput, DriveSignal.BRAKE);
     }
 
     /**
      * Sets left and right encoders to 0
      */
     public void resetEncoders() {
-        resetLeftEncoder();
-        resetRightEncoder();
-    }
-
-    /**
-     * Sets the left encoder to 0
-     */
-    public void resetLeftEncoder() {
         mLeftMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
-    }
-
-    /**
-     * Sets the right encoder to 0
-     */
-    public void resetRightEncoder() {
         mRightMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
     }
 
@@ -241,7 +146,7 @@ public class Drivetrain extends Subsystem {
      * @return The value of the left drive encoder in inches
      */
     public double getLeftEncoderDistance() {
-        return mLeftMaster.getSelectedSensorPosition(0) * Constants.driveEncoderToInches;
+        return mLeftMaster.getSelectedSensorPosition(0) * Constants.kDriveEncoderToInches;
     }
 
     /**
@@ -264,7 +169,7 @@ public class Drivetrain extends Subsystem {
      * @return The value of the right drive encoder in inches
      */
     public double getRightEncoderDistance() {
-        return mRightMaster.getSelectedSensorPosition(0) * Constants.driveEncoderToInches;
+        return mRightMaster.getSelectedSensorPosition(0) * Constants.kDriveEncoderToInches;
     }
 
     /**
@@ -342,24 +247,6 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
-     * Gets the master left talon
-     * 
-     * @return The master left talon
-     */
-    public TalonSRX getLeftTalon() {
-        return mLeftMaster;
-    }
-
-    /**
-     * Gets the master right talon
-     * 
-     * @return The master right talon
-     */
-    public TalonSRX getRightTalon() {
-        return mRightMaster;
-    }
-
-    /**
      * Gives the displacement of the target from the center point of the limelight
      * on the x-axis
      * 
@@ -397,13 +284,24 @@ public class Drivetrain extends Subsystem {
         return tv.getDouble(0) == 1;
     }
 
+    /**
+     * Sets the robot pipeline to the necessary setting
+     */
     public void setVisionMode() {
         limelight.getEntry("ledMode").setNumber(0);
         limelight.getEntry("camMode").setNumber(0);
     }
 
+    /**
+     * Sets the driverstation pipeline to the necessary settings
+     */
     public void setCameraMode() {
         limelight.getEntry("ledMode").setNumber(1);
         limelight.getEntry("camMode").setNumber(1);
+    }
+    
+    @Override
+    public void initDefaultCommand() {
+        setDefaultCommand(new Drive());
     }
 }

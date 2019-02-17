@@ -1,10 +1,15 @@
 package com.nomythic2491.frc2019.Controllers;
 
+import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.lib.util.CheesyDriveHelper;
+import com.nomythic2491.lib.util.DriveSignal;
+
 import edu.wpi.first.wpilibj.Joystick;
 
 public class ArcadeDriver implements IDriveController {
-    
-    private static ArcadeDriver mInstance = null; 
+
+    private static ArcadeDriver mInstance = null;
+    private CheesyDriveHelper mHelper;
 
     public static ArcadeDriver getInstance() {
         if (mInstance == null) {
@@ -17,16 +22,15 @@ public class ArcadeDriver implements IDriveController {
 
     private ArcadeDriver() {
         mJoystick = new Joystick(0);
+        mHelper = new CheesyDriveHelper();
     }
 
     @Override
-    public double getThrottle() {
-        return mJoystick.getRawAxis(1);
-    }
-
-    @Override
-    public double getTurn() {
-        return mJoystick.getRawAxis(2);
+    public DriveSignal getSignal() {
+        return mHelper.cheesyDrive(
+                mHelper.handleDeadband(-mJoystick.getRawAxis(Constants.kDriverThrottleAxis), Constants.kDeadband),
+                mHelper.handleDeadband(mJoystick.getRawAxis(Constants.kDriverTurnAxis), Constants.kDeadband),
+                mJoystick.getRawButton(Constants.kQuickturnButton));
     }
 
     @Override
@@ -35,19 +39,18 @@ public class ArcadeDriver implements IDriveController {
     }
 
     @Override
-    public boolean getTankTurnLeft() {
-        return mJoystick.getRawButton(2);
-    }
-
-    @Override
-    public boolean getTankTurnRight() {
-        return mJoystick.getRawButton(3);
-    }
-
-    @Override
     public boolean getSlowSpeed() {
         return mJoystick.getRawButton(0);
     }
 
+    @Override
+    public boolean getIntakeOut() {
+        return mJoystick.getRawButton(5);
+    }
+
+    @Override
+    public boolean getIntakeIn() {
+        return mJoystick.getRawButton(3);
+    }
 
 }
