@@ -3,6 +3,7 @@ package com.nomythic2491.frc2019.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -47,20 +48,21 @@ public class Drivetrain extends Subsystem {
         mLeftMaster = TalonSRXFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
         configureMaster(mLeftMaster, true);
 
-        mLeftSlave = VictorSPXFactory.createPermanentSlaveTalon(Constants.kLeftDriveSlaveId,
-                Constants.kLeftDriveMasterId);
-        mLeftSlave.setInverted(false);
+        mLeftSlave = new VictorSPX(Constants.kLeftDriveSlaveId);
+        mLeftSlave.configFactoryDefault();
+        mLeftSlave.setInverted(true);
+        mLeftSlave.follow(mLeftMaster);
 
         mRightMaster = TalonSRXFactory.createDefaultTalon(Constants.kRightDriveMasterId);
         configureMaster(mRightMaster, false);
 
-        mRightSlave = VictorSPXFactory.createPermanentSlaveTalon(Constants.kRightDriveSlaveId,
-                Constants.kRightDriveMasterId);
-        mRightSlave.setInverted(true);
+        mRightSlave = new VictorSPX(Constants.kRightDriveSlaveId);
+        mRightSlave.configFactoryDefault();
+        mRightSlave.follow(mRightMaster);
 
         // Corrects sensor direction to match throttle direction
         mLeftMaster.setSensorPhase(true);
-        mRightMaster.setSensorPhase(true);
+        mRightMaster.setSensorPhase(true); 
 
         /* Configures FPID constants for Talon's Velocity mode */
         setTalonPIDF(Constants.kVelocitykP, Constants.kVelocitykI, Constants.kVelocitykD, Constants.kVelocitykF);
@@ -68,7 +70,7 @@ public class Drivetrain extends Subsystem {
         /**
          * Instantiates the gyro
          */
-        gyro = new AHRS(Port.kUSB);
+        //gyro = new AHRS(Port.kUSB);
 
         resetGyro();
 
@@ -89,7 +91,7 @@ public class Drivetrain extends Subsystem {
             DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent,
                     false);
         }
-        talon.setInverted(!left);
+        talon.setInverted(left);
         talon.setSensorPhase(true);
         talon.enableVoltageCompensation(true);
         talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
@@ -221,7 +223,7 @@ public class Drivetrain extends Subsystem {
      * Sets the value of the gyro to 0
      */
     public void resetGyro() {
-        gyro.reset();
+        //gyro.reset();
     }
 
     /**
@@ -230,11 +232,11 @@ public class Drivetrain extends Subsystem {
      * @return
      */
     public double getGyroAngle() {
-        return (gyro.getAngle() % 360 + 360) % 360;
+        return 0;//(gyro.getAngle() % 360 + 360) % 360;
     }
 
     public double getRawGyroAngle() {
-        return gyro.getAngle();
+        return 0;//gyro.getAngle();
     }
 
     /**
@@ -242,9 +244,9 @@ public class Drivetrain extends Subsystem {
      * 
      * @return The drivetrain gyro
      */
-    public AHRS getGyro() {
-        return gyro;
-    }
+    // public AHRS getGyro() {
+    //     return gyro;
+    // }
 
     /**
      * Gives the displacement of the target from the center point of the limelight

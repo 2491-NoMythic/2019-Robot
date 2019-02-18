@@ -17,10 +17,10 @@ public class Constants {
     // Drive
     public static final int kControlPinsChannel = 0;
 
-    public static int kRightDriveMasterId = 10;
-    public static int kRightDriveSlaveId = 11;
-    public static int kLeftDriveMasterId = 1;
-    public static int kLeftDriveSlaveId = 0;
+    public static int kRightDriveMasterId = 1;
+    public static int kRightDriveSlaveId = 0;
+    public static int kLeftDriveMasterId = 14;
+    public static int kLeftDriveSlaveId = 15;
 
     public static final double kDriveEncoderToInches = 1 / Constants.kWheelDiameterInches * Math.PI / 4096.0;
     public static final double kWheelDiameterInches = 2491; // This is very, very important! Change this before trying to

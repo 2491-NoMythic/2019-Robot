@@ -8,6 +8,7 @@
 package com.nomythic2491.frc2019;
 
 import com.nomythic2491.frc2019.Settings.ControllerMap;
+import com.nomythic2491.frc2019.commands.Climber.ManualClimb;
 import com.nomythic2491.frc2019.commands.MagicBox.ElevateBox;
 import com.nomythic2491.frc2019.commands.MagicBox.IntakeCargoManual;
 import com.nomythic2491.frc2019.commands.MagicBox.RotateMagicBoxToPosition;
@@ -15,6 +16,7 @@ import com.nomythic2491.frc2019.commands.MagicBox.RotateMagicBoxToPosition;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.POVButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -32,6 +34,7 @@ public class OI {
   Button Cargo, Cargo2;
   Button HatchMed;
   Button Bottom;
+  POVButton Deploy, Retract;
 
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
@@ -74,28 +77,33 @@ public class OI {
     Cargo2 = new JoystickButton(controllers[ControllerMap.operatorController],3);
     Flat = new JoystickButton(controllers[ControllerMap.operatorController], 1);
 
-    CargoMed = new JoystickButton(controllers[ControllerMap.operatorController], 7);
+    //CargoMed = new JoystickButton(controllers[ControllerMap.operatorController], 7);
     CargoLow = new JoystickButton(controllers[ControllerMap.operatorController], 9);
     CargoPickup = new JoystickButton(controllers[ControllerMap.operatorController], 11);
     HatchMed = new JoystickButton(controllers[ControllerMap.operatorController], 8);
     Bottom = new JoystickButton(controllers[ControllerMap.operatorController], 12);
+
+    Deploy = new POVButton(controllers[ControllerMap.operatorController], 180);
+    Retract = new POVButton(controllers[ControllerMap.operatorController], 0);
 
     //Right hand is cargo left hand is hatch
 
     //CargoMed.whenPressed(new ElevateBox(49));
     //HatchMed.whenPressed(new ElevateBox(28));
     CargoLow.whenPressed(new ElevateBox(21));
-    CargoPickup.whenPressed(new ElevateBox(2.5));
+    CargoPickup.whenPressed(new ElevateBox(3));
     Bottom.whenPressed(new ElevateBox(0));
 
-    //[]\
-    Stowed.whenPressed(new RotateMagicBoxToPosition(-1614.0));
+    Stowed.whenPressed(new ManualClimb(false, true));
     Hatch.whenPressed(new RotateMagicBoxToPosition(-1414.0));
     Hatch2.whenPressed(new RotateMagicBoxToPosition(-1414.0)); //1314
     Cargo.whenPressed(new RotateMagicBoxToPosition(-1100));
     Cargo2.whenPressed(new RotateMagicBoxToPosition(-1100));
 
-    Flat.whenPressed(new RotateMagicBoxToPosition(-600));
+    Flat.whenPressed(new RotateMagicBoxToPosition(-570));
+
+    Deploy.whileActive(new ManualClimb(true, false));
+    Retract.whileActive(new ManualClimb(false, false));
 
   }
 

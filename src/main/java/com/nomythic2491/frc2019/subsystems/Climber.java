@@ -27,7 +27,7 @@ public class Climber extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   private static Climber instance;
-  private TalonSRX mRightClimberTalon, mLeftClimberTalon;
+  private TalonSRX mMasterClimber, mSlaveClimber;
   private Solenoid mClimberSolenoid, mBrakeSolenoid;
    DigitalInput limitSwitch;
 
@@ -39,18 +39,18 @@ public class Climber extends Subsystem {
   }
 
   private Climber() {
-    mRightClimberTalon = TalonSRXFactory.createDefaultTalon(Constants.kPoleMasterId);
-    configureMaster(mRightClimberTalon, true);
+    mMasterClimber = TalonSRXFactory.createDefaultTalon(Constants.kPoleMasterId);
+    configureMaster(mMasterClimber, true);
 
-    mLeftClimberTalon = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
-    mLeftClimberTalon.setInverted(false);
+    mSlaveClimber = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
+    mSlaveClimber.setInverted(true);
 
     mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSkidChannel);
     mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeChannel);
 
   }
   public void runClimberRacks(double speed) {
-    mRightClimberTalon.set(ControlMode.PercentOutput, speed);
+    mMasterClimber.set(ControlMode.PercentOutput, speed);
   }
 
   // Elias --- this stuff is all copied from Drivetrain.java and we might not need
@@ -79,11 +79,11 @@ public class Climber extends Subsystem {
   }
 
   private void resetRightEncoder() {
-    mRightClimberTalon.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+    mMasterClimber.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
   }
 
   private void resetLeftEncoder() {
-    mLeftClimberTalon.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+    mSlaveClimber.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
   }
 
   /**
@@ -92,7 +92,7 @@ public class Climber extends Subsystem {
   public double getLeftEncoderDistance() {
     try
     {
-      return mLeftClimberTalon.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
+      return mSlaveClimber.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
     }
     catch(Exception e)
     {
@@ -107,7 +107,7 @@ public class Climber extends Subsystem {
   public double getLeftEncoderDistanceRaw() {
     try
     {
-      return mLeftClimberTalon.getSelectedSensorPosition(0);
+      return mSlaveClimber.getSelectedSensorPosition(0);
     }
     catch(Exception e)
     {
@@ -124,7 +124,7 @@ public class Climber extends Subsystem {
   public double getRightEncoderDistanceRaw() {
     try 
     {
-      return mRightClimberTalon.getSelectedSensorPosition(0);
+      return mMasterClimber.getSelectedSensorPosition(0);
     }
     catch(Exception e)
     {
@@ -139,7 +139,7 @@ public class Climber extends Subsystem {
   public double getRightEncoderDistance() {
     try
     {
-      return mRightClimberTalon.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
+      return mMasterClimber.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
     }
     catch(Exception e)
     {
@@ -164,13 +164,10 @@ public class Climber extends Subsystem {
     mClimberSolenoid.set(false);
   }
 
-  public void engageBrake() {
-    mBrakeSolenoid.set(true);
+  public void engageRatchet(boolean engaed) {
+    mBrakeSolenoid.set(engaed);
   }
 
-  public void disengageBrake() {
-    mBrakeSolenoid.set(false);
-}
 public boolean isSkidUp() {
   return  mClimberSolenoid.get();
 }
