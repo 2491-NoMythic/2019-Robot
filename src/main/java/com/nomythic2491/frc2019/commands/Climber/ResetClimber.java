@@ -27,7 +27,7 @@ public class ResetClimber extends CommandBase {
   @Override
   protected void execute() {
      climber.disengageSkid();
-     climber.runClimberRacks(Constants.kClimberVelocity);
+     climber.runClimberDemand(Constants.kClimberVelocity);
 
   }
 
@@ -39,7 +39,7 @@ public class ResetClimber extends CommandBase {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-  climber.runClimberRacks(0);
+  climber.runClimberDemand(0);
   }
 
   // Called when another command which requires one or more of the same
