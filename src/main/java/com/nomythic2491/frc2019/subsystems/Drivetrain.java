@@ -3,24 +3,21 @@ package com.nomythic2491.frc2019.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.Settings.Variables;
-import com.nomythic2491.lib.drivers.TalonSRXFactory;
-import com.nomythic2491.lib.drivers.VictorSPXFactory;
-import com.nomythic2491.lib.util.DriveSignal;
 import com.nomythic2491.frc2019.commands.Drivetrain.Drive;
+import com.nomythic2491.lib.drivers.TalonSRXFactory;
+import com.nomythic2491.lib.util.DriveSignal;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -33,7 +30,6 @@ public class Drivetrain extends Subsystem {
     public StringBuilder velocity;
     private NetworkTable limelight;
     private NetworkTableEntry tx, ty, ta, tv;
-    private Solenoid controlPins;
 
     public static Drivetrain getInstance() {
         if (mInstance == null) {
@@ -43,15 +39,15 @@ public class Drivetrain extends Subsystem {
     }
 
     private Drivetrain() {
-        
+
         // Start all Talons in open loop mode.
         mLeftMaster = TalonSRXFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
         configureMaster(mLeftMaster, true);
 
         mLeftSlave = new VictorSPX(Constants.kLeftDriveSlaveId);
         mLeftSlave.configFactoryDefault();
-        mLeftSlave.setInverted(true);
         mLeftSlave.follow(mLeftMaster);
+        mLeftSlave.setInverted(InvertType.FollowMaster);
 
         mRightMaster = TalonSRXFactory.createDefaultTalon(Constants.kRightDriveMasterId);
         configureMaster(mRightMaster, false);
@@ -59,18 +55,19 @@ public class Drivetrain extends Subsystem {
         mRightSlave = new VictorSPX(Constants.kRightDriveSlaveId);
         mRightSlave.configFactoryDefault();
         mRightSlave.follow(mRightMaster);
+        mRightSlave.setInverted(InvertType.FollowMaster);
 
         // Corrects sensor direction to match throttle direction
         mLeftMaster.setSensorPhase(true);
-        mRightMaster.setSensorPhase(true); 
+        mRightMaster.setSensorPhase(true);
 
         /* Configures FPID constants for Talon's Velocity mode */
-        setTalonPIDF(Constants.kVelocitykP, Constants.kVelocitykI, Constants.kVelocitykD, Constants.kVelocitykF);
+        setTalonPIDF(Constants.kDrivekP, Constants.kDrivekI, Constants.kDrivekD, Constants.kDrivekF);
 
         /**
          * Instantiates the gyro
          */
-        //gyro = new AHRS(Port.kUSB);
+        gyro = new AHRS(Port.kUSB);
 
         resetGyro();
 
@@ -84,9 +81,10 @@ public class Drivetrain extends Subsystem {
     }
 
     private void configureMaster(TalonSRX talon, boolean left) {
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
+        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
+        // primary closed-loop, 100 ms timeout
         final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
-                100); // primary closed-loop, 100 ms timeout
+                Constants.kLongCANTimeoutMs);
         if (sensorPresent != ErrorCode.OK) {
             DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent,
                     false);
@@ -103,23 +101,23 @@ public class Drivetrain extends Subsystem {
     }
 
     private void setTalonPIDF(double proportional, double iterative, double derivative, double feedForward) {
-        mLeftMaster.config_kP(Constants.kVelocitySlotId, proportional, Constants.kTimeoutMs);
-        mRightMaster.config_kP(Constants.kVelocitySlotId, proportional, Constants.kTimeoutMs);
+        mLeftMaster.config_kP(Constants.kPrimarySlotIdx, proportional, Constants.kLongCANTimeoutMs);
+        mRightMaster.config_kP(Constants.kPrimarySlotIdx, proportional, Constants.kLongCANTimeoutMs);
 
-        mLeftMaster.config_kI(Constants.kVelocitySlotId, iterative, Constants.kTimeoutMs);
-        mRightMaster.config_kI(Constants.kVelocitySlotId, iterative, Constants.kTimeoutMs);
+        mLeftMaster.config_kI(Constants.kPrimarySlotIdx, iterative, Constants.kLongCANTimeoutMs);
+        mRightMaster.config_kI(Constants.kPrimarySlotIdx, iterative, Constants.kLongCANTimeoutMs);
 
-        mLeftMaster.config_kD(Constants.kVelocitySlotId, derivative, Constants.kTimeoutMs);
-        mRightMaster.config_kD(Constants.kVelocitySlotId, derivative, Constants.kTimeoutMs);
+        mLeftMaster.config_kD(Constants.kPrimarySlotIdx, derivative, Constants.kLongCANTimeoutMs);
+        mRightMaster.config_kD(Constants.kPrimarySlotIdx, derivative, Constants.kLongCANTimeoutMs);
 
-        mLeftMaster.config_kF(Constants.kVelocitySlotId, feedForward, Constants.kTimeoutMs);
-        mRightMaster.config_kF(Constants.kVelocitySlotId, feedForward, Constants.kTimeoutMs);
+        mLeftMaster.config_kF(Constants.kPrimarySlotIdx, feedForward, Constants.kLongCANTimeoutMs);
+        mRightMaster.config_kF(Constants.kPrimarySlotIdx, feedForward, Constants.kLongCANTimeoutMs);
     }
 
     /**
      * Drives each side of the robot at a given DriveSignal in a given ControlMode
      * 
-     * @param mode  CTRE ControlMode for the talons
+     * @param mode   CTRE ControlMode for the talons
      * @param signal DriveSignal for the motors
      */
     public void driveDemand(ControlMode mode, DriveSignal signal) {
@@ -140,8 +138,8 @@ public class Drivetrain extends Subsystem {
      * Sets left and right encoders to 0
      */
     public void resetEncoders() {
-        mLeftMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
-        mRightMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+        mLeftMaster.setSelectedSensorPosition(0, Constants.kPrimarySlotIdx, Constants.kTimeoutMs);
+        mRightMaster.setSelectedSensorPosition(0, Constants.kPrimarySlotIdx, Constants.kTimeoutMs);
     }
 
     /**
@@ -209,21 +207,21 @@ public class Drivetrain extends Subsystem {
      * @return The left driverail's velocity in NativeUnitsPer100Ms
      */
     public double getLeftVelocityRaw() {
-        return mLeftMaster.getSelectedSensorVelocity(Constants.kVelocitySlotId);
+        return mLeftMaster.getSelectedSensorVelocity(Constants.kPrimarySlotIdx);
     }
 
     /**
      * @return The right driverail's velocity in NativeUnitsPer100Ms
      */
     public double getRightVelocityRaw() {
-        return mRightMaster.getSelectedSensorVelocity(Constants.kVelocitySlotId);
+        return mRightMaster.getSelectedSensorVelocity(Constants.kPrimarySlotIdx);
     }
 
     /**
      * Sets the value of the gyro to 0
      */
     public void resetGyro() {
-        //gyro.reset();
+        gyro.reset();
     }
 
     /**
@@ -232,21 +230,12 @@ public class Drivetrain extends Subsystem {
      * @return
      */
     public double getGyroAngle() {
-        return 0;//(gyro.getAngle() % 360 + 360) % 360;
+        return (gyro.getAngle() % 360 + 360) % 360;
     }
 
     public double getRawGyroAngle() {
-        return 0;//gyro.getAngle();
+        return gyro.getAngle();
     }
-
-    /**
-     * Gets the drivetrain gyro
-     * 
-     * @return The drivetrain gyro
-     */
-    // public AHRS getGyro() {
-    //     return gyro;
-    // }
 
     /**
      * Gives the displacement of the target from the center point of the limelight
@@ -301,7 +290,7 @@ public class Drivetrain extends Subsystem {
         limelight.getEntry("ledMode").setNumber(1);
         limelight.getEntry("camMode").setNumber(1);
     }
-    
+
     @Override
     public void initDefaultCommand() {
         setDefaultCommand(new Drive());

@@ -28,7 +28,7 @@ public class Climber extends Subsystem {
   // here. Call these from Commands.
   private static Climber instance;
   private TalonSRX mMasterClimber, mSlaveClimber;
-  private Solenoid mClimberSolenoid, mBrakeSolenoid;
+  private Solenoid mClimberSolenoid, mRatchetSolenoid;
    DigitalInput limitSwitch;
 
   public static Climber getInstance() {
@@ -45,8 +45,8 @@ public class Climber extends Subsystem {
     mSlaveClimber = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
     mSlaveClimber.setInverted(true);
 
-    mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSkidChannel);
-    mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeChannel);
+    mClimberSolenoid = new Solenoid(Constants.kSkidsChannel);
+    mRatchetSolenoid = new Solenoid(Constants.kRatchetChannel);
 
   }
   public void runClimberRacks(double speed) {
@@ -79,11 +79,11 @@ public class Climber extends Subsystem {
   }
 
   private void resetRightEncoder() {
-    mMasterClimber.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+    mMasterClimber.setSelectedSensorPosition(0, Constants.kPrimarySlotIdx, Constants.kTimeoutMs);
   }
 
   private void resetLeftEncoder() {
-    mSlaveClimber.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+    mSlaveClimber.setSelectedSensorPosition(0, Constants.kPrimarySlotIdx, Constants.kTimeoutMs);
   }
 
   /**
@@ -165,7 +165,7 @@ public class Climber extends Subsystem {
   }
 
   public void engageRatchet(boolean engaed) {
-    mBrakeSolenoid.set(engaed);
+    mRatchetSolenoid.set(engaed);
   }
 
 public boolean isSkidUp() {

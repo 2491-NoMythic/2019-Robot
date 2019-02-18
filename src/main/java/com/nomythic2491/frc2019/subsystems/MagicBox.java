@@ -8,11 +8,9 @@
 package com.nomythic2491.frc2019.subsystems;
 
 import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.motion.SetValueMotionProfile;
-import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
@@ -23,8 +21,8 @@ import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -57,46 +55,47 @@ public class MagicBox extends Subsystem {
   }
 
   private MagicBox() {
-    intake = TalonSRXFactory.createDefaultTalon(Constants.kIntakeRollerId);
-    rotateIntake = TalonSRXFactory.createDefaultTalon(Constants.kRotator);
+    intake = TalonSRXFactory.createDefaultTalon(Constants.kRollerId);
+
+    rotateIntake = TalonSRXFactory.createDefaultTalon(Constants.kRotatorId);
     configureMaster(rotateIntake, false, 0.04);
-    elevatorMaster = TalonSRXFactory.createDefaultTalon(Constants.kElevatorLeft);
+
+    rotateIntake.selectProfileSlot(Constants.kPrimarySlotIdx, 0);
+    rotateIntake.config_kF(Constants.kPrimarySlotIdx, 1.076842105263158, Constants.kLongCANTimeoutMs);
+    rotateIntake.config_kP(Constants.kPrimarySlotIdx, 0.6, Constants.kLongCANTimeoutMs); // .12
+    rotateIntake.config_kI(Constants.kPrimarySlotIdx, 0, Constants.kLongCANTimeoutMs); // .00001
+    rotateIntake.config_kD(Constants.kPrimarySlotIdx, 220, Constants.kLongCANTimeoutMs); // 25
+
+    rotateIntake.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
+    rotateIntake.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
+
+    rotateIntake.configMotionCruiseVelocity(200, Constants.kLongCANTimeoutMs);
+    rotateIntake.configMotionAcceleration(400, Constants.kLongCANTimeoutMs);
+
+    elevatorMaster = TalonSRXFactory.createDefaultTalon(Constants.kElevatorMasterId);
     configureMaster(elevatorMaster, true, 0.04);
 
-    elevatorMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100);
-    elevatorMaster.selectProfileSlot(0, 0);
-    elevatorMaster.config_kF(0, 0.1364);
-    elevatorMaster.config_kP(0, 0.25); // .12
-    elevatorMaster.config_kI(0, 0.00001); // .00001
-    elevatorMaster.config_kD(0, 45); // 25
+    elevatorMaster.selectProfileSlot(Constants.kPrimarySlotIdx, 0);
+    elevatorMaster.config_kF(Constants.kPrimarySlotIdx, 0.1364, Constants.kLongCANTimeoutMs);
+    elevatorMaster.config_kP(Constants.kPrimarySlotIdx, 0.25, Constants.kLongCANTimeoutMs); // .12
+    elevatorMaster.config_kI(Constants.kPrimarySlotIdx, 0.00001, Constants.kLongCANTimeoutMs); // .00001
+    elevatorMaster.config_kD(Constants.kPrimarySlotIdx, 45, Constants.kLongCANTimeoutMs); // 25
 
-    elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 100);
-    elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 100);
+    elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
+    elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
 
-    elevatorMaster.configMotionCruiseVelocity(6650);
-    elevatorMaster.configMotionAcceleration(6650);
+    elevatorMaster.configMotionCruiseVelocity(6650, Constants.kLongCANTimeoutMs);
+    elevatorMaster.configMotionAcceleration(6650, Constants.kLongCANTimeoutMs);
 
     elevatorMaster.setSelectedSensorPosition(0);
 
-    rotateIntake.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100);
+    initQuadrature();
 
-    rotateIntake.selectProfileSlot(0, 0);
-    rotateIntake.config_kF(0, 1.076842105263158);
-    rotateIntake.config_kP(0, 0.6); // .12
-    rotateIntake.config_kI(0, 0); // .00001
-    rotateIntake.config_kD(0, 220); // 25
-
-    rotateIntake.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 100);
-    rotateIntake.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 100);
-
-    rotateIntake.configMotionCruiseVelocity(200);
-    rotateIntake.configMotionAcceleration(400);
-
-    elevatorSlave = TalonSRXFactory.createPermanentSlaveTalon(Constants.kElevatorRight, Constants.kElevatorLeft);
-    elevatorSlave.setInverted(true);
+    elevatorSlave = new TalonSRX(Constants.kElevatorSlaveId);
+    elevatorSlave.configFactoryDefault(Constants.kLongCANTimeoutMs);
+    elevatorSlave.setInverted(InvertType.OpposeMaster);
 
     spindle = new DoubleSolenoid(Constants.kHatchOutChannel, Constants.kHatchInChannel);
-    initQuadrature();
   }
 
   public void initQuadrature() {
@@ -109,26 +108,24 @@ public class MagicBox extends Subsystem {
 
     int pulseWidth = rotateIntake.getSensorCollection().getPulseWidthPosition();
 
-		/**
-		 * Mask out the bottom 12 bits to normalize to [0,4095],
-		 * or in other words, to stay within [0,360) degrees 
-		 */
-		pulseWidth = pulseWidth & 0xFFF;
+    /**
+     * Mask out the bottom 12 bits to normalize to [0,4095], or in other words, to
+     * stay within [0,360) degrees
+     */
+    pulseWidth = pulseWidth & 0xFFF;
 
-		/* Update Quadrature position */
-	  rotateIntake.getSensorCollection().setQuadraturePosition(pulseWidth, Constants.kTimeoutMs);
-	}
-
+    /* Update Quadrature position */
+    rotateIntake.getSensorCollection().setQuadraturePosition(pulseWidth, Constants.kTimeoutMs);
+  }
 
   private void configureMaster(TalonSRX talon, boolean left, double nominalV) {
-    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
-    //final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100); // primary
-                                                                                                                         // closed-loop,
-                                                                                                                         // 100ms
-                                                                                                                         // timeout
-    // if (sensorPresent != ErrorCode.OK) {
-    //   DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent, false);
-    // }
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
+    // primary closed-loop
+    final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
+        Constants.kLongCANTimeoutMs);
+    if (sensorPresent != ErrorCode.OK) {
+      DriverStation.reportError("Could not detect " + (left ? "left" : "right") + "encoder: " + sensorPresent, false);
+    }
     talon.setInverted(!left);
     talon.setSensorPhase(false);
     talon.enableVoltageCompensation(true);
@@ -162,7 +159,7 @@ public class MagicBox extends Subsystem {
    * Resets the elevator encoder
    */
   public void resetElevatorEncoder() {
-    elevatorMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+    elevatorMaster.setSelectedSensorPosition(0, 0, Constants.kTimeoutMs);
   }
 
   public double getIntakeRotatorPosition() {
@@ -170,19 +167,19 @@ public class MagicBox extends Subsystem {
   }
 
   /**
-	 * @param units CTRE mag encoder sensor units 
-	 * @return degrees rounded to tenths.
-	 */
-	String ToDeg(int units) {
-		double deg = units * 360.0 / 4096.0;
+   * @param units CTRE mag encoder sensor units
+   * @return degrees rounded to tenths.
+   */
+  String ToDeg(int units) {
+    double deg = units * 360.0 / 4096.0;
 
-		/* truncate to 0.1 res */
-		deg *= 10;
-		deg = (int) deg;
-		deg /= 10;
+    /* truncate to 0.1 res */
+    deg *= 10;
+    deg = (int) deg;
+    deg /= 10;
 
-		return "" + deg;
-}
+    return "" + deg;
+  }
 
   /**
    * Stops the intake from moving
