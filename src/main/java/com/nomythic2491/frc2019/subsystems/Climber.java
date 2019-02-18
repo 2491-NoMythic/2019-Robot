@@ -10,18 +10,18 @@ package com.nomythic2491.frc2019.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.commands.Climber.ManualClimb;
+import com.nomythic2491.frc2019.commands.Climber.ClimberLoop;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
-
 
 /**
  * Add your docs here.
@@ -32,33 +32,31 @@ public class Climber extends Subsystem {
   private static Climber instance = null;
   private TalonSRX mMasterClimber, mSlaveClimber;
   private Solenoid mClimberSolenoid, mRatchetSolenoid;
-   DigitalInput limitSwitch;
+  DigitalInput limitSwitch;
 
   public enum ClimberDemand {
-    Climb(20, NeutralMode.Brake), 
-    Reset(1, NeutralMode.Coast), 
-    Stop(0, NeutralMode.Brake);
+    Climb(-1, NeutralMode.Brake, true), Reset(1, NeutralMode.Coast, false), Stop(0, NeutralMode.Brake, true);
 
-    double mHightPoint;
-    double mHight;
+    double mSpeed;
     NeutralMode mBrake;
+    boolean mRatchet;
 
-    private ClimberDemand(double hight, NeutralMode brake) {
-      mHightPoint = hight/(1.5*Math.PI) * 4096;
-      mHight = hight;
+    private ClimberDemand(double speed, NeutralMode brake, boolean ratchet) {
+      mSpeed = speed; //hight / (1.5 * Math.PI) * 4096;
       mBrake = brake;
+      mRatchet = ratchet;
     }
 
-    public double getHeightPoint() {
-      return mHightPoint;
-    }
-
-    public double getHight() {
-      return mHight;
+    public double getSpeed() {
+      return mSpeed;
     }
 
     public NeutralMode getBrake() {
       return mBrake;
+    }
+
+    public boolean getRatchet() {
+      return mRatchet;
     }
   }
 
@@ -74,15 +72,17 @@ public class Climber extends Subsystem {
     configureMaster(mMasterClimber, true);
 
     mSlaveClimber = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
-    mSlaveClimber.setInverted(true);
+    mSlaveClimber.setInverted(InvertType.OpposeMaster);
 
     mClimberSolenoid = new Solenoid(Constants.kSkidsChannel);
     mRatchetSolenoid = new Solenoid(Constants.kRatchetChannel);
 
   }
-  
-  public void runClimberRacks(double speed) {
-    mMasterClimber.set(ControlMode.PercentOutput, speed);
+
+  public void runClimberDemand(ClimberDemand demand) {
+    engageRatchet(demand.getRatchet());
+    mMasterClimber.setNeutralMode(demand.getBrake());
+    mMasterClimber.set(ControlMode.MotionMagic, demand.getSpeed());
   }
 
   // Elias --- this stuff is all copied from Drivetrain.java and we might not need
@@ -122,29 +122,23 @@ public class Climber extends Subsystem {
    * @return The value of the left drive encoder in inches
    */
   public double getLeftEncoderDistance() {
-    try
-    {
+    try {
       return mSlaveClimber.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
+    } catch (Exception e) {
+      System.out.println("Failed to get left climber encoder distance.");
+      return -1;
     }
-    catch(Exception e)
-    {
-    System.out.println("Failed to get left climber encoder distance.");
-    return -1;  
-   }
   }
 
   /**
    * Gets the left encoder value in ticks (4096 per rotation)
    */
   public double getLeftEncoderDistanceRaw() {
-    try
-    {
+    try {
       return mSlaveClimber.getSelectedSensorPosition(0);
-    }
-    catch(Exception e)
-    {
+    } catch (Exception e) {
       System.out.println("Failed to get left climber encoder distance raw.");
-      return -1;  
+      return -1;
     }
   }
 
@@ -154,29 +148,24 @@ public class Climber extends Subsystem {
    * @return
    */
   public double getRightEncoderDistanceRaw() {
-    try 
-    {
+    try {
       return mMasterClimber.getSelectedSensorPosition(0);
-    }
-    catch(Exception e)
-    {
+    } catch (Exception e) {
       System.out.println("Failed to get right climber encoder distance raw.");
-      return -1;  
+      return -1;
     }
   }
 
   /**
-   * @return The value of the right drive encoder in inches. If return negative 1 it has failed. 
+   * @return The value of the right drive encoder in inches. If return negative 1
+   *         it has failed.
    */
   public double getRightEncoderDistance() {
-    try
-    {
+    try {
       return mMasterClimber.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
-    }
-    catch(Exception e)
-    {
+    } catch (Exception e) {
       System.out.println("Failed to get right climber encoder distance.");
-      return -1;  
+      return -1;
     }
   }
 
@@ -200,15 +189,14 @@ public class Climber extends Subsystem {
     mRatchetSolenoid.set(engaed);
   }
 
-public boolean isSkidUp() {
-  return  mClimberSolenoid.get();
-}
-
+  public boolean isSkidUp() {
+    return mClimberSolenoid.get();
+  }
 
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
-    setDefaultCommand(new ManualClimb());
+    setDefaultCommand(new ClimberLoop());
   }
 
 }

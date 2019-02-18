@@ -5,55 +5,47 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.MagicBox;
+package com.nomythic2491.frc2019.commands.Climber;
 
-import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.ControlBoard;
 import com.nomythic2491.frc2019.commands.CommandBase;
+import com.nomythic2491.frc2019.subsystems.Climber.ClimberDemand;
 
-import edu.wpi.first.wpilibj.Timer;
+public class ClimberLoop extends CommandBase {
+  private ControlBoard mBoard;
 
-public class PlaceCargo extends CommandBase {
-
-  Timer timer;
-
-  /**
-   * Runs the intake backwards to push the cargo out of the magic box
-   */
-  public PlaceCargo() {
+  public ClimberLoop() {
     // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    requires(magicbox);
+    requires(climber);
+    mBoard = ControlBoard.getInstance();
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    timer.reset();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    timer.start();
-    magicbox.runIoCargo(Constants.kBoxCargoShootSpeed);
+    climber.runClimberDemand(mBoard.getClimberDemand());
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return timer.get() >= 1;
+    return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    magicbox.stopIntake();
+    climber.runClimberDemand(ClimberDemand.Stop);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    end();
   }
 }

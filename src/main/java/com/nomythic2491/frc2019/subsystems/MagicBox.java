@@ -47,7 +47,7 @@ public class MagicBox extends Subsystem {
 
     private GamepeiceDemand(double hight, double angle) {
       mHeightPoint = hight/Math.PI * 4096;
-      mAnglePoint = (angle * 4096)/360;
+      mAnglePoint = angle; //(angle * 4096)/360;
     }
 
     public double getHeightPoint() {
@@ -276,7 +276,8 @@ public class MagicBox extends Subsystem {
   }
 
   public void GamepeiceDemand(GamepeiceDemand demand) {
-    elevateToPoint(demand);
+    elevateToPoint(demand.getHeightPoint());
+    rotateToPoint(demand.getAnglePoint());
   }
 
   private void elevateToPoint(double setpoint) {

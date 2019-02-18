@@ -12,12 +12,13 @@ import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
 public class GamepieceLoop extends CommandBase {
-
+  ControlBoard mBoard;
   /**
    * Runs the cargo intake while a button is held
    */
   public GamepieceLoop() {
     requires(magicbox);
+    mBoard = ControlBoard.getInstance();
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -30,8 +31,8 @@ public class GamepieceLoop extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    magicbox.elevateToPoint(ControlBoard.getInstance().getGamepeiceDemand());
-    magicbox.runIoCargo(ControlBoard.getInstance().getIoCargo());
+    magicbox.GamepeiceDemand(mBoard.getGamepeiceDemand());
+    magicbox.runIoCargo(mBoard.getIoCargo());
   }
 
   // Make this return true when this Command no longer needs to run execute()

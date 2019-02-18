@@ -8,10 +8,6 @@
 package com.nomythic2491.frc2019;
 
 import com.nomythic2491.frc2019.Settings.ControllerMap;
-import com.nomythic2491.frc2019.commands.Climber.ManualClimb;
-import com.nomythic2491.frc2019.commands.MagicBox.ElevateBox;
-import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
-import com.nomythic2491.frc2019.commands.MagicBox.RotateMagicBoxToPosition;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -87,20 +83,6 @@ public class OI {
     Retract = new POVButton(controllers[ControllerMap.operatorController], 0);
 
     //Right hand is cargo left hand is hatch
-
-    //CargoMed.whenPressed(new ElevateBox(49));
-    //HatchMed.whenPressed(new ElevateBox(28));
-    CargoLow.whenPressed(new ElevateBox(21));
-    CargoPickup.whenPressed(new ElevateBox(3));
-    Bottom.whenPressed(new ElevateBox(0));
-
-    Hatch.whenPressed(new RotateMagicBoxToPosition(-1414.0));
-    Hatch2.whenPressed(new RotateMagicBoxToPosition(-1414.0)); //1314
-    Cargo.whenPressed(new RotateMagicBoxToPosition(-1100));
-    Cargo2.whenPressed(new RotateMagicBoxToPosition(-1100));
-
-    Flat.whenPressed(new RotateMagicBoxToPosition(-570));
-
   }
 
   /**

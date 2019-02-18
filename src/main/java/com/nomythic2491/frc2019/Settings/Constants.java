@@ -73,8 +73,8 @@ public class Constants {
         public static final int kThrottleAxis = 1;
         public static final int kTurnAxis = 2;
         public static final int kQuickturnButton = 1;
-        public static final int kCargoIn = 3;
-        public static final int kCargoOut = 5;
+        public static final int kCargoInButton = 3;
+        public static final int kCargoOutButton = 5;
         public static final int kKillSwitchButton = 11;
         public static final int kKillSwitchButton2 = 12;
     }
