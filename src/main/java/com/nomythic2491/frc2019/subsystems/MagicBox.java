@@ -88,7 +88,7 @@ public class MagicBox extends Subsystem {
   private TalonSRX elevatorMaster, elevatorSlave;
 
   public Solenoid CorralPins;
-  private DoubleSolenoid spindle;
+  private DoubleSolenoid spindle, flippyBumper;
   DigitalInput hatchPresent = new DigitalInput(0);
   DigitalInput cargoPresent = new DigitalInput(1);
 
@@ -142,13 +142,14 @@ public class MagicBox extends Subsystem {
     elevatorSlave.setInverted(InvertType.OpposeMaster);
 
     spindle = new DoubleSolenoid(Constants.kHatchOutChannel, Constants.kHatchInChannel);
+    flippyBumper = new DoubleSolenoid(Constants.kBumperInChannel, Constants.kBumperOutChannel);
   }
 
   public void initQuadrature() {
     /* get the absolute pulse width position */
     // rotateIntake.setSelectedSensorPosition(0);
 
-    // rotateIntake.getSensorCollection().setPulseWidthPosition(0, 100);
+    // rotateIntake.getSensorCollection().setPulseWidthPosition(0, 100;
     // rotateIntake.getSensorCollection().setQuadraturePosition(0, 100);
     // rotateIntake.getSensorCollection().setAnalogPosition(0, 100);
 
@@ -253,7 +254,18 @@ public class MagicBox extends Subsystem {
   public void retractSolenoid() {
     spindle.set(Value.kReverse);
   }
-
+  /**
+   * Retracts the flippy bumper solenoid
+   */
+  public void retractBumperSolenoid() {
+    flippyBumper.set(Value.kReverse);
+  }
+  /**
+   * Extends the flippy bumper solenoid
+   */
+  public void extendBumperSolenoid() {
+    flippyBumper.set(Value.kForward);
+  }
   /**
    * Determines what position the hatch intake solenoid is in
    * 

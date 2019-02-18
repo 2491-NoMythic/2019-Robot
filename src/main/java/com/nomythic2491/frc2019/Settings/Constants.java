@@ -45,6 +45,9 @@ public class Constants {
     public static final int kHatchOutChannel = 4;
     public static final int kHatchInChannel = 5;
 
+    public static final int kBumperInChannel = 2491; 
+    public static final int kBumperOutChannel = 2491;
+
     public static final double kHatchPickupPause = 0.25;
     // public static final double kElevatorGroundHeight = 0; //Limit switch will
     // remove this
