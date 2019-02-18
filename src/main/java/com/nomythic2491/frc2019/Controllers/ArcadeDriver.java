@@ -1,6 +1,7 @@
 package com.nomythic2491.frc2019.Controllers;
 
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.subsystems.MagicBox.IoCargo;
 import com.nomythic2491.lib.util.CheesyDriveHelper;
 import com.nomythic2491.lib.util.DriveSignal;
 
@@ -28,14 +29,14 @@ public class ArcadeDriver implements IDriveController {
     @Override
     public DriveSignal getSignal() {
         return mHelper.cheesyDrive(
-                mHelper.handleDeadband(-mJoystick.getRawAxis(Constants.kDriverThrottleAxis), Constants.kDeadband),
-                mHelper.handleDeadband(mJoystick.getRawAxis(Constants.kDriverTurnAxis), Constants.kDeadband),
-                mJoystick.getRawButton(Constants.kQuickturnButton));
+                mHelper.handleDeadband(-mJoystick.getRawAxis(Constants.ArcadeDriver.kThrottleAxis), Constants.kDeadband),
+                mHelper.handleDeadband(mJoystick.getRawAxis(Constants.ArcadeDriver.kTurnAxis), Constants.kDeadband),
+                mJoystick.getRawButton(Constants.ArcadeDriver.kQuickturnButton));
     }
 
     @Override
     public boolean getKillSwitch() {
-        return mJoystick.getRawButton(11);
+        return mJoystick.getRawButton(Constants.ArcadeDriver.kKillSwitchButton) || mJoystick.getRawButton(Constants.ArcadeDriver.kKillSwitchButton2);
     }
 
     @Override
@@ -44,13 +45,13 @@ public class ArcadeDriver implements IDriveController {
     }
 
     @Override
-    public boolean getIntakeOut() {
-        return mJoystick.getRawButton(5);
+    public IoCargo getIoCargo() {
+        if (mJoystick.getRawButton(Constants.ArcadeDriver.kCargoInButton)) {
+            return IoCargo.In;
+        } else if (mJoystick.getRawButton(Constants.ArcadeDriver.kCargoOutButton)) {
+            return IoCargo.Out;
+        } else {
+            return IoCargo.Stop;
+        }
     }
-
-    @Override
-    public boolean getIntakeIn() {
-        return mJoystick.getRawButton(3);
-    }
-
 }

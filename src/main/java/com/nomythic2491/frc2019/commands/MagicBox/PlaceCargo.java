@@ -35,7 +35,7 @@ public class PlaceCargo extends CommandBase {
   @Override
   protected void execute() {
     timer.start();
-    magicbox.runIntake(Constants.kBoxCargoShootSpeed);
+    magicbox.runIoCargo(Constants.kBoxCargoShootSpeed);
   }
 
   // Make this return true when this Command no longer needs to run execute()

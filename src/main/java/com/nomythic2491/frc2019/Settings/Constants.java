@@ -63,8 +63,29 @@ public class Constants {
                                                            // intake rotator
 
     // Controllers
-    public static final int kDriverThrottleAxis = 1;
-    public static final int kDriverTurnAxis = 2;
     public static final double kDeadband = 0.05;
-    public static final int kQuickturnButton = 1;
+
+    public static final class ArcadeDriver {
+        public static final int kId = 0;
+        public static final int kThrottleAxis = 1;
+        public static final int kTurnAxis = 2;
+        public static final int kQuickturnButton = 1;
+        public static final int kCargoIn = 3;
+        public static final int kCargoOut = 5;
+        public static final int kKillSwitchButton = 11;
+        public static final int kKillSwitchButton2 = 12;
+    }
+
+    public static final class JoysticOpertator {
+        public static final int kId = 1;
+        public static final int kThrottleAxis = 1;
+        public static final int kTurnAxis = 2;
+        public static final int kQuickturnButton = 1;
+    }
+    public static final class PS4Operator {
+        public static final int kId = 1;
+        public static final int kThrottleAxis = 1;
+        public static final int kTurnAxis = 2;
+        public static final int kQuickturnButton = 1;
+    }
 }

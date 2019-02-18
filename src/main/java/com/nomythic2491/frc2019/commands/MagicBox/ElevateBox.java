@@ -22,7 +22,7 @@ public class ElevateBox extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    magicbox.magicToPoint(mTarget);
+    magicbox.elevateToPoint(mTarget);
   }
   
 

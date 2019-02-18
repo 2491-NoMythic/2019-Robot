@@ -10,10 +10,13 @@ package com.nomythic2491.frc2019.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.commands.Climber.ManualClimb;
+
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -26,10 +29,38 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Climber extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  private static Climber instance;
+  private static Climber instance = null;
   private TalonSRX mMasterClimber, mSlaveClimber;
   private Solenoid mClimberSolenoid, mRatchetSolenoid;
    DigitalInput limitSwitch;
+
+  public enum ClimberDemand {
+    Climb(20, NeutralMode.Brake), 
+    Reset(1, NeutralMode.Coast), 
+    Stop(0, NeutralMode.Brake);
+
+    double mHightPoint;
+    double mHight;
+    NeutralMode mBrake;
+
+    private ClimberDemand(double hight, NeutralMode brake) {
+      mHightPoint = hight/(1.5*Math.PI) * 4096;
+      mHight = hight;
+      mBrake = brake;
+    }
+
+    public double getHeightPoint() {
+      return mHightPoint;
+    }
+
+    public double getHight() {
+      return mHight;
+    }
+
+    public NeutralMode getBrake() {
+      return mBrake;
+    }
+  }
 
   public static Climber getInstance() {
     if (instance == null) {
@@ -49,6 +80,7 @@ public class Climber extends Subsystem {
     mRatchetSolenoid = new Solenoid(Constants.kRatchetChannel);
 
   }
+  
   public void runClimberRacks(double speed) {
     mMasterClimber.set(ControlMode.PercentOutput, speed);
   }
@@ -176,7 +208,7 @@ public boolean isSkidUp() {
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
+    setDefaultCommand(new ManualClimb());
   }
 
 }

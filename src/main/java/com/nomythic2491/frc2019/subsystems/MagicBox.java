@@ -15,7 +15,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Variables;
-import com.nomythic2491.frc2019.commands.MagicBox.IntakeCargoManual;
+import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -31,20 +31,66 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class MagicBox extends Subsystem {
 
-  private static MagicBox instance;
+  @Override
+  public void initDefaultCommand() {
+    // Set the default command for a subsystem here.
+    setDefaultCommand(new GamepieceLoop());
+  }
+  public enum GamepeiceDemand {
+    Test(1, 1),
+    CargoOut_Ship(0,0);
+    
+
+
+    private double mHeightPoint;
+    private double mAnglePoint;
+
+    private GamepeiceDemand(double hight, double angle) {
+      mHeightPoint = hight/Math.PI * 4096;
+      mAnglePoint = (angle * 4096)/360;
+    }
+
+    public double getHeightPoint() {
+      return mHeightPoint;
+    }
+
+    public double getAnglePoint() {
+      return mAnglePoint;
+    }
+  }
+  public enum IoCargo {
+    Out(.75), In(-.75), Stop(0);
+
+    private double mSpeed;
+
+    private IoCargo(double speed) {
+      mSpeed = speed;
+    }
+
+    public double getSpeed() {
+      return mSpeed;
+    }
+  }
+
+  private static MagicBox instance = null;
+
+  public static MagicBox getInstance() {
+    if (instance == null) {
+      instance = new MagicBox();
+    }
+    return instance;
+  }
+
   private TalonSRX intake, rotateIntake;
   /**
    * Master is left, Slave is right
    */
   private TalonSRX elevatorMaster, elevatorSlave;
+
+  public Solenoid CorralPins;
   private DoubleSolenoid spindle;
-  // private Solenoid leftSpindle, rightSpindle; //These will only be needed if we
-  // decide that we want to have two solenoids controlling the hatch intake. If
-  // it's just one, we don't need these.
-  public boolean isElevatorRising, isBoxFlippedDown, isBoxFlippedMiddle;
-  public Solenoid controlPins;
-  DigitalInput elevatorLimitSwitch = new DigitalInput(0);
-  DigitalInput cargoLimitSwitch = new DigitalInput(1);
+  DigitalInput hatchPresent = new DigitalInput(0);
+  DigitalInput cargoPresent = new DigitalInput(1);
 
   public enum PositionRotate {
     GROUND, FLAT, BACK
@@ -142,8 +188,12 @@ public class MagicBox extends Subsystem {
    * 
    * @param speed How fast it goes on a scale of -1 to 1
    */
-  public void runIntake(double speed) {
-    intake.set(ControlMode.PercentOutput, speed);
+  public void runIoCargo(IoCargo demand) {
+    if(cargoPresent.get() && demand != IoCargo.In) {
+      intake.set(ControlMode.PercentOutput, 0);
+    } else {
+      intake.set(ControlMode.PercentOutput, demand.getSpeed());
+    }
   }
 
   /**
@@ -152,7 +202,7 @@ public class MagicBox extends Subsystem {
    * @return Whether or not cargo is in the intake
    */
   public boolean isCargoIn() {
-    return cargoLimitSwitch.get();
+    return cargoPresent.get();
   }
 
   /**
@@ -179,13 +229,6 @@ public class MagicBox extends Subsystem {
     deg /= 10;
 
     return "" + deg;
-  }
-
-  /**
-   * Stops the intake from moving
-   */
-  public void stopIntake() {
-    runIntake(0);
   }
 
   public boolean getIsElevatorRunningMotionProfile() {
@@ -220,73 +263,17 @@ public class MagicBox extends Subsystem {
     return spindle.get();
   }
 
-  // public void runElevatorMotionProfile(double[][] profile, int totalCount,
-  // boolean isInverted) {
-  // TrajectoryPoint point = new TrajectoryPoint();
-  // elevatorMaster.clearMotionProfileTrajectories();
-  // for (int i = 0; i < totalCount; ++i) {
-  // /* for each point, fill our structure and pass it to API */
-  // point.position = profile[i][0];
-  // if (isInverted) {
-  // point.velocity = -profile[i][1];
-  // } else {
-  // point.velocity = profile[i][1];
-  // }
-  // point.timeDur = (int) profile[i][2];
-  // point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
-  // /*
-  // * set true to not do any position servo, just velocity feedforward
-  // */
-  // point.zeroPos = false;
-  // if (i == 0)
-  // point.zeroPos = true; /* set this to true on the first point */
+  public void GamepeiceDemand(GamepeiceDemand demand) {
+    elevateToPoint(demand);
+  }
 
-  // point.isLastPoint = false;
-  // if ((i + 1) == totalCount)
-  // point.isLastPoint = true; /* set this to true on the last point */
-
-  // elevatorMaster.pushMotionProfileTrajectory(point);
-  // }
-  // elevatorMaster.set(ControlMode.MotionProfile, 1);
-  // }
-
-  public void magicToPoint(double setpoint) {
+  private void elevateToPoint(double setpoint) {
     elevatorMaster.set(ControlMode.MotionMagic, setpoint);
   }
 
-  public void rotateToPoint(double setpoint) {
+  private void rotateToPoint(double setpoint) {
     rotateIntake.set(ControlMode.MotionMagic, setpoint);
   }
-
-  // public void runMagicboxMotionProfile(double[][] profile, int totalCount,
-  // boolean isInverted) {
-  // TrajectoryPoint point = new TrajectoryPoint();
-  // rotateIntake.clearMotionProfileTrajectories();
-  // for (int i = 0; i < totalCount; ++i) {
-  // /* for each point, fill our structure and pass it to API */
-  // point.position = profile[i][0];
-  // if (isInverted) {
-  // point.velocity = -profile[i][1];
-  // } else {
-  // point.velocity = profile[i][1];
-  // }
-  // point.timeDur = (int) profile[i][2];
-  // point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
-  // /*
-  // * set true to not do any position servo, just velocity feedforward
-  // */
-  // point.zeroPos = false;
-  // if (i == 0)
-  // point.zeroPos = true; /* set this to true on the first point */
-
-  // point.isLastPoint = false;
-  // if ((i + 1) == totalCount)
-  // point.isLastPoint = true; /* set this to true on the last point */
-
-  // rotateIntake.pushMotionProfileTrajectory(point);
-  // }
-  // rotateIntake.set(ControlMode.MotionProfile, 1);
-  // }
 
   public PositionElevator getElevatorPosition() {
     return Variables.currentElevatorPostion;
@@ -297,10 +284,10 @@ public class MagicBox extends Subsystem {
   }
 
   public void toggleControlPins() {
-    if (controlPins.get()) {
-      controlPins.set(false);
+    if (CorralPins.get()) {
+      CorralPins.set(false);
     } else {
-      controlPins.set(true);
+      CorralPins.set(true);
     }
   }
 
@@ -310,25 +297,11 @@ public class MagicBox extends Subsystem {
    * @return The control pin solenoid's value
    */
   public boolean controlPinsExtended() {
-    return controlPins.get();
-  }
-
-  @Override
-  public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    setDefaultCommand(new IntakeCargoManual());
-  }
-
-  public static MagicBox getInstance() {
-    if (instance == null) {
-      instance = new MagicBox();
-    }
-    return instance;
+    return CorralPins.get();
   }
 
   public void positon() {
     System.out.println(elevatorMaster.getSelectedSensorPosition(0));
     System.out.println(elevatorMaster.getClosedLoopError());
   }
-
 }

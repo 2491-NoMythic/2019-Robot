@@ -1,5 +1,6 @@
 package com.nomythic2491.frc2019.Controllers;
 
+import com.nomythic2491.frc2019.subsystems.MagicBox.IoCargo;
 import com.nomythic2491.lib.util.DriveSignal;
 
 public interface IDriveController {
@@ -10,7 +11,6 @@ public interface IDriveController {
 
     public boolean getSlowSpeed();
 
-    public boolean getIntakeOut();
+    public IoCargo getIoCargo();
 
-    public boolean getIntakeIn();
 }

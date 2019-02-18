@@ -10,7 +10,7 @@ package com.nomythic2491.frc2019;
 import com.nomythic2491.frc2019.Settings.ControllerMap;
 import com.nomythic2491.frc2019.commands.Climber.ManualClimb;
 import com.nomythic2491.frc2019.commands.MagicBox.ElevateBox;
-import com.nomythic2491.frc2019.commands.MagicBox.IntakeCargoManual;
+import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
 import com.nomythic2491.frc2019.commands.MagicBox.RotateMagicBoxToPosition;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -94,16 +94,12 @@ public class OI {
     CargoPickup.whenPressed(new ElevateBox(3));
     Bottom.whenPressed(new ElevateBox(0));
 
-    Stowed.whenPressed(new ManualClimb(false, true));
     Hatch.whenPressed(new RotateMagicBoxToPosition(-1414.0));
     Hatch2.whenPressed(new RotateMagicBoxToPosition(-1414.0)); //1314
     Cargo.whenPressed(new RotateMagicBoxToPosition(-1100));
     Cargo2.whenPressed(new RotateMagicBoxToPosition(-1100));
 
     Flat.whenPressed(new RotateMagicBoxToPosition(-570));
-
-    Deploy.whileActive(new ManualClimb(true, false));
-    Retract.whileActive(new ManualClimb(false, false));
 
   }
 

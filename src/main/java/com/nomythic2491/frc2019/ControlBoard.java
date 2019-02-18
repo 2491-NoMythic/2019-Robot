@@ -1,6 +1,9 @@
 package com.nomythic2491.frc2019;
 
 import com.nomythic2491.frc2019.Controllers.*;
+import com.nomythic2491.frc2019.subsystems.Climber.ClimberDemand;
+import com.nomythic2491.frc2019.subsystems.MagicBox.GamepeiceDemand;
+import com.nomythic2491.frc2019.subsystems.MagicBox.IoCargo;
 import com.nomythic2491.lib.util.DriveSignal;
 
 public class ControlBoard implements IControlBoard {
@@ -23,7 +26,7 @@ public class ControlBoard implements IControlBoard {
         }
 
         if (true) {
-            mOperatorController = PS4Operator.getInstance();
+            mOperatorController = JoystickOperator.getInstance();
         }
     }
 
@@ -43,12 +46,17 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public boolean getIntakeOut() {
-        return mDriveController.getIntakeOut();
+    public IoCargo getIoCargo() {
+        return mDriveController.getIoCargo();
     }
 
     @Override
-    public boolean getIntakeIn() {
-        return mDriveController.getIntakeIn();
+    public ClimberDemand getClimberDemand() {
+        return mOperatorController.getClimberDemand();
+    }
+
+    @Override
+    public GamepeiceDemand getGamepeiceDemand() {
+        return mOperatorController.getGamepeiceDemand();
     }
 }

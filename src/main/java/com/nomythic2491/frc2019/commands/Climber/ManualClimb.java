@@ -7,18 +7,17 @@
 
 package com.nomythic2491.frc2019.commands.Climber;
 
+import com.nomythic2491.frc2019.ControlBoard;
 import com.nomythic2491.frc2019.commands.CommandBase;
-import com.nomythic2491.frc2019.subsystems.Climber;
 
 
 public class ManualClimb extends CommandBase {
-  private boolean mDeploy, mStop;
+  private ControlBoard mBoard;
 
-  public ManualClimb(Boolean deploy, boolean stop) {
+  public ManualClimb() {
     // Use requires() here to declare subsystem dependencies
     requires(climber);
-    mDeploy = deploy;
-    mStop = stop;
+    mBoard = ControlBoard.getInstance();
   }
 
   // Called just before this Command runs the first time
@@ -29,27 +28,27 @@ public class ManualClimb extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    climber.engageRatchet(mDeploy);
-    if (mDeploy) {
-      climber.runClimberRacks(-1);
-    } else {
-      climber.runClimberRacks(1);
+
+    switch (mBoard.getClimberDemand()) {
+      case Climb:
+      break;
+      case Reset:
+      break;
+      case Stop:
+      break;
     }
-   
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    if (mStop) {
       climber.runClimberRacks(0);
-    }
   }
 
   // Called when another command which requires one or more of the same
