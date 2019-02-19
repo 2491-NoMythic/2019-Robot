@@ -10,10 +10,10 @@ public class Constants {
     public static final int kPrimarySlotIdx = 0;
 
     // Drive
-    public static final int kRightDriveMasterId = 1;
-    public static final int kRightDriveSlaveId = 0;
-    public static final int kLeftDriveMasterId = 14;
-    public static final int kLeftDriveSlaveId = 15;
+    public static final int kRightDriveMasterId = 10;
+    public static final int kRightDriveSlaveId = 11;
+    public static final int kLeftDriveMasterId = 1;
+    public static final int kLeftDriveSlaveId = 0;
 
     public static final double kDrivekP = .5;
     public static final double kDrivekI = .001;
@@ -45,8 +45,8 @@ public class Constants {
     public static final int kHatchOutChannel = 4;
     public static final int kHatchInChannel = 5;
 
-    public static final int kBumperInChannel = 2491; 
-    public static final int kBumperOutChannel = 2491;
+    public static final int kBumperInChannel = 1; 
+    public static final int kBumperOutChannel = 0;
 
     public static final double kHatchPickupPause = 0.25;
     // public static final double kElevatorGroundHeight = 0; //Limit switch will
