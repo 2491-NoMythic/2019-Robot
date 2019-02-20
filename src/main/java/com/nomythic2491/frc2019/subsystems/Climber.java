@@ -35,7 +35,7 @@ public class Climber extends Subsystem {
   DigitalInput limitSwitch;
 
   public enum ClimberDemand {
-    Climb(-1, NeutralMode.Brake, true), Reset(1, NeutralMode.Coast, false), Stop(0, NeutralMode.Brake, true);
+    Climb(-1, NeutralMode.Brake, true), Reset(1, NeutralMode.Coast, false), Stop(0, NeutralMode.Brake, false);
 
     double mSpeed;
     NeutralMode mBrake;
@@ -70,13 +70,12 @@ public class Climber extends Subsystem {
   private Climber() {
     mMasterClimber = TalonSRXFactory.createDefaultTalon(Constants.kPoleMasterId);
     configureMaster(mMasterClimber, true);
-
+    
     mSlaveClimber = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
-    mSlaveClimber.setInverted(InvertType.OpposeMaster);
+    mSlaveClimber.setInverted(InvertType.FollowMaster);
 
     mClimberSolenoid = new Solenoid(Constants.kSkidsChannel);
     mRatchetSolenoid = new Solenoid(Constants.kRatchetChannel);
-
   }
 
   public void runClimberDemand(ClimberDemand demand) {

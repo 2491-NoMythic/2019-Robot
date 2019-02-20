@@ -28,6 +28,7 @@ public class ArcadeDriver implements IDriveController {
 
     @Override
     public DriveSignal getSignal() {
+        System.out.println(-mJoystick.getRawAxis(Constants.ArcadeDriver.kThrottleAxis));
         return mHelper.cheesyDrive(
                 mHelper.handleDeadband(-mJoystick.getRawAxis(Constants.ArcadeDriver.kThrottleAxis), Constants.kDeadband),
                 mHelper.handleDeadband(mJoystick.getRawAxis(Constants.ArcadeDriver.kTurnAxis), Constants.kDeadband),

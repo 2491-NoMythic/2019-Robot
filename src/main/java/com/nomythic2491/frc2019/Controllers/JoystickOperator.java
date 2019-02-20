@@ -24,12 +24,18 @@ public class JoystickOperator implements IOperatorController {
 
     @Override
     public ClimberDemand getClimberDemand() {
-        return null;
+        if (mJoystick.getPOV() == 180) {
+            return ClimberDemand.Climb;
+        } else if (mJoystick.getPOV() == 0) {
+            return ClimberDemand.Reset;
+        } else {
+            return ClimberDemand.Stop;
+        }
     }
 
     @Override
     public GamepeiceDemand getGamepeiceDemand() {
-        return null;
+        return GamepeiceDemand.Test;
     }
 
 }
