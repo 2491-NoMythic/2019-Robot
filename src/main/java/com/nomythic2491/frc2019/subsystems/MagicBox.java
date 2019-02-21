@@ -39,8 +39,6 @@ public class MagicBox extends Subsystem {
   public enum GamepeiceDemand {
     Test(1, 1),
     CargoOut_Ship(0,0);
-    
-
 
     private double mHeightPoint;
     private double mAnglePoint;
@@ -277,7 +275,7 @@ public class MagicBox extends Subsystem {
 
   public void GamepeiceDemand(GamepeiceDemand demand) {
     elevateToPoint(demand.getHeightPoint());
-    rotateToPoint(demand.getAnglePoint());
+    //rotateToPoint(demand.getAnglePoint());
   }
 
   private void elevateToPoint(double setpoint) {
