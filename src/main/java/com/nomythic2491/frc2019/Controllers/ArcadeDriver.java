@@ -1,6 +1,7 @@
 package com.nomythic2491.frc2019.Controllers;
 
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Constants.kArcadeDriver;
 import com.nomythic2491.frc2019.subsystems.MagicBox.IoCargo;
 import com.nomythic2491.lib.util.CheesyDriveHelper;
 import com.nomythic2491.lib.util.DriveSignal;
@@ -29,14 +30,14 @@ public class ArcadeDriver implements IDriveController {
     @Override
     public DriveSignal getSignal() {
         return mHelper.cheesyDrive(
-                mHelper.handleDeadband(mJoystick.getRawAxis(Constants.ArcadeDriver.kThrottleAxis), Constants.kDeadband),
-                mHelper.handleDeadband(mJoystick.getRawAxis(Constants.ArcadeDriver.kTurnAxis), Constants.kDeadband),
-                mJoystick.getRawButton(Constants.ArcadeDriver.kQuickturnButton));
+                mHelper.handleDeadband(mJoystick.getRawAxis(kArcadeDriver.kThrottleAxis), Constants.kDeadband),
+                mHelper.handleDeadband(mJoystick.getRawAxis(kArcadeDriver.kTurnAxis), Constants.kDeadband),
+                mJoystick.getRawButton(kArcadeDriver.kQuickturnButton));
     }
 
     @Override
     public boolean getKillSwitch() {
-        return mJoystick.getRawButton(Constants.ArcadeDriver.kKillSwitchButton) || mJoystick.getRawButton(Constants.ArcadeDriver.kKillSwitchButton2);
+        return mJoystick.getRawButton(kArcadeDriver.kKillSwitchButton) || mJoystick.getRawButton(Constants.kArcadeDriver.kKillSwitchButton2);
     }
 
     @Override
@@ -46,9 +47,9 @@ public class ArcadeDriver implements IDriveController {
 
     @Override
     public IoCargo getIoCargo() {
-        if (mJoystick.getRawButton(Constants.ArcadeDriver.kCargoInButton)) {
+        if (mJoystick.getRawButton(kArcadeDriver.kCargoInButton)) {
             return IoCargo.In;
-        } else if (mJoystick.getRawButton(Constants.ArcadeDriver.kCargoOutButton)) {
+        } else if (mJoystick.getRawButton( kArcadeDriver.kCargoOutButton)) {
             return IoCargo.Out;
         } else {
             return IoCargo.Stop;

@@ -7,7 +7,10 @@ public class Constants {
     public static final int kTimeoutMs = 10;
     public static final int kLongCANTimeoutMs = 100;
     public static final double kDriveVoltageRampRate = 2;
-    public static final int kPrimarySlotIdx = 0;
+    public static final int kSlot_MotMagic = 0;
+    public static final int kSlot_Adjustment = 1;
+    public static final int kPID_Primary = 0;
+    public static final int kPID_Auxliary = 1;
 
     // Drive
     public static final int kRightDriveMasterId = 10;
@@ -68,7 +71,7 @@ public class Constants {
     // Controllers
     public static final double kDeadband = 0.05;
 
-    public static final class ArcadeDriver {
+    public static final class kArcadeDriver {
         public static final int kId = 0;
         public static final int kThrottleAxis = 1;
         public static final int kTurnAxis = 2;
@@ -79,16 +82,23 @@ public class Constants {
         public static final int kKillSwitchButton2 = 12;
     }
 
-    public static final class JoysticOpertator {
+    public static final class kJoysticOpertator {
         public static final int kId = 1;
         public static final int kThrottleAxis = 1;
         public static final int kTurnAxis = 2;
         public static final int kQuickturnButton = 1;
     }
-    public static final class PS4Operator {
+    public static final class kPS4Operator {
         public static final int kId = 1;
         public static final int kThrottleAxis = 1;
         public static final int kTurnAxis = 2;
         public static final int kQuickturnButton = 1;
+    }
+
+    public static final class kManipulator {
+        public static final boolean kMasterSensorPhase = true;
+        public static final boolean kSlaveSensorPhase = true;
+        public static final int kMaxVel = 7500;
+        public static final int kMaxAccel = kMaxVel * 4;
     }
 }

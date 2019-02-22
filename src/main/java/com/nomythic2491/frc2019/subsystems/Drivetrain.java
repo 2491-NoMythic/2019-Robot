@@ -101,17 +101,17 @@ public class Drivetrain extends Subsystem {
     }
 
     private void setTalonPIDF(double proportional, double iterative, double derivative, double feedForward) {
-        mLeftMaster.config_kP(Constants.kPrimarySlotIdx, proportional, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kP(Constants.kPrimarySlotIdx, proportional, Constants.kLongCANTimeoutMs);
+        mLeftMaster.config_kP(Constants.kSlot_MotMagic, proportional, Constants.kLongCANTimeoutMs);
+        mRightMaster.config_kP(Constants.kSlot_MotMagic, proportional, Constants.kLongCANTimeoutMs);
 
-        mLeftMaster.config_kI(Constants.kPrimarySlotIdx, iterative, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kI(Constants.kPrimarySlotIdx, iterative, Constants.kLongCANTimeoutMs);
+        mLeftMaster.config_kI(Constants.kSlot_MotMagic, iterative, Constants.kLongCANTimeoutMs);
+        mRightMaster.config_kI(Constants.kSlot_MotMagic, iterative, Constants.kLongCANTimeoutMs);
 
-        mLeftMaster.config_kD(Constants.kPrimarySlotIdx, derivative, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kD(Constants.kPrimarySlotIdx, derivative, Constants.kLongCANTimeoutMs);
+        mLeftMaster.config_kD(Constants.kSlot_MotMagic, derivative, Constants.kLongCANTimeoutMs);
+        mRightMaster.config_kD(Constants.kSlot_MotMagic, derivative, Constants.kLongCANTimeoutMs);
 
-        mLeftMaster.config_kF(Constants.kPrimarySlotIdx, feedForward, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kF(Constants.kPrimarySlotIdx, feedForward, Constants.kLongCANTimeoutMs);
+        mLeftMaster.config_kF(Constants.kSlot_MotMagic, feedForward, Constants.kLongCANTimeoutMs);
+        mRightMaster.config_kF(Constants.kSlot_MotMagic, feedForward, Constants.kLongCANTimeoutMs);
     }
 
     /**
@@ -138,8 +138,8 @@ public class Drivetrain extends Subsystem {
      * Sets left and right encoders to 0
      */
     public void resetEncoders() {
-        mLeftMaster.setSelectedSensorPosition(0, Constants.kPrimarySlotIdx, Constants.kTimeoutMs);
-        mRightMaster.setSelectedSensorPosition(0, Constants.kPrimarySlotIdx, Constants.kTimeoutMs);
+        mLeftMaster.setSelectedSensorPosition(0, Constants.kSlot_MotMagic, Constants.kTimeoutMs);
+        mRightMaster.setSelectedSensorPosition(0, Constants.kSlot_MotMagic, Constants.kTimeoutMs);
     }
 
     /**
@@ -207,14 +207,14 @@ public class Drivetrain extends Subsystem {
      * @return The left driverail's velocity in NativeUnitsPer100Ms
      */
     public double getLeftVelocityRaw() {
-        return mLeftMaster.getSelectedSensorVelocity(Constants.kPrimarySlotIdx);
+        return mLeftMaster.getSelectedSensorVelocity(Constants.kSlot_MotMagic);
     }
 
     /**
      * @return The right driverail's velocity in NativeUnitsPer100Ms
      */
     public double getRightVelocityRaw() {
-        return mRightMaster.getSelectedSensorVelocity(Constants.kPrimarySlotIdx);
+        return mRightMaster.getSelectedSensorVelocity(Constants.kSlot_MotMagic);
     }
 
     /**

@@ -11,10 +11,13 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Variables;
+import com.nomythic2491.frc2019.Settings.Constants.kManipulator;
 import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
@@ -106,11 +109,11 @@ public class MagicBox extends Subsystem {
     rotateIntake = TalonSRXFactory.createDefaultTalon(Constants.kRotatorId);
     configureMaster(rotateIntake, false, 0.04);
 
-    rotateIntake.selectProfileSlot(Constants.kPrimarySlotIdx, 0);
-    rotateIntake.config_kF(Constants.kPrimarySlotIdx, 1.076842105263158, Constants.kLongCANTimeoutMs);
-    rotateIntake.config_kP(Constants.kPrimarySlotIdx, 0.6, Constants.kLongCANTimeoutMs); // .12
-    rotateIntake.config_kI(Constants.kPrimarySlotIdx, 0, Constants.kLongCANTimeoutMs); // .00001
-    rotateIntake.config_kD(Constants.kPrimarySlotIdx, 220, Constants.kLongCANTimeoutMs); // 25
+    rotateIntake.selectProfileSlot(Constants.kSlot_MotMagic, 0);
+    rotateIntake.config_kF(Constants.kSlot_MotMagic, 1.076842105263158, Constants.kLongCANTimeoutMs);
+    rotateIntake.config_kP(Constants.kSlot_MotMagic, 0.6, Constants.kLongCANTimeoutMs); // .12
+    rotateIntake.config_kI(Constants.kSlot_MotMagic, 0, Constants.kLongCANTimeoutMs); // .00001
+    rotateIntake.config_kD(Constants.kSlot_MotMagic, 220, Constants.kLongCANTimeoutMs); // 25
 
     rotateIntake.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
     rotateIntake.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
@@ -118,32 +121,70 @@ public class MagicBox extends Subsystem {
     rotateIntake.configMotionCruiseVelocity(200, Constants.kLongCANTimeoutMs);
     rotateIntake.configMotionAcceleration(400, Constants.kLongCANTimeoutMs);
 
+    initManipulator();
+
+    initQuadrature();
+
+    spindle = new DoubleSolenoid(Constants.kHatchOutChannel, Constants.kHatchInChannel);
+    flippyBumper = new DoubleSolenoid(Constants.kBumperInChannel, Constants.kBumperOutChannel);
+  }
+
+  private void initManipulator() {
     elevatorMaster = TalonSRXFactory.createDefaultTalon(Constants.kElevatorMasterId);
     configureMaster(elevatorMaster, true, 0.04);
 
-    elevatorMaster.selectProfileSlot(Constants.kPrimarySlotIdx, 0);
-    elevatorMaster.config_kF(Constants.kPrimarySlotIdx, 0.1364, Constants.kLongCANTimeoutMs);
-    elevatorMaster.config_kP(Constants.kPrimarySlotIdx, 0.25, Constants.kLongCANTimeoutMs); // .12
-    elevatorMaster.config_kI(Constants.kPrimarySlotIdx, 0.00001, Constants.kLongCANTimeoutMs); // .00001
-    elevatorMaster.config_kD(Constants.kPrimarySlotIdx, 45, Constants.kLongCANTimeoutMs); // 25
+    elevatorSlave = new TalonSRX(Constants.kElevatorSlaveId);
+    elevatorSlave.configFactoryDefault(Constants.kLongCANTimeoutMs);
+
+    final ErrorCode slaveSensorPresent = elevatorSlave.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
+        Constants.kLongCANTimeoutMs);
+    if (slaveSensorPresent != ErrorCode.OK) {
+      DriverStation.reportError("Could not detect right elevtor encoder: " + slaveSensorPresent, false);
+    }
+
+    elevatorMaster.configRemoteFeedbackFilter(elevatorSlave.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, Constants.kLongCANTimeoutMs);
+
+    elevatorMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs);
+    final ErrorCode masterSensorPresent = elevatorMaster.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kLongCANTimeoutMs);
+    if (masterSensorPresent != ErrorCode.OK) {
+      DriverStation.reportError("Could not detect left elevator encoder: " + masterSensorPresent, false);
+    }
+
+    elevatorMaster.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, Constants.kPID_Primary, Constants.kLongCANTimeoutMs);
+    elevatorMaster.configSelectedFeedbackCoefficient(0.5, Constants.kPID_Primary, Constants.kLongCANTimeoutMs);
+
+    elevatorMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs);
+    elevatorMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kLongCANTimeoutMs);
+    elevatorMaster.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, Constants.kPID_Auxliary, Constants.kLongCANTimeoutMs);
+    elevatorMaster.configSelectedFeedbackCoefficient(1, Constants.kPID_Auxliary, Constants.kLongCANTimeoutMs);
+
+    elevatorMaster.setSensorPhase(kManipulator.kMasterSensorPhase);
+    elevatorSlave.setSensorPhase(kManipulator.kSlaveSensorPhase);
+    elevatorSlave.follow(elevatorMaster);
+    elevatorSlave.setInverted(InvertType.OpposeMaster);
+
+    elevatorMaster.config_kP(Constants.kSlot_MotMagic, 0.032, Constants.kLongCANTimeoutMs); // .12
+    elevatorMaster.config_kI(Constants.kSlot_MotMagic, 0, Constants.kLongCANTimeoutMs); // .00001
+    elevatorMaster.config_kD(Constants.kSlot_MotMagic, 0, Constants.kLongCANTimeoutMs);
+    elevatorMaster.config_kF(Constants.kSlot_MotMagic, 0.1364, Constants.kLongCANTimeoutMs);
+    
+    elevatorMaster.config_kP(Constants.kSlot_Adjustment, 0, Constants.kLongCANTimeoutMs); // .12
+    elevatorMaster.config_kI(Constants.kSlot_Adjustment, 0, Constants.kLongCANTimeoutMs); // .00001
+    elevatorMaster.config_kD(Constants.kSlot_Adjustment, 0, Constants.kLongCANTimeoutMs);// 25
+    elevatorMaster.config_kF(Constants.kSlot_Adjustment, 0, Constants.kLongCANTimeoutMs);
 
     elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
     elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
 
-    elevatorMaster.configMotionCruiseVelocity(6650, Constants.kLongCANTimeoutMs);
-    elevatorMaster.configMotionAcceleration(6650, Constants.kLongCANTimeoutMs);
+    elevatorMaster.configMotionCruiseVelocity(kManipulator.kMaxVel, Constants.kLongCANTimeoutMs);
+    elevatorMaster.configMotionAcceleration(kManipulator.kMaxAccel, Constants.kLongCANTimeoutMs);
 
+    //assigns a slot of saved PIDF values to a talon's primary or auxilary loops
+    elevatorMaster.selectProfileSlot(Constants.kSlot_MotMagic, Constants.kPID_Primary);
+    elevatorMaster.selectProfileSlot(Constants.kSlot_Adjustment, Constants.kPID_Auxliary);
+
+    elevatorMaster.
     elevatorMaster.setSelectedSensorPosition(0);
-
-    initQuadrature();
-
-    elevatorSlave = new TalonSRX(Constants.kElevatorSlaveId);
-    elevatorSlave.configFactoryDefault(Constants.kLongCANTimeoutMs);
-    elevatorSlave.follow(elevatorMaster);
-    elevatorSlave.setInverted(InvertType.OpposeMaster);
-
-    spindle = new DoubleSolenoid(Constants.kHatchOutChannel, Constants.kHatchInChannel);
-    flippyBumper = new DoubleSolenoid(Constants.kBumperInChannel, Constants.kBumperOutChannel);
   }
 
   public void initQuadrature() {
@@ -169,11 +210,6 @@ public class MagicBox extends Subsystem {
   private void configureMaster(TalonSRX talon, boolean left, double nominalV) {
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
     // primary closed-loop
-    final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
-        Constants.kLongCANTimeoutMs);
-    if (sensorPresent != ErrorCode.OK) {
-      DriverStation.reportError("Could not detect " + (left ? "left" : "right") + "encoder: " + sensorPresent, false);
-    }
     talon.setInverted(!left);
     talon.setSensorPhase(false);
     talon.enableVoltageCompensation(true);

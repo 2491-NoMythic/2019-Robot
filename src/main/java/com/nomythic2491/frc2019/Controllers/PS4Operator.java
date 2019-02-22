@@ -20,7 +20,7 @@ public class PS4Operator implements IOperatorController {
     private final Joystick mJoystick;
 
     private PS4Operator() {
-        mJoystick = new Joystick(Constants.PS4Operator.kId);
+        mJoystick = new Joystick(Constants.kPS4Operator.kId);
     }
 
     @Override
