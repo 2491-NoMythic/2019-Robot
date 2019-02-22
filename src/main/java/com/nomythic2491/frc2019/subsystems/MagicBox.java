@@ -96,7 +96,10 @@ public class MagicBox extends Subsystem {
     rotateIntake.configMotionCruiseVelocity(200, Constants.kLongCANTimeoutMs);
     rotateIntake.configMotionAcceleration(400, Constants.kLongCANTimeoutMs);
 
-    // Caridge
+    // roatakeIntake.getSensorCollection().syncQuadratureWithPulseWidth(bookend0,
+    // bookend1, bCrossZeroOnInterval, offset, timeoutMs);
+
+    //Caridge
     elevatorMaster = TalonSRXFactory.createDefaultTalon(Constants.kElevatorMasterId);
     configureMaster(elevatorMaster, true, 0.04);
 
@@ -155,8 +158,6 @@ public class MagicBox extends Subsystem {
 
     elevatorMaster.configMotionCruiseVelocity(kManipulator.kMaxVel, Constants.kLongCANTimeoutMs);
     elevatorMaster.configMotionAcceleration(kManipulator.kMaxAccel, Constants.kLongCANTimeoutMs);
-    // elevatorMaster.getSensorCollection().syncQuadratureWithPulseWidth(bookend0,
-    // bookend1, bCrossZeroOnInterval, offset, timeoutMs)
 
     // assigns a slot of saved PIDF values to a talon's primary or auxilary loops
     elevatorMaster.selectProfileSlot(Constants.kSlot_MotMagic, Constants.kPID_Primary);
