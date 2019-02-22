@@ -9,7 +9,9 @@ package com.nomythic2491.frc2019.subsystems;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
@@ -155,12 +157,13 @@ public class MagicBox extends Subsystem {
 
     elevatorMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs);
     elevatorMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kLongCANTimeoutMs);
+    //if right falls behind, number is positive
     elevatorMaster.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, Constants.kPID_Auxliary, Constants.kLongCANTimeoutMs);
     elevatorMaster.configSelectedFeedbackCoefficient(1, Constants.kPID_Auxliary, Constants.kLongCANTimeoutMs);
 
     elevatorMaster.setSensorPhase(kManipulator.kMasterSensorPhase);
     elevatorSlave.setSensorPhase(kManipulator.kSlaveSensorPhase);
-    elevatorSlave.follow(elevatorMaster);
+    elevatorSlave.follow(elevatorMaster, FollowerType.AuxOutput1);
     elevatorSlave.setInverted(InvertType.OpposeMaster);
 
     elevatorMaster.config_kP(Constants.kSlot_MotMagic, 0.032, Constants.kLongCANTimeoutMs); // .12
@@ -172,18 +175,29 @@ public class MagicBox extends Subsystem {
     elevatorMaster.config_kI(Constants.kSlot_Adjustment, 0, Constants.kLongCANTimeoutMs); // .00001
     elevatorMaster.config_kD(Constants.kSlot_Adjustment, 0, Constants.kLongCANTimeoutMs);// 25
     elevatorMaster.config_kF(Constants.kSlot_Adjustment, 0, Constants.kLongCANTimeoutMs);
+    elevatorMaster.configAllowableClosedloopError(Constants.kSlot_Adjustment, 0, Constants.kLongCANTimeoutMs);
 
-    elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
-    elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
+    elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 20, Constants.kTimeoutMs);
+		elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+		elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
+    elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 20, Constants.kTimeoutMs);
+    elevatorSlave.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kTimeoutMs);
 
     elevatorMaster.configMotionCruiseVelocity(kManipulator.kMaxVel, Constants.kLongCANTimeoutMs);
     elevatorMaster.configMotionAcceleration(kManipulator.kMaxAccel, Constants.kLongCANTimeoutMs);
+    //elevatorMaster.getSensorCollection().syncQuadratureWithPulseWidth(bookend0, bookend1, bCrossZeroOnInterval, offset, timeoutMs)
 
     //assigns a slot of saved PIDF values to a talon's primary or auxilary loops
     elevatorMaster.selectProfileSlot(Constants.kSlot_MotMagic, Constants.kPID_Primary);
     elevatorMaster.selectProfileSlot(Constants.kSlot_Adjustment, Constants.kPID_Auxliary);
 
-    elevatorMaster.
+    /**
+		 * configAuxPIDPolarity(boolean invert, int timeoutMs)
+		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
+		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
+		 */
+    elevatorMaster.configAuxPIDPolarity(false, Constants.kLongCANTimeoutMs);
+
     elevatorMaster.setSelectedSensorPosition(0);
   }
 
@@ -269,15 +283,6 @@ public class MagicBox extends Subsystem {
     return "" + deg;
   }
 
-  public boolean getIsElevatorRunningMotionProfile() {
-    return false;
-    // return elevatorLeft.isMotionProfileFinished();
-  }
-
-  public boolean getIsMagicboxRunningMotionProfile() {
-    return rotateIntake.isMotionProfileFinished();
-  }
-
   /**
    * Extends the hatch intake solenoid
    */
@@ -312,7 +317,7 @@ public class MagicBox extends Subsystem {
     return spindle.get();
   }
 
-  public void GamepeiceDemand(GamepeiceDemand demand) {
+  public void followGamepeiceDemand(GamepeiceDemand demand) {
     if(demand != GamepeiceDemand.Hold) {
       elevateToPoint(demand.getHeightPoint());
       rotateToPoint(demand.getAnglePoint());
@@ -320,7 +325,7 @@ public class MagicBox extends Subsystem {
   }
 
   private void elevateToPoint(double setpoint) {
-    elevatorMaster.set(ControlMode.MotionMagic, setpoint);
+    elevatorMaster.set(ControlMode.MotionMagic, setpoint, DemandType.AuxPID, 0);
   }
 
   private void rotateToPoint(double setpoint) {

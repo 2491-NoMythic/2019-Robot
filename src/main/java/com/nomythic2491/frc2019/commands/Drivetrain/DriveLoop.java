@@ -5,18 +5,18 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.MagicBox;
+package com.nomythic2491.frc2019.commands.Drivetrain;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.nomythic2491.frc2019.ControlBoard;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class GamepieceLoop extends CommandBase {
-  ControlBoard mBoard;
-  /**
-   * Runs the cargo intake while a button is held
-   */
-  public GamepieceLoop() {
-    requires(magicbox);
+public class DriveLoop extends CommandBase {
+
+  private ControlBoard mBoard;
+
+  public DriveLoop() {
+    requires(drivetrain);
     mBoard = ControlBoard.getInstance();
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -30,8 +30,7 @@ public class GamepieceLoop extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    magicbox.followGamepeiceDemand(mBoard.getGamepeiceDemand());
-    magicbox.runIoCargo(mBoard.getIoCargo());
+    drivetrain.driveDemand(ControlMode.PercentOutput, mBoard.getSignal());
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -43,6 +42,7 @@ public class GamepieceLoop extends CommandBase {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    drivetrain.stop();
   }
 
   // Called when another command which requires one or more of the same
