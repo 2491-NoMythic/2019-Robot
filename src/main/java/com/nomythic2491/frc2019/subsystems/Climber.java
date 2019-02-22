@@ -81,7 +81,7 @@ public class Climber extends Subsystem {
   public void runClimberDemand(ClimberDemand demand) {
     engageRatchet(demand.getRatchet());
     mMasterClimber.setNeutralMode(demand.getBrake());
-    mMasterClimber.set(ControlMode.MotionMagic, demand.getSpeed());
+    mMasterClimber.set(ControlMode.PercentOutput, demand.getSpeed());
   }
 
   // Elias --- this stuff is all copied from Drivetrain.java and we might not need

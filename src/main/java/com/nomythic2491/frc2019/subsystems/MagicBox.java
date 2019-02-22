@@ -37,8 +37,10 @@ public class MagicBox extends Subsystem {
     setDefaultCommand(new GamepieceLoop());
   }
   public enum GamepeiceDemand {
-    Test(1, 1),
-    CargoOut_Ship(0,0);
+    Test(0, -500),
+    CargoOut_Ship(21, -1100),
+    CargoFloor(3, -600),
+    Hold(0,0);
 
     private double mHeightPoint;
     private double mAnglePoint;
@@ -137,6 +139,7 @@ public class MagicBox extends Subsystem {
 
     elevatorSlave = new TalonSRX(Constants.kElevatorSlaveId);
     elevatorSlave.configFactoryDefault(Constants.kLongCANTimeoutMs);
+    elevatorSlave.follow(elevatorMaster);
     elevatorSlave.setInverted(InvertType.OpposeMaster);
 
     spindle = new DoubleSolenoid(Constants.kHatchOutChannel, Constants.kHatchInChannel);
@@ -188,11 +191,11 @@ public class MagicBox extends Subsystem {
    * @param speed How fast it goes on a scale of -1 to 1
    */
   public void runIoCargo(IoCargo demand) {
-    if(cargoPresent.get() && demand != IoCargo.In) {
-      intake.set(ControlMode.PercentOutput, 0);
-    } else {
+    // if(cargoPresent.get() && demand == IoCargo.In) {
+    //   intake.set(ControlMode.PercentOutput, 0);
+    // } else {
       intake.set(ControlMode.PercentOutput, demand.getSpeed());
-    }
+    // }
   }
 
   /**
@@ -274,8 +277,10 @@ public class MagicBox extends Subsystem {
   }
 
   public void GamepeiceDemand(GamepeiceDemand demand) {
-    elevateToPoint(demand.getHeightPoint());
-    //rotateToPoint(demand.getAnglePoint());
+    if(demand != GamepeiceDemand.Hold) {
+      elevateToPoint(demand.getHeightPoint());
+      rotateToPoint(demand.getAnglePoint());
+    }
   }
 
   private void elevateToPoint(double setpoint) {

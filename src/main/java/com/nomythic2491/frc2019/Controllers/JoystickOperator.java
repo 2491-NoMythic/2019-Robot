@@ -28,14 +28,19 @@ public class JoystickOperator implements IOperatorController {
             return ClimberDemand.Climb;
         } else if (mJoystick.getPOV() == 0) {
             return ClimberDemand.Reset;
-        } else {
-            return ClimberDemand.Stop;
         }
+        return ClimberDemand.Stop;
     }
 
     @Override
     public GamepeiceDemand getGamepeiceDemand() {
-        return GamepeiceDemand.Test;
+        if (mJoystick.getRawButton(5)) {
+            return GamepeiceDemand.CargoOut_Ship;
+        } else if (mJoystick.getRawButton(6)) {
+            return GamepeiceDemand.CargoFloor;
+        } else {
+            return GamepeiceDemand.Hold;
+        }
     }
 
 }
