@@ -1,7 +1,68 @@
 package com.nomythic2491.frc2019.Settings;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 public class Constants {
     // Motor Controllers have ID's || Solenoids have Channels
+
+    public enum GamepeiceDemand {
+        Test(0, -500), CargoOut_Ship(21, -1100), CargoFloor(3, -600), Hold(0, 0);
+
+        private double mHeightPoint;
+        private double mAnglePoint;
+
+        private GamepeiceDemand(double hight, double angle) {
+            mHeightPoint = hight / Math.PI * 4096;
+            mAnglePoint = angle; // (angle * 4096)/360;
+        }
+
+        public double getHeightPoint() {
+            return mHeightPoint;
+        }
+
+        public double getAnglePoint() {
+            return mAnglePoint;
+        }
+    }
+
+    public enum IoCargo {
+        Out(.75), In(-.75), Stop(0);
+
+        private double mSpeed;
+
+        private IoCargo(double speed) {
+            mSpeed = speed;
+        }
+
+        public double getSpeed() {
+            return mSpeed;
+        }
+    }
+    public enum ClimberDemand {
+        Climb(-1, NeutralMode.Brake, true), Reset(1, NeutralMode.Coast, false), Stop(0, NeutralMode.Brake, false);
+    
+        double mSpeed;
+        NeutralMode mBrake;
+        boolean mRatchet;
+    
+        private ClimberDemand(double speed, NeutralMode brake, boolean ratchet) {
+          mSpeed = speed; //hight / (1.5 * Math.PI) * 4096;
+          mBrake = brake;
+          mRatchet = ratchet;
+        }
+    
+        public double getSpeed() {
+          return mSpeed;
+        }
+    
+        public NeutralMode getBrake() {
+          return mBrake;
+        }
+    
+        public boolean getRatchet() {
+          return mRatchet;
+        }
+      }
 
     // Talons
     public static final int kTimeoutMs = 10;

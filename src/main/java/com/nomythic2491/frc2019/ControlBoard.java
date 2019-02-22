@@ -1,9 +1,12 @@
 package com.nomythic2491.frc2019;
 
-import com.nomythic2491.frc2019.Controllers.*;
-import com.nomythic2491.frc2019.subsystems.Climber.ClimberDemand;
-import com.nomythic2491.frc2019.subsystems.MagicBox.GamepeiceDemand;
-import com.nomythic2491.frc2019.subsystems.MagicBox.IoCargo;
+import com.nomythic2491.frc2019.Controllers.ArcadeDriver;
+import com.nomythic2491.frc2019.Controllers.IDriveController;
+import com.nomythic2491.frc2019.Controllers.IOperatorController;
+import com.nomythic2491.frc2019.Controllers.JoystickOperator;
+import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
+import com.nomythic2491.frc2019.Settings.Constants.GamepeiceDemand;
+import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.lib.util.DriveSignal;
 
 public class ControlBoard implements IControlBoard {

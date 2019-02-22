@@ -1,8 +1,8 @@
 package com.nomythic2491.frc2019.Controllers;
 
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.frc2019.Settings.Constants.kArcadeDriver;
-import com.nomythic2491.frc2019.subsystems.MagicBox.IoCargo;
 import com.nomythic2491.lib.util.CheesyDriveHelper;
 import com.nomythic2491.lib.util.DriveSignal;
 

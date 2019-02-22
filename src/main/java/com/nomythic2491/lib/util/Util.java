@@ -61,4 +61,19 @@ public class Util {
         }
         return result;
     }
+
+    /**
+     * @param units CTRE mag encoder sensor units
+     * @return degrees rounded to tenths.
+     */
+    String ToDeg(int units) {
+        double deg = units * 360.0 / 4096.0;
+
+        /* truncate to 0.1 res */
+        deg *= 10;
+        deg = (int) deg;
+        deg /= 10;
+
+        return "" + deg;
+    }
 }
