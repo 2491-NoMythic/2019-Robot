@@ -34,6 +34,7 @@ public class ControllerMap {
     public static final int tipBoxUp = 5; //Left bumper
     public static final int tipBoxBack = 1; //X
     public static final int deployLineupPins = 8; //Right trigger
+    public static final int togglePivot = 2491; //Change this so it actually does stuff
 
     //Operator General
     public static final int cargoIntakeAxis = 1;

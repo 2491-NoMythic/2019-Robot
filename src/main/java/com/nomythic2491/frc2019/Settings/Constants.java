@@ -8,6 +8,7 @@ public class Constants {
     public static final int kLongCANTimeoutMs = 100;
     public static final double kDriveVoltageRampRate = 2;
     public static final int kPrimarySlotIdx = 0;
+    public static final int kVelocitySlotId = 2491; //Make this not 2491
 
     // Drive
     public static final int kRightDriveMasterId = 10;
@@ -64,6 +65,19 @@ public class Constants {
                                                          // intake rotator
     public static final double kBoxTipBackPosition = 2491; // The position in encoder ticks of the back position of the
                                                            // intake rotator
+
+
+    //Fork
+    public static final int kElevator = 2491;
+    public static final int kElevatorLeft = 2491;
+    public static final int kElevatorRight = 2491;
+    public static final int kRightHatchOutChannelBox = 2491;
+    public static final int kRightHatchInChannelBox = 2491;
+    public static final int kPivotOutChannel = 2491;
+    public static final int kPivotInChannel = 2491;
+
+    public static final int kForkCargoIntakeVelocity = 2491;
+    
 
     // Controllers
     public static final double kDeadband = 0.05;
