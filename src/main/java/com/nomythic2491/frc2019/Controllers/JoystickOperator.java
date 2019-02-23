@@ -28,8 +28,8 @@ public class JoystickOperator implements IOperatorController {
             return ClimberDemand.Climb;
         } else if (mJoystick.getPOV() == 0) {
             return ClimberDemand.Reset;
-        }
-        return ClimberDemand.Stop;
+        } 
+        return ClimberDemand.Stop; //TODO: joystick returns 0 if not plugged in
     }
 
     @Override

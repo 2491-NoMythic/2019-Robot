@@ -98,6 +98,11 @@ public class Drivetrain extends Subsystem {
         talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
         talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
         talon.configNeutralDeadband(0.04, 0);
+
+        talon.configNominalOutputForward(0, Constants.kLongCANTimeoutMs);
+        talon.configNominalOutputReverse(0, Constants.kLongCANTimeoutMs);
+        talon.configPeakOutputForward(1, Constants.kLongCANTimeoutMs);
+        talon.configPeakOutputReverse(-1, Constants.kLongCANTimeoutMs);
     }
 
     private void setTalonPIDF(double proportional, double iterative, double derivative, double feedForward) {
@@ -295,4 +300,9 @@ public class Drivetrain extends Subsystem {
     public void initDefaultCommand() {
         setDefaultCommand(new Drive());
     }
+
+    public void positon() {
+        System.out.println("Right: " + mRightMaster.getSelectedSensorPosition(0) + " Rerror: " + mRightMaster.getClosedLoopError() 
+        + "Left: " + mRightMaster.getSelectedSensorPosition(0) + "Lerror: " + mRightMaster.getClosedLoopError());
+      }
 }
