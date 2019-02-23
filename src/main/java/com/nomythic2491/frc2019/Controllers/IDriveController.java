@@ -12,5 +12,4 @@ public interface IDriveController {
     public boolean getSlowSpeed();
 
     public IoCargo getIoCargo();
-
 }

@@ -38,7 +38,7 @@ public class MagicBox extends Subsystem {
   }
 
   public enum GamepeiceDemand {
-    Test(0, -500), CargoOut_Ship(21, -1100), CargoFloor(5.2, -500), Hold(0, 0), Stow (21, -1500);
+    Test(0, -500), CargoOut_Ship(21, -1100), CargoFloor(5.2, -500), Hold(0, 0), Stow(21, -1500);
 
     private double mHeightPoint;
     private double mAnglePoint;
@@ -71,13 +71,13 @@ public class MagicBox extends Subsystem {
     }
   }
 
-  private static MagicBox instance = null;
+  private static MagicBox mInstance = null;
 
   public static MagicBox getInstance() {
-    if (instance == null) {
-      instance = new MagicBox();
+    if (mInstance == null) {
+      mInstance = new MagicBox();
     }
-    return instance;
+    return mInstance;
   }
 
   private TalonSRX intake, rotateIntake;

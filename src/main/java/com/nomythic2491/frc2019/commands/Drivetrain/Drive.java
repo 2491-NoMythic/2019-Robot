@@ -35,46 +35,6 @@ public class Drive extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    // lastLeftSpeed = currentLeftSpeed;
-    // lastRightSpeed = currentRightSpeed;
-
-    // currentLeftSpeed = -oi.getAxisDeadzonedSquared(ControllerMap.driveControllerLeft, ControllerMap.driveMainAxisLeft, 0.1);
-    // currentRightSpeed = -oi.getAxisDeadzonedSquared(ControllerMap.driveControllerRight, ControllerMap.driveMainAxisRight, 0.1);
-
-    // //Left Joystick
-    // switch(Variables.degreeofaccel){
-    //   //Linear Drive
-    //   case 1:
-    //     double rightDeltay = (currentLeftSpeed - lastLeftSpeed);
-    //     double signOfValue = (rightDeltay / Math.abs(rightDeltay));
-    //     if (Math.abs(rightDeltay) > Variables.linearAccelerationValue){
-    //       if (Math.abs(currentLeftSpeed) - Math.abs(lastLeftSpeed) > 0) {
-    //         //System.out.println(currentLeftSpeed + " was too high, setting to " + (lastLeftSpeed + (Variables.accelerationSpeed * signOfLeftAcceleration)));
-    //         currentLeftSpeed = lastLeftSpeed + (Variables.linearAccelerationValue * signOfValue);
-            
-    //       }
-    //     }
-    //   //No editing factor to speed rate.  
-    //   default:
-    // }
-
-    // //Right Joystick
-    // switch(Variables.degreeofaccel){
-    //   //Linear Drive
-    //   case 1:
-    //   double rightDeltay = (currentRightSpeed - lastRightSpeed);
-    //   double signOfRightValue = (rightDeltay / Math.abs(rightDeltay));
-    //   if (Math.abs(rightDeltay) > Variables.linearAccelerationValue) { // otherwise the power is below 0.05 accel and is fine
-		// 		if (Math.abs(currentRightSpeed) - Math.abs(lastRightSpeed) > 0) {
-		// 			//System.out.println(currentRightSpeed + " was too high, setting to " + (lastRightSpeed + (Variables.accelerationSpeed * signOfRightAcceleration)));
-		// 			currentRightSpeed = lastRightSpeed + (Variables.linearAccelerationValue * signOfRightValue);
-		// 		}
-		// 		// if the difference between the numbers is positive it is going up
-    //   }
-    //   //No editing factor to speed rate
-    //   default:
-    // }
-    // drivetrain.driveDemand(ControlMode.PercentOutput, new DriveSignal(currentLeftSpeed, currentRightSpeed));
     drivetrain.driveDemand(ControlMode.PercentOutput, mBoard.getSignal());
   }
 
