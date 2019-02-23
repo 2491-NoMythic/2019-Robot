@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class PivotIntake extends CommandBase {
 
+    /**
+     * Pivots the intake
+     */
     public PivotIntake() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);

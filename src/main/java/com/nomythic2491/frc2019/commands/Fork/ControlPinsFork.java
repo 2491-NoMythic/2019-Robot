@@ -10,6 +10,10 @@ package com.nomythic2491.frc2019.commands.Fork;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
 public class ControlPinsFork extends CommandBase {
+  
+  /**
+   * Extends or retracts the control pins based on their current position
+   */
   public ControlPinsFork() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);

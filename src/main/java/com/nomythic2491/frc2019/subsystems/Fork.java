@@ -41,6 +41,9 @@ public class Fork extends Subsystem {
         return instance;
     }
 
+    /**
+     * The system of Talons and Solenoids that make up the fork intake subsystem
+     */
     private Fork() {
         elevator = TalonSRXFactory.createDefaultTalon(Constants.kElevator);
         intakeLeft = TalonSRXFactory.createDefaultTalon(Constants.kElevatorLeft);

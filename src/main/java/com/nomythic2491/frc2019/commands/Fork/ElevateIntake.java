@@ -14,6 +14,9 @@ import com.nomythic2491.frc2019.Settings.Constants;
 
 public class ElevateIntake extends CommandBase {
 
+    /**
+     * Elevates or lowers the carriage depending on current state
+     */
     public ElevateIntake() {
         requires(fork);
     }

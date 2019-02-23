@@ -12,8 +12,8 @@ import com.nomythic2491.frc2019.commands.CommandBase;
 public class CargoIntakeUntilSuccess extends CommandBase {
 
     /**
-   * Runs the cargo intake until cargo appears in the magic box.
-   */
+    * Runs the cargo intake until cargo appears in the magic box.
+    */
     public CargoIntakeUntilSuccess() {
      // Use requires() here to declare subsystem dependencies
      // eg. requires(chassis);
