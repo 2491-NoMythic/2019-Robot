@@ -36,18 +36,16 @@ public class MagicBox extends Subsystem {
     // Set the default command for a subsystem here.
     setDefaultCommand(new GamepieceLoop());
   }
+
   public enum GamepeiceDemand {
-    Test(0, -500),
-    CargoOut_Ship(21, -1100),
-    CargoFloor(3, -600),
-    Hold(0,0);
+    Test(0, -500), CargoOut_Ship(21, -1100), CargoFloor(5.2, -500), Hold(0, 0), Stow (21, -1500);
 
     private double mHeightPoint;
     private double mAnglePoint;
 
     private GamepeiceDemand(double hight, double angle) {
-      mHeightPoint = hight/Math.PI * 4096;
-      mAnglePoint = angle; //(angle * 4096)/360;
+      mHeightPoint = hight / Math.PI * 4096;
+      mAnglePoint = angle; // (angle * 4096)/360;
     }
 
     public double getHeightPoint() {
@@ -58,6 +56,7 @@ public class MagicBox extends Subsystem {
       return mAnglePoint;
     }
   }
+
   public enum IoCargo {
     Out(.75), In(-.75), Stop(0);
 
@@ -192,9 +191,9 @@ public class MagicBox extends Subsystem {
    */
   public void runIoCargo(IoCargo demand) {
     // if(cargoPresent.get() && demand == IoCargo.In) {
-    //   intake.set(ControlMode.PercentOutput, 0);
+    // intake.set(ControlMode.PercentOutput, 0);
     // } else {
-      intake.set(ControlMode.PercentOutput, demand.getSpeed());
+    intake.set(ControlMode.PercentOutput, demand.getSpeed());
     // }
   }
 
@@ -255,18 +254,21 @@ public class MagicBox extends Subsystem {
   public void retractSolenoid() {
     spindle.set(Value.kReverse);
   }
+
   /**
    * Retracts the flippy bumper solenoid
    */
   public void retractBumperSolenoid() {
     flippyBumper.set(Value.kReverse);
   }
+
   /**
    * Extends the flippy bumper solenoid
    */
   public void extendBumperSolenoid() {
     flippyBumper.set(Value.kForward);
   }
+
   /**
    * Determines what position the hatch intake solenoid is in
    * 
@@ -277,7 +279,7 @@ public class MagicBox extends Subsystem {
   }
 
   public void GamepeiceDemand(GamepeiceDemand demand) {
-    if(demand != GamepeiceDemand.Hold) {
+    if (demand != GamepeiceDemand.Hold) {
       elevateToPoint(demand.getHeightPoint());
       rotateToPoint(demand.getAnglePoint());
     }
