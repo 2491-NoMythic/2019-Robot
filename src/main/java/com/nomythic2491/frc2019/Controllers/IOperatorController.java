@@ -8,5 +8,7 @@ public interface IOperatorController {
     public ClimberDemand getClimberDemand();
 
     public GamepeiceDemand getGamepeiceDemand();
+
+    public void runPathTest();
     
 }

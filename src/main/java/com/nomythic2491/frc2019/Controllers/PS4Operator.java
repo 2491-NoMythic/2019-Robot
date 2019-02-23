@@ -32,4 +32,11 @@ public class PS4Operator implements IOperatorController {
     public GamepeiceDemand getGamepeiceDemand() {
         return null;
     }
+
+    @Override
+    public void runPathTest() {
+
+    }
+
+    
 }

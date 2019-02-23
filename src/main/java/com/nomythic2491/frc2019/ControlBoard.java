@@ -59,4 +59,9 @@ public class ControlBoard implements IControlBoard {
     public GamepeiceDemand getGamepeiceDemand() {
         return mOperatorController.getGamepeiceDemand();
     }
+
+    @Override
+    public void runPathTest() {
+        mOperatorController.runPathTest();
+    }
 }
