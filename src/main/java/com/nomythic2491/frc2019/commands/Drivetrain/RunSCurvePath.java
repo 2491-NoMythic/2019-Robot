@@ -23,7 +23,7 @@ public class RunSCurvePath extends CommandBase {
   int count;
   Trajectory left;
   Trajectory right;
-  double mpstoetpms = 855.49;
+  double mpstoetpms = 5133.214;
   public RunSCurvePath() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
