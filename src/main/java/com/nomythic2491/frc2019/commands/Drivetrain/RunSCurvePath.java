@@ -53,20 +53,19 @@ public class RunSCurvePath extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    //Trajectory.Segment segLeft = left.get(count);
-    //Trajectory.Segment segRight = right.get(count);
-    //double adjustedSegLeft = segLeft.velocity*mpstoetpms;
-    //double adjustedSegRight = segRight.velocity*mpstoetpms;
-    DriveSignal signal = new DriveSignal(2.0*mpstoetpms, 2.0*mpstoetpms); //adjustedSegRight,adjustedSegLeft
+    Trajectory.Segment segLeft = left.get(count);
+    Trajectory.Segment segRight = right.get(count);
+    double adjustedSegLeft = segLeft.velocity*mpstoetpms;
+    double adjustedSegRight = segRight.velocity*mpstoetpms;
+    DriveSignal signal = new DriveSignal(adjustedSegRight,adjustedSegLeft); //adjustedSegRight,adjustedSegLeft
     drivetrain.driveDemand(ControlMode.Velocity, signal);
-    //path = path +",{x: " + segLeft.x + " y: " + segLeft.y + "}";
     count++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return 250 == count;
+    return left.length() == count;
   }
 
   // Called once after isFinished returns true
