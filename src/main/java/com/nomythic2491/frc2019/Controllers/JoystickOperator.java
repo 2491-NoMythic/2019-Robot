@@ -10,6 +10,8 @@ public class JoystickOperator implements IOperatorController {
 
     private static JoystickOperator mInstance = null;
 
+    private RunSCurvePath test = new RunSCurvePath();
+
     public static JoystickOperator getInstance() {
         if (mInstance == null) {
             mInstance = new JoystickOperator();
@@ -49,7 +51,7 @@ public class JoystickOperator implements IOperatorController {
     @Override
     public void runPathTest() {
         if(mJoystick.getRawButton(10)){
-            RunSCurvePath.init();
+            test.start();
         }
     }
 

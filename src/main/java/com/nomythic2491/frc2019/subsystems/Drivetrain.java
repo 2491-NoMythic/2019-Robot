@@ -42,7 +42,7 @@ public class Drivetrain extends Subsystem {
 
         // Start all Talons in open loop mode.
         mLeftMaster = TalonSRXFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
-        configureMaster(mLeftMaster, true);
+        configureMaster(mLeftMaster, false);
 
         mLeftSlave = new VictorSPX(Constants.kLeftDriveSlaveId);
         mLeftSlave.configFactoryDefault();
@@ -50,7 +50,7 @@ public class Drivetrain extends Subsystem {
         mLeftSlave.setInverted(InvertType.FollowMaster);
 
         mRightMaster = TalonSRXFactory.createDefaultTalon(Constants.kRightDriveMasterId);
-        configureMaster(mRightMaster, false);
+        configureMaster(mRightMaster, true);
 
         mRightSlave = new VictorSPX(Constants.kRightDriveSlaveId);
         mRightSlave.configFactoryDefault();

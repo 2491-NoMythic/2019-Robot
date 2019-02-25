@@ -15,10 +15,10 @@ public class Constants {
     public static final int kLeftDriveMasterId = 1;
     public static final int kLeftDriveSlaveId = 0;
 
-    public static final double kDrivekP = 0;
+    public static final double kDrivekP = 0.1;
     public static final double kDrivekI = 0;
     public static final double kDrivekD = 0;
-    public static final double kDrivekF = 1023/20000;
+    public static final double kDrivekF = 0.05115;
 
     public static final double kDriveEncoderToInches = 1 / Constants.kWheelDiameterInches * Math.PI / 4096.0;
     public static final double kWheelDiameterInches = 2491; // This is very, very important! Change this before trying

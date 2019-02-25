@@ -36,6 +36,7 @@ public class Drive extends CommandBase {
   @Override
   protected void execute() {
     drivetrain.driveDemand(ControlMode.PercentOutput, mBoard.getSignal());
+    mBoard.runPathTest();
   }
 
   // Make this return true when this Command no longer needs to run execute()

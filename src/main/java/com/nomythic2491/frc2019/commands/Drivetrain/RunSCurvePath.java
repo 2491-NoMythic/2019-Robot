@@ -45,6 +45,7 @@ public class RunSCurvePath extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    System.out.println("Running");
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -55,19 +56,20 @@ public class RunSCurvePath extends CommandBase {
     double adjustedSegLeft = segLeft.velocity*mpstoetpms;
     double adjustedSegRight = segRight.velocity*mpstoetpms;
     DriveSignal signal = new DriveSignal(adjustedSegRight,adjustedSegLeft);
-    drivetrain.driveDemand(ControlMode.Velocity,signal);
+    drivetrain.driveDemand(ControlMode.Velocity, signal);
     count++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return left.length() <= count-1;
+    return left.length() == count;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    System.out.println("Done");
     drivetrain.stop();
   }
 
