@@ -24,6 +24,7 @@ public class RunSCurvePath extends CommandBase {
   Trajectory left;
   Trajectory right;
   double mpstoetpms = 5133.214;
+  String path;
   public RunSCurvePath() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -40,6 +41,7 @@ public class RunSCurvePath extends CommandBase {
     left  = modifier.getLeftTrajectory();
     right = modifier.getRightTrajectory();
     count = 0;
+    path = "";
   }
 
   // Called just before this Command runs the first time
@@ -51,19 +53,20 @@ public class RunSCurvePath extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Trajectory.Segment segLeft = left.get(count);
-    Trajectory.Segment segRight = right.get(count);
-    double adjustedSegLeft = segLeft.velocity*mpstoetpms;
-    double adjustedSegRight = segRight.velocity*mpstoetpms;
-    DriveSignal signal = new DriveSignal(adjustedSegRight,adjustedSegLeft);
+    //Trajectory.Segment segLeft = left.get(count);
+    //Trajectory.Segment segRight = right.get(count);
+    //double adjustedSegLeft = segLeft.velocity*mpstoetpms;
+    //double adjustedSegRight = segRight.velocity*mpstoetpms;
+    DriveSignal signal = new DriveSignal(2.0*mpstoetpms, 2.0*mpstoetpms); //adjustedSegRight,adjustedSegLeft
     drivetrain.driveDemand(ControlMode.Velocity, signal);
+    //path = path +",{x: " + segLeft.x + " y: " + segLeft.y + "}";
     count++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return left.length() == count;
+    return 250 == count;
   }
 
   // Called once after isFinished returns true
@@ -71,6 +74,7 @@ public class RunSCurvePath extends CommandBase {
   protected void end() {
     System.out.println("Done");
     drivetrain.stop();
+    System.out.println(path);
   }
 
   // Called when another command which requires one or more of the same

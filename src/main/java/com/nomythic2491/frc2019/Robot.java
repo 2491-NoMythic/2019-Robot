@@ -7,6 +7,7 @@
 
 package com.nomythic2491.frc2019;
 import com.nomythic2491.frc2019.commands.CommandBase;
+import com.nomythic2491.frc2019.commands.Drivetrain.RunSCurvePath;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -35,6 +36,7 @@ public class Robot extends TimedRobot {
     // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
+    SmartDashboard.putData("Run Path Test", new RunSCurvePath());
   }
 
   /**
