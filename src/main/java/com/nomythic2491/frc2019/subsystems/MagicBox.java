@@ -14,7 +14,8 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.Settings.Variables;
+import com.nomythic2491.frc2019.Settings.Constants.GamepeiceDemand;
+import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
@@ -37,40 +38,6 @@ public class MagicBox extends Subsystem {
     setDefaultCommand(new GamepieceLoop());
   }
 
-  public enum GamepeiceDemand {
-    Test(0, -500), CargoOut_Ship(21, -1100), CargoFloor(5.2, -500), Hold(0, 0), Stow(21, -1500);
-
-    private double mHeightPoint;
-    private double mAnglePoint;
-
-    private GamepeiceDemand(double hight, double angle) {
-      mHeightPoint = hight / Math.PI * 4096;
-      mAnglePoint = angle; // (angle * 4096)/360;
-    }
-
-    public double getHeightPoint() {
-      return mHeightPoint;
-    }
-
-    public double getAnglePoint() {
-      return mAnglePoint;
-    }
-  }
-
-  public enum IoCargo {
-    Out(.75), In(-.75), Stop(0);
-
-    private double mSpeed;
-
-    private IoCargo(double speed) {
-      mSpeed = speed;
-    }
-
-    public double getSpeed() {
-      return mSpeed;
-    }
-  }
-
   private static MagicBox mInstance = null;
 
   public static MagicBox getInstance() {
@@ -91,25 +58,17 @@ public class MagicBox extends Subsystem {
   DigitalInput hatchPresent = new DigitalInput(0);
   DigitalInput cargoPresent = new DigitalInput(1);
 
-  public enum PositionRotate {
-    GROUND, FLAT, BACK
-  }
-
-  public enum PositionElevator {
-    UP, DOWN
-  }
-
   private MagicBox() {
     intake = TalonSRXFactory.createDefaultTalon(Constants.kRollerId);
 
     rotateIntake = TalonSRXFactory.createDefaultTalon(Constants.kRotatorId);
     configureMaster(rotateIntake, false, 0.04);
 
-    rotateIntake.selectProfileSlot(Constants.kPrimarySlotIdx, 0);
-    rotateIntake.config_kF(Constants.kPrimarySlotIdx, 1.076842105263158, Constants.kLongCANTimeoutMs);
-    rotateIntake.config_kP(Constants.kPrimarySlotIdx, 0.6, Constants.kLongCANTimeoutMs); // .12
-    rotateIntake.config_kI(Constants.kPrimarySlotIdx, 0, Constants.kLongCANTimeoutMs); // .00001
-    rotateIntake.config_kD(Constants.kPrimarySlotIdx, 220, Constants.kLongCANTimeoutMs); // 25
+    rotateIntake.selectProfileSlot(Constants.kVelocitySlot, 0);
+    rotateIntake.config_kF(Constants.kVelocitySlot, 1.076842105263158, Constants.kLongCANTimeoutMs);
+    rotateIntake.config_kP(Constants.kVelocitySlot, 0.6, Constants.kLongCANTimeoutMs); // .12
+    rotateIntake.config_kI(Constants.kVelocitySlot, 0, Constants.kLongCANTimeoutMs); // .00001
+    rotateIntake.config_kD(Constants.kVelocitySlot, 220, Constants.kLongCANTimeoutMs); // 25
 
     rotateIntake.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
     rotateIntake.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
@@ -120,11 +79,11 @@ public class MagicBox extends Subsystem {
     elevatorMaster = TalonSRXFactory.createDefaultTalon(Constants.kElevatorMasterId);
     configureMaster(elevatorMaster, true, 0.04);
 
-    elevatorMaster.selectProfileSlot(Constants.kPrimarySlotIdx, 0);
-    elevatorMaster.config_kF(Constants.kPrimarySlotIdx, 0.1364, Constants.kLongCANTimeoutMs);
-    elevatorMaster.config_kP(Constants.kPrimarySlotIdx, 0.25, Constants.kLongCANTimeoutMs); // .12
-    elevatorMaster.config_kI(Constants.kPrimarySlotIdx, 0.00001, Constants.kLongCANTimeoutMs); // .00001
-    elevatorMaster.config_kD(Constants.kPrimarySlotIdx, 45, Constants.kLongCANTimeoutMs); // 25
+    elevatorMaster.selectProfileSlot(Constants.kVelocitySlot, 0);
+    elevatorMaster.config_kF(Constants.kVelocitySlot, 0.1364, Constants.kLongCANTimeoutMs);
+    elevatorMaster.config_kP(Constants.kVelocitySlot, 0.25, Constants.kLongCANTimeoutMs); // .12
+    elevatorMaster.config_kI(Constants.kVelocitySlot, 0.00001, Constants.kLongCANTimeoutMs); // .00001
+    elevatorMaster.config_kD(Constants.kVelocitySlot, 45, Constants.kLongCANTimeoutMs); // 25
 
     elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
     elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
@@ -180,7 +139,7 @@ public class MagicBox extends Subsystem {
     // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
     // Constants.kLongCANTimeoutMs);
     talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-    talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
+    talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); //TODO: Remove this bad boy!
     talon.configNeutralDeadband(nominalV, 100);
   }
 
@@ -291,14 +250,6 @@ public class MagicBox extends Subsystem {
 
   private void rotateToPoint(double setpoint) {
     rotateIntake.set(ControlMode.MotionMagic, setpoint);
-  }
-
-  public PositionElevator getElevatorPosition() {
-    return Variables.currentElevatorPostion;
-  }
-
-  public PositionRotate getMagicBoxPosition() {
-    return Variables.currentMagicboxPosition;
   }
 
   public void toggleControlPins() {

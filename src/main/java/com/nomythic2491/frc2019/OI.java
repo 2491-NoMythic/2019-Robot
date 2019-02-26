@@ -7,8 +7,6 @@
 
 package com.nomythic2491.frc2019;
 
-import com.nomythic2491.frc2019.Settings.ControllerMap;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -61,26 +59,6 @@ public class OI {
   // button.whenReleased(new ExampleCommand());
   public void init()
   {
-    // controllers[0] = new Joystick(0);//Drive
-    controllers[0] = new Joystick(1);//Op
-
-    //pickupHatch = new JoystickButton(controllers[ControllerMap.operatorController], ControllerMap.hatchButton);
-
-    Stowed = new JoystickButton(controllers[ControllerMap.operatorController], 2);
-    Hatch = new JoystickButton(controllers[ControllerMap.operatorController],6);
-    Hatch2 = new JoystickButton(controllers[ControllerMap.operatorController],4);
-    Cargo = new JoystickButton(controllers[ControllerMap.operatorController],5);
-    Cargo2 = new JoystickButton(controllers[ControllerMap.operatorController],3);
-    Flat = new JoystickButton(controllers[ControllerMap.operatorController], 1);
-
-    //CargoMed = new JoystickButton(controllers[ControllerMap.operatorController], 7);
-    CargoLow = new JoystickButton(controllers[ControllerMap.operatorController], 9);
-    CargoPickup = new JoystickButton(controllers[ControllerMap.operatorController], 11);
-    HatchMed = new JoystickButton(controllers[ControllerMap.operatorController], 8);
-    Bottom = new JoystickButton(controllers[ControllerMap.operatorController], 12);
-
-    Deploy = new POVButton(controllers[ControllerMap.operatorController], 180);
-    Retract = new POVButton(controllers[ControllerMap.operatorController], 0);
 
     //Right hand is cargo left hand is hatch
   }

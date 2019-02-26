@@ -1,14 +1,16 @@
 package com.nomythic2491.frc2019.Controllers;
 
+import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
+import com.nomythic2491.frc2019.Settings.Constants.GamepeiceDemand;
 import com.nomythic2491.frc2019.commands.Drivetrain.RunSCurvePath;
-import com.nomythic2491.frc2019.subsystems.Climber.ClimberDemand;
-import com.nomythic2491.frc2019.subsystems.MagicBox.GamepeiceDemand;
 
 import edu.wpi.first.wpilibj.Joystick;
 
 public class JoystickOperator implements IOperatorController {
 
     private static JoystickOperator mInstance = null;
+
+    private RunSCurvePath test = new RunSCurvePath();
 
     public static JoystickOperator getInstance() {
         if (mInstance == null) {
@@ -49,7 +51,7 @@ public class JoystickOperator implements IOperatorController {
     @Override
     public void runPathTest() {
         if(mJoystick.getRawButton(10)){
-            RunSCurvePath.init();
+            test.start();
         }
     }
 

@@ -1,7 +1,7 @@
 package com.nomythic2491.frc2019.Controllers;
 
 import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.subsystems.MagicBox.IoCargo;
+import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.lib.util.CheesyDriveHelper;
 import com.nomythic2491.lib.util.DriveSignal;
 
@@ -29,7 +29,7 @@ public class ArcadeDriver implements IDriveController {
     @Override
     public DriveSignal getSignal() {
         return mHelper.cheesyDrive(
-                mHelper.handleDeadband(mJoystick.getRawAxis(Constants.ArcadeDriver.kThrottleAxis), Constants.kDeadband),
+                mHelper.handleDeadband(-mJoystick.getRawAxis(Constants.ArcadeDriver.kThrottleAxis), Constants.kDeadband),
                 mHelper.handleDeadband(mJoystick.getRawAxis(Constants.ArcadeDriver.kTurnAxis), Constants.kDeadband),
                 mJoystick.getRawButton(Constants.ArcadeDriver.kQuickturnButton));
     }
