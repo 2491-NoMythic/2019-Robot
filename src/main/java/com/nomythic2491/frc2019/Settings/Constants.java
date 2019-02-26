@@ -64,6 +64,27 @@ public class Constants {
                                                          // intake rotator
     public static final double kBoxTipBackPosition = 2491; // The position in encoder ticks of the back position of the
                                                            // intake rotator
+    
+    //MagicFork
+    public static final int kMFIntakeRollerId = 2491;
+    public static final int kMFElevatorId = 2491;
+    public static final int kMFHatchReleaseChannel = 2491;
+    public static final int kMFHatchGrabChannel = 2491;
+    public static final int kMFIntakeRotateDownChannel = 2491;
+    public static final int kMFIntakeRotateUpChannel = 2491;
+
+    public static final double kMFShootSpeed = 2491;
+    public static final double kMFIntakeSpeed = 2491;
+
+    public static final double kMFElevatorP = 2491;
+    public static final double kMFElevatorI = 2491;
+    public static final double kMFElevatorD = 2491;
+    public static final double kMFElevatorF = 2491;
+
+    public static final double kMFRollerP = 2491;
+    public static final double kMFRollerI = 2491;
+    public static final double kMFRollerD = 2491;
+    public static final double kMFRollerF = 2491;
 
     // Controllers
     public static final double kDeadband = 0.05;
