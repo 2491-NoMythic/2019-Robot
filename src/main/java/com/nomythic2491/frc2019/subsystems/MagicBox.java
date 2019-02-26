@@ -180,7 +180,7 @@ public class MagicBox extends Subsystem {
     // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
     // Constants.kLongCANTimeoutMs);
     talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-    talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
+    talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); //TODO: Remove this bad boy!
     talon.configNeutralDeadband(nominalV, 100);
   }
 
