@@ -14,6 +14,8 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Constants.GamepeiceDemand;
+import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
@@ -34,40 +36,6 @@ public class MagicBox extends Subsystem {
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     setDefaultCommand(new GamepieceLoop());
-  }
-
-  public enum GamepeiceDemand {
-    Test(0, -500), CargoOut_Ship(21, -1100), CargoFloor(5.2, -500), Hold(0, 0), Stow(21, -1500);
-
-    private double mHeightPoint;
-    private double mAnglePoint;
-
-    private GamepeiceDemand(double hight, double angle) {
-      mHeightPoint = hight / Math.PI * 4096;
-      mAnglePoint = angle; // (angle * 4096)/360;
-    }
-
-    public double getHeightPoint() {
-      return mHeightPoint;
-    }
-
-    public double getAnglePoint() {
-      return mAnglePoint;
-    }
-  }
-
-  public enum IoCargo {
-    Out(.75), In(-.75), Stop(0);
-
-    private double mSpeed;
-
-    private IoCargo(double speed) {
-      mSpeed = speed;
-    }
-
-    public double getSpeed() {
-      return mSpeed;
-    }
   }
 
   private static MagicBox mInstance = null;

@@ -8,8 +8,8 @@
 package com.nomythic2491.frc2019.commands.Climber;
 
 import com.nomythic2491.frc2019.ControlBoard;
+import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
 import com.nomythic2491.frc2019.commands.CommandBase;
-import com.nomythic2491.frc2019.subsystems.Climber.ClimberDemand;
 
 public class ClimberLoop extends CommandBase {
   private ControlBoard mBoard;

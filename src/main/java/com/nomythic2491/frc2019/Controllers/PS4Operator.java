@@ -1,8 +1,8 @@
 package com.nomythic2491.frc2019.Controllers;
 
 import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.subsystems.Climber.ClimberDemand;
-import com.nomythic2491.frc2019.subsystems.MagicBox.GamepeiceDemand;
+import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
+import com.nomythic2491.frc2019.Settings.Constants.GamepeiceDemand;
 
 import edu.wpi.first.wpilibj.Joystick;
 
