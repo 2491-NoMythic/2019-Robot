@@ -14,7 +14,6 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
@@ -90,14 +89,6 @@ public class MagicBox extends Subsystem {
   private DoubleSolenoid spindle, flippyBumper;
   DigitalInput hatchPresent = new DigitalInput(0);
   DigitalInput cargoPresent = new DigitalInput(1);
-
-  public enum PositionRotate {
-    GROUND, FLAT, BACK
-  }
-
-  public enum PositionElevator {
-    UP, DOWN
-  }
 
   private MagicBox() {
     intake = TalonSRXFactory.createDefaultTalon(Constants.kRollerId);
@@ -291,14 +282,6 @@ public class MagicBox extends Subsystem {
 
   private void rotateToPoint(double setpoint) {
     rotateIntake.set(ControlMode.MotionMagic, setpoint);
-  }
-
-  public PositionElevator getElevatorPosition() {
-    return Variables.currentElevatorPostion;
-  }
-
-  public PositionRotate getMagicBoxPosition() {
-    return Variables.currentMagicboxPosition;
   }
 
   public void toggleControlPins() {

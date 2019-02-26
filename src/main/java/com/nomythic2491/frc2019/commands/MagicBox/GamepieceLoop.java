@@ -8,7 +8,6 @@
 package com.nomythic2491.frc2019.commands.MagicBox;
 
 import com.nomythic2491.frc2019.ControlBoard;
-import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
 public class GamepieceLoop extends CommandBase {

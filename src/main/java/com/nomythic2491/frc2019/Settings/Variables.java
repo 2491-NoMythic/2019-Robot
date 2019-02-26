@@ -7,9 +7,6 @@
 
 package com.nomythic2491.frc2019.Settings;
 
-import com.nomythic2491.frc2019.subsystems.MagicBox.PositionElevator;
-import com.nomythic2491.frc2019.subsystems.MagicBox.PositionRotate;
-
 /**
  * Add your docs here.
  */
@@ -34,8 +31,4 @@ public class Variables {
 
     //Controllers
     public static boolean isTwoStick = false;
-
-    //MagicBox
-    public static PositionElevator currentElevatorPostion = PositionElevator.DOWN;
-    public static PositionRotate currentMagicboxPosition = PositionRotate.FLAT;
 }

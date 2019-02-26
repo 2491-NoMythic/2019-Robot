@@ -11,7 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.commands.Drivetrain.Drive;
+import com.nomythic2491.frc2019.commands.Drivetrain.DriveLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.lib.util.DriveSignal;
 
@@ -26,7 +26,7 @@ public class Drivetrain extends Subsystem {
 
     @Override
     public void initDefaultCommand() {
-        setDefaultCommand(new Drive());
+        setDefaultCommand(new DriveLoop());
     }
 
     private static Drivetrain mInstance = null;
@@ -98,14 +98,7 @@ public class Drivetrain extends Subsystem {
         talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs); //TODO: cofigure this for good data
         talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
         talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); //TODO: sets a constant accel – s to full – configure
-        talon.configNeutralDeadband(0.04, 0);
 
-        talon.configNominalOutputForward(0, Constants.kLongCANTimeoutMs);
-        talon.configNominalOutputReverse(0, Constants.kLongCANTimeoutMs);
-        talon.configPeakOutputForward(1, Constants.kLongCANTimeoutMs);
-        talon.configPeakOutputReverse(-1, Constants.kLongCANTimeoutMs);
-
-        talon.selectProfileSlot(Constants.kVelocitySlot, 0);
         talon.config_kP(Constants.kVelocitySlot, Constants.kDrivekP, Constants.kLongCANTimeoutMs);
         talon.config_kI(Constants.kVelocitySlot, Constants.kDrivekI, Constants.kLongCANTimeoutMs);
         talon.config_kD(Constants.kVelocitySlot, Constants.kDrivekD, Constants.kLongCANTimeoutMs);

@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.nomythic2491.frc2019.commands.CommandBase;
 import com.nomythic2491.lib.util.DriveSignal;
 
-import edu.wpi.first.wpilibj.command.Command;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;

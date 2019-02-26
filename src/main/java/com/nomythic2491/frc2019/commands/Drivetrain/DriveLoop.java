@@ -9,22 +9,15 @@ package com.nomythic2491.frc2019.commands.Drivetrain;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.nomythic2491.frc2019.ControlBoard;
-import com.nomythic2491.frc2019.Settings.ControllerMap;
-import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.frc2019.commands.CommandBase;
-import com.nomythic2491.lib.util.DriveSignal;
 
-public class Drive extends CommandBase {
+public class DriveLoop extends CommandBase {
 
   private ControlBoard mBoard;
-  private double currentLeftSpeed, currentRightSpeed, lastLeftSpeed, lastRightSpeed;	
 
-
-  public Drive() {
+  public DriveLoop() {
     requires(drivetrain);
     mBoard = ControlBoard.getInstance();
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
