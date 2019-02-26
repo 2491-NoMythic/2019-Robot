@@ -110,11 +110,11 @@ public class Climber extends Subsystem {
   }
 
   private void resetRightEncoder() {
-    mMasterClimber.setSelectedSensorPosition(0, Constants.kPrimarySlotIdx, Constants.kTimeoutMs);
+    mMasterClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
   }
 
   private void resetLeftEncoder() {
-    mSlaveClimber.setSelectedSensorPosition(0, Constants.kPrimarySlotIdx, Constants.kTimeoutMs);
+    mSlaveClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
   }
 
   /**

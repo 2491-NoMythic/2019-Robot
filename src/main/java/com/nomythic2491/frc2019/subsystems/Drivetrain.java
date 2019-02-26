@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
@@ -23,13 +24,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Drivetrain extends Subsystem {
 
+    @Override
+    public void initDefaultCommand() {
+        setDefaultCommand(new Drive());
+    }
+
     private static Drivetrain mInstance = null;
-    private TalonSRX mLeftMaster, mRightMaster;
-    private VictorSPX mLeftSlave, mRightSlave;
-    private AHRS gyro;
-    public StringBuilder velocity;
-    private NetworkTable limelight;
-    private NetworkTableEntry tx, ty, ta, tv;
 
     public static Drivetrain getInstance() {
         if (mInstance == null) {
@@ -37,6 +37,14 @@ public class Drivetrain extends Subsystem {
         }
         return mInstance;
     }
+
+    private TalonSRX mLeftMaster, mRightMaster;
+    private VictorSPX mLeftSlave, mRightSlave;
+    private AHRS gyro;
+    public StringBuilder velocity;
+    private NetworkTable limelight;
+    private NetworkTableEntry tx, ty, ta, tv;
+    private boolean mBreak;
 
     private Drivetrain() {
 
@@ -57,13 +65,6 @@ public class Drivetrain extends Subsystem {
         mRightSlave.follow(mRightMaster);
         mRightSlave.setInverted(InvertType.FollowMaster);
 
-        // Corrects sensor direction to match throttle direction
-        mLeftMaster.setSensorPhase(true);
-        mRightMaster.setSensorPhase(true);
-
-        /* Configures FPID constants for Talon's Velocity mode */
-        setTalonPIDF(Constants.kDrivekP, Constants.kDrivekI, Constants.kDrivekD, Constants.kDrivekF);
-
         /**
          * Instantiates the gyro
          */
@@ -82,6 +83,7 @@ public class Drivetrain extends Subsystem {
 
     private void configureMaster(TalonSRX talon, boolean left) {
         talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
+        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
         // primary closed-loop, 100 ms timeout
         final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
                 Constants.kLongCANTimeoutMs);
@@ -93,30 +95,23 @@ public class Drivetrain extends Subsystem {
         talon.setSensorPhase(true);
         talon.enableVoltageCompensation(true);
         talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
-        // Constants.kLongCANTimeoutMs);
+        talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs); //TODO: cofigure this for good data
         talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
+        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); //TODO: sets a constant accel – s to full – configure
         talon.configNeutralDeadband(0.04, 0);
 
         talon.configNominalOutputForward(0, Constants.kLongCANTimeoutMs);
         talon.configNominalOutputReverse(0, Constants.kLongCANTimeoutMs);
         talon.configPeakOutputForward(1, Constants.kLongCANTimeoutMs);
         talon.configPeakOutputReverse(-1, Constants.kLongCANTimeoutMs);
-    }
 
-    private void setTalonPIDF(double proportional, double iterative, double derivative, double feedForward) {
-        mLeftMaster.config_kP(Constants.kPrimarySlotIdx, proportional, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kP(Constants.kPrimarySlotIdx, proportional, Constants.kLongCANTimeoutMs);
+        talon.selectProfileSlot(Constants.kVelocitySlot, 0);
+        talon.config_kP(Constants.kVelocitySlot, Constants.kDrivekP, Constants.kLongCANTimeoutMs);
+        talon.config_kI(Constants.kVelocitySlot, Constants.kDrivekI, Constants.kLongCANTimeoutMs);
+        talon.config_kD(Constants.kVelocitySlot, Constants.kDrivekD, Constants.kLongCANTimeoutMs);
+        talon.config_kF(Constants.kVelocitySlot, Constants.kDrivekF, Constants.kLongCANTimeoutMs);
+        //talon.config_IntegralZone(Constants.kVelocitySlot, Constants.kDriveIZ, Constants.kLongCANTimeoutMs);
 
-        mLeftMaster.config_kI(Constants.kPrimarySlotIdx, iterative, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kI(Constants.kPrimarySlotIdx, iterative, Constants.kLongCANTimeoutMs);
-
-        mLeftMaster.config_kD(Constants.kPrimarySlotIdx, derivative, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kD(Constants.kPrimarySlotIdx, derivative, Constants.kLongCANTimeoutMs);
-
-        mLeftMaster.config_kF(Constants.kPrimarySlotIdx, feedForward, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kF(Constants.kPrimarySlotIdx, feedForward, Constants.kLongCANTimeoutMs);
     }
 
     /**
@@ -126,10 +121,14 @@ public class Drivetrain extends Subsystem {
      * @param signal DriveSignal for the motors
      */
     public void driveDemand(ControlMode mode, DriveSignal signal) {
+        if (mBreak != signal.getBrakeMode()) {
+            mRightMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
+            mLeftMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
+            mBreak = signal.getBrakeMode();
+        }
+
         mLeftMaster.set(mode, signal.getLeft());
-        mRightMaster.set(mode, signal.getRight());
-        mRightMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
-        mLeftMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
+        mRightMaster.set(mode, signal.getRight());  
     }
 
     /**
@@ -143,15 +142,15 @@ public class Drivetrain extends Subsystem {
      * Sets left and right encoders to 0
      */
     public void resetEncoders() {
-        mLeftMaster.setSelectedSensorPosition(0, Constants.kPrimarySlotIdx, Constants.kTimeoutMs);
-        mRightMaster.setSelectedSensorPosition(0, Constants.kPrimarySlotIdx, Constants.kTimeoutMs);
+        mLeftMaster.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
+        mRightMaster.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
     }
 
     /**
      * @return The value of the left drive encoder in inches
      */
     public double getLeftEncoderDistance() {
-        return mLeftMaster.getSelectedSensorPosition(0) * Constants.kDriveEncoderToInches;
+        return getLeftEncoderDistanceRaw() * Constants.kDriveEncoderToInches;
     }
 
     /**
@@ -174,7 +173,7 @@ public class Drivetrain extends Subsystem {
      * @return The value of the right drive encoder in inches
      */
     public double getRightEncoderDistance() {
-        return mRightMaster.getSelectedSensorPosition(0) * Constants.kDriveEncoderToInches;
+        return getRightEncoderDistanceRaw() * Constants.kDriveEncoderToInches;
     }
 
     /**
@@ -185,41 +184,17 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
-     * @return The speed of the left motor in RPS
-     */
-    // public double getLeftEncoderRate() {
-    // return mLeftMaster.getSelectedSensorVelocity(0) *
-    // Constants.driveEncoderVelocityToRPS;
-    // }
-
-    /**
-     * @return The speed of the right motor in RPS
-     */
-    // public double getRightEncoderRate() {
-    // return mRightMaster.getSelectedSensorVelocity(0) *
-    // Constants.driveEncoderVelocityToRPS;
-    // }
-
-    /**
-     * 
-     * @return The average speed of both motors in RPS
-     */
-    // public double getEncoderRate() {
-    // return (getRightEncoderRate() + getLeftEncoderRate()) / 2;
-    // }
-
-    /**
      * @return The left driverail's velocity in NativeUnitsPer100Ms
      */
     public double getLeftVelocityRaw() {
-        return mLeftMaster.getSelectedSensorVelocity(Constants.kPrimarySlotIdx);
+        return mLeftMaster.getSelectedSensorVelocity(Constants.kVelocitySlot);
     }
 
     /**
      * @return The right driverail's velocity in NativeUnitsPer100Ms
      */
     public double getRightVelocityRaw() {
-        return mRightMaster.getSelectedSensorVelocity(Constants.kPrimarySlotIdx);
+        return mRightMaster.getSelectedSensorVelocity(Constants.kVelocitySlot);
     }
 
     /**
@@ -235,7 +210,7 @@ public class Drivetrain extends Subsystem {
      * @return
      */
     public double getGyroAngle() {
-        return (gyro.getAngle() % 360 + 360) % 360;
+        return (getRawGyroAngle() % 360 + 360) % 360;
     }
 
     public double getRawGyroAngle() {
@@ -294,11 +269,6 @@ public class Drivetrain extends Subsystem {
     public void setCameraMode() {
         limelight.getEntry("ledMode").setNumber(1);
         limelight.getEntry("camMode").setNumber(1);
-    }
-
-    @Override
-    public void initDefaultCommand() {
-        setDefaultCommand(new Drive());
     }
 
     public void positon() {

@@ -7,7 +7,7 @@ public class Constants {
     public static final int kTimeoutMs = 10;
     public static final int kLongCANTimeoutMs = 100;
     public static final double kDriveVoltageRampRate = 2;
-    public static final int kPrimarySlotIdx = 0;
+    public static final int kVelocitySlot = 0;
 
     // Drive
     public static final int kRightDriveMasterId = 10;
@@ -17,6 +17,7 @@ public class Constants {
 
     public static final double kDrivekP = 0.1;
     public static final double kDrivekI = 0;
+    public static final int kDriveIZ = 0;
     public static final double kDrivekD = 0;
     public static final double kDrivekF = .05285; //calculated 0.0000487024 other:.05115
 
