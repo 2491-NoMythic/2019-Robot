@@ -9,17 +9,15 @@ package com.nomythic2491.frc2019.commands.MagicFork;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class HatchPickup extends CommandBase {
-  public HatchPickup() {
+public class AutoPlaceHatch extends CommandBase {
+  public AutoPlaceHatch() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(magicfork);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    magicfork.grabHatch();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -30,13 +28,12 @@ public class HatchPickup extends CommandBase {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    magicfork.dropHatch();
   }
 
   // Called when another command which requires one or more of the same

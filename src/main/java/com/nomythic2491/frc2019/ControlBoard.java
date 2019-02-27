@@ -5,7 +5,7 @@ import com.nomythic2491.frc2019.Controllers.IDriveController;
 import com.nomythic2491.frc2019.Controllers.IOperatorController;
 import com.nomythic2491.frc2019.Controllers.JoystickOperator;
 import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
-import com.nomythic2491.frc2019.Settings.Constants.GamepeiceDemand;
+import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.lib.util.DriveSignal;
 
@@ -59,8 +59,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public GamepeiceDemand getGamepeiceDemand() {
-        return mOperatorController.getGamepeiceDemand();
+    public GamepieceDemand getGamepieceDemand() {
+        return mOperatorController.getGamepieceDemand();
     }
 
     @Override

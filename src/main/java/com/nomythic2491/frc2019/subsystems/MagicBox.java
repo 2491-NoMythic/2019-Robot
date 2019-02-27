@@ -14,7 +14,7 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.Settings.Constants.GamepeiceDemand;
+import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
@@ -237,8 +237,8 @@ public class MagicBox extends Subsystem {
     return spindle.get();
   }
 
-  public void GamepeiceDemand(GamepeiceDemand demand) {
-    if (demand != GamepeiceDemand.Hold) {
+  public void GamepieceDemand(GamepieceDemand demand) {
+    if (demand != GamepieceDemand.Hold) {
       elevateToPoint(demand.getHeightPoint());
       rotateToPoint(demand.getAnglePoint());
     }

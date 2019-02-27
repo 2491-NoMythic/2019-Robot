@@ -10,6 +10,9 @@ package com.nomythic2491.frc2019.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
+import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
+import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -40,21 +43,21 @@ public class MagicFork extends Subsystem {
         intakeRoller = TalonSRXFactory.createDefaultTalon(Constants.kMFIntakeRollerId);
         elevator = TalonSRXFactory.createDefaultTalon(Constants.kMFElevatorId);
 
-        intakeRoller.selectProfileSlot(Constants.kPrimarySlotIdx, 0);
-        intakeRoller.config_kP(Constants.kPrimarySlotIdx, Constants.kMFRollerP, Constants.kLongCANTimeoutMs);
-        intakeRoller.config_kI(Constants.kPrimarySlotIdx, Constants.kMFRollerI, Constants.kLongCANTimeoutMs);
-        intakeRoller.config_kD(Constants.kPrimarySlotIdx, Constants.kMFRollerD, Constants.kLongCANTimeoutMs);
-        intakeRoller.config_kF(Constants.kPrimarySlotIdx, Constants.kMFRollerF, Constants.kLongCANTimeoutMs);
+        intakeRoller.selectProfileSlot(Constants.kVelocitySlot, 0);
+        intakeRoller.config_kP(Constants.kVelocitySlot, Constants.kMFRollerP, Constants.kLongCANTimeoutMs);
+        intakeRoller.config_kI(Constants.kVelocitySlot, Constants.kMFRollerI, Constants.kLongCANTimeoutMs);
+        intakeRoller.config_kD(Constants.kVelocitySlot, Constants.kMFRollerD, Constants.kLongCANTimeoutMs);
+        intakeRoller.config_kF(Constants.kVelocitySlot, Constants.kMFRollerF, Constants.kLongCANTimeoutMs);
         // intakeRoller.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
         // intakeRoller.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
         // intakeRoller.configMotionCruiseVelocity(200, Constants.kLongCANTimeoutMs);
         // intakeRoller.configMotionAcceleration(400, Constants.kLongCANTimeoutMs);
 
-        elevator.selectProfileSlot(Constants.kPrimarySlotIdx, 0);
-        elevator.config_kP(Constants.kPrimarySlotIdx, Constants.kMFElevatorP, Constants.kLongCANTimeoutMs);
-        elevator.config_kI(Constants.kPrimarySlotIdx, Constants.kMFElevatorI, Constants.kLongCANTimeoutMs);
-        elevator.config_kD(Constants.kPrimarySlotIdx, Constants.kMFElevatorD, Constants.kLongCANTimeoutMs);
-        elevator.config_kF(Constants.kPrimarySlotIdx, Constants.kMFElevatorF, Constants.kLongCANTimeoutMs);
+        elevator.selectProfileSlot(Constants.kVelocitySlot, 0);
+        elevator.config_kP(Constants.kVelocitySlot, Constants.kMFElevatorP, Constants.kLongCANTimeoutMs);
+        elevator.config_kI(Constants.kVelocitySlot, Constants.kMFElevatorI, Constants.kLongCANTimeoutMs);
+        elevator.config_kD(Constants.kVelocitySlot, Constants.kMFElevatorD, Constants.kLongCANTimeoutMs);
+        elevator.config_kF(Constants.kVelocitySlot, Constants.kMFElevatorF, Constants.kLongCANTimeoutMs);
         // elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
         // elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
         // elevator.configMotionCruiseVelocity(6650, Constants.kLongCANTimeoutMs);
@@ -125,6 +128,14 @@ public class MagicFork extends Subsystem {
     }
 
     /**
+     * Checks to see if the intake is in the tilted up position
+     * @return True if up; false if down
+     */
+    public Value isIntakeTippedUp() {
+        return intakeAngle.get();
+    }
+
+    /**
      * Extends angle pistons to tip the intake up
      */
     public void tipIntakeUp() {
@@ -138,7 +149,39 @@ public class MagicFork extends Subsystem {
         intakeAngle.set(Value.kReverse);
     }
 
+    public void runIoCargo(IoCargo demand) {
+        //this needs code!
+    }
+
+    /**
+     * Runs magic fork elevator at given speed
+     * @param speed speed elevator runs at from -1 to 1
+     */
+    public void runElevator(double speed) {
+        elevator.set(ControlMode.PercentOutput, speed);
+    }
+
+    /**
+     * Moves the elevator to a set point
+     * @param setpoint The point the elevator will move to
+     */
+    private void elevateToPoint(double setpoint) {
+        elevator.set(ControlMode.MotionMagic, setpoint);
+    }
+
+    /**
+     * I don't know what da heck dis does
+     * @param demand
+     */
+    public void GamepieceDemand(GamepieceDemand demand) {
+        if (demand != GamepieceDemand.Hold) {
+          elevateToPoint(demand.getHeightPoint());
+          rotateToPoint(demand.getAnglePoint());
+        }
+      }
+
     @Override
     protected void initDefaultCommand() {
+        setDefaultCommand(new GamepieceLoop());
     }
 }

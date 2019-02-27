@@ -5,13 +5,13 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 public class Constants {
     // Motor Controllers have ID's || Solenoids have Channels
 
-    public enum GamepeiceDemand {
+    public enum GamepieceDemand {
         Test(0, -500), CargoOut_Ship(21, -1100), CargoFloor(5.2, -500), Hold(0, 0), Stow(21, -1500);
 
         private double mHeightPoint;
         private double mAnglePoint;
 
-        private GamepeiceDemand(double hight, double angle) {
+        private GamepieceDemand(double hight, double angle) {
             mHeightPoint = hight / Math.PI * 4096;
             mAnglePoint = angle; // (angle * 4096)/360;
         }
@@ -136,7 +136,7 @@ public class Constants {
     public static final int kMFIntakeRotateDownChannel = 2491;
     public static final int kMFIntakeRotateUpChannel = 2491;
 
-    public static final double kMFShootSpeed = 2491;
+    public static final double kMFShootSpeed = .75;
     public static final double kMFIntakeSpeed = 2491;
 
     public static final double kMFElevatorP = 2491;

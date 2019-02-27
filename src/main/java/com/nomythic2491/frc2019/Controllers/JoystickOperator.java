@@ -1,7 +1,7 @@
 package com.nomythic2491.frc2019.Controllers;
 
 import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
-import com.nomythic2491.frc2019.Settings.Constants.GamepeiceDemand;
+import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.commands.Drivetrain.RunSCurvePath;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -36,15 +36,15 @@ public class JoystickOperator implements IOperatorController {
     }
 
     @Override
-    public GamepeiceDemand getGamepeiceDemand() {
+    public GamepieceDemand getGamepieceDemand() {
         if (mJoystick.getRawButton(5)) {
-            return GamepeiceDemand.CargoOut_Ship;
+            return GamepieceDemand.CargoOut_Ship;
         } else if (mJoystick.getRawButton(6)) {
-            return GamepeiceDemand.CargoFloor;
+            return GamepieceDemand.CargoFloor;
         } else if (mJoystick.getRawButton(3)) {
-            return GamepeiceDemand.Stow;
+            return GamepieceDemand.Stow;
         } else {
-            return GamepeiceDemand.Hold;
+            return GamepieceDemand.Hold;
         }
     }
 

@@ -9,8 +9,10 @@ package com.nomythic2491.frc2019.commands.MagicFork;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class HatchPickup extends CommandBase {
-  public HatchPickup() {
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+
+public class TipUpAndDown extends CommandBase {
+  public TipUpAndDown() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(magicfork);
@@ -19,7 +21,15 @@ public class HatchPickup extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    magicfork.grabHatch();
+    if (magicfork.isIntakeTippedUp() == Value.kForward) {
+      magicfork.tipIntakeDown();
+    }
+
+    else if (magicfork.isIntakeTippedUp() == Value.kReverse) {
+      magicfork.tipIntakeUp();
+    }
+
+    else {}
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -36,7 +46,6 @@ public class HatchPickup extends CommandBase {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    magicfork.dropHatch();
   }
 
   // Called when another command which requires one or more of the same
