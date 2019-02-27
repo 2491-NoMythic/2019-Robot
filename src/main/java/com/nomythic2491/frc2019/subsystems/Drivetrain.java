@@ -103,6 +103,7 @@ public class Drivetrain extends Subsystem {
         talon.config_kI(Constants.kVelocitySlot, Constants.kDrivekI, Constants.kLongCANTimeoutMs);
         talon.config_kD(Constants.kVelocitySlot, Constants.kDrivekD, Constants.kLongCANTimeoutMs);
         talon.config_kF(Constants.kVelocitySlot, Constants.kDrivekF, Constants.kLongCANTimeoutMs);
+        talon.configOpenloopRamp(1);
         //talon.config_IntegralZone(Constants.kVelocitySlot, Constants.kDriveIZ, Constants.kLongCANTimeoutMs);
 
     }
