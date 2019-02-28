@@ -30,10 +30,10 @@ public class RunSCurvePath extends CommandBase {
     requires(drivetrain);
     double wheelbase_width = 25.75/39.37;
     waypoints = new Waypoint[] {
-      new Waypoint(-2,-4,0),
+      new Waypoint(-3,-1,0),
       new Waypoint(0,0,0)
     };
-    config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 3.3528, 4.0, 60.0);
+    config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 3.3528, 8.0, 60.0);
     Trajectory trajectory = Pathfinder.generate(waypoints, config);
     TankModifier modifier = new TankModifier(trajectory);
     modifier.modify(wheelbase_width);
@@ -56,7 +56,7 @@ public class RunSCurvePath extends CommandBase {
     Trajectory.Segment segRight = right.get(count);
     double adjustedSegLeft = segLeft.velocity*mpstoetpms;
     double adjustedSegRight = segRight.velocity*mpstoetpms;
-    DriveSignal signal = new DriveSignal(adjustedSegRight,adjustedSegLeft); //adjustedSegRight,adjustedSegLeft
+    DriveSignal signal = new DriveSignal(adjustedSegRight,adjustedSegLeft); //2*mpstoetpms, 2*mpstoetpms
     drivetrain.driveDemand(ControlMode.Velocity, signal);
     count++;
   }
@@ -64,7 +64,8 @@ public class RunSCurvePath extends CommandBase {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return left.length() == count;
+    // return left.length() == count;
+    return count ==125;
   }
 
   // Called once after isFinished returns true

@@ -68,7 +68,7 @@ public class Constants {
     // Talons
     public static final int kTimeoutMs = 10;
     public static final int kLongCANTimeoutMs = 100;
-    public static final double kDriveVoltageRampRate = 2;
+    public static final double kDriveVoltageRampRate = .5;
     public static final int kVelocitySlot = 0;
 
     // Drive
@@ -77,11 +77,11 @@ public class Constants {
     public static final int kLeftDriveMasterId = 1;
     public static final int kLeftDriveSlaveId = 0;
 
-    public static final double kDrivekP = 0.1;
+    public static final double kDrivekP = 1;
     public static final double kDrivekI = 0;
     public static final int kDriveIZ = 0;
-    public static final double kDrivekD = 0;
-    public static final double kDrivekF = .05285; // calculated 0.0000487024 other:.05115
+    public static final double kDrivekD = 300;
+    public static final double kDrivekF = .05385; // calculated 0.0000487024 other:.05115
 
     public static final double kDriveEncoderToInches = 1 / Constants.kWheelDiameterInches * Math.PI / 4096.0;
     public static final double kWheelDiameterInches = 2491; // This is very, very important! Change this before trying
@@ -150,7 +150,8 @@ public class Constants {
     public static final double kMFRollerF = 2491;
 
     // Controllers
-    public static final double kDeadband = 0.05;
+    public static final double kDeadbandThrottle = 0.1;
+    public static final double kDeadbandTurn = 0.05;
 
     public static final class ArcadeDriver {
         public static final int kId = 0;

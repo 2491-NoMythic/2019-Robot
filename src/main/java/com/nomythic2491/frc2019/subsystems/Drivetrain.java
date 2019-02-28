@@ -95,15 +95,15 @@ public class Drivetrain extends Subsystem {
         talon.setSensorPhase(true);
         talon.enableVoltageCompensation(true);
         talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs); //TODO: cofigure this for good data
-        talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
+        talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_25Ms, Constants.kLongCANTimeoutMs); //TODO: cofigure this for good data
+        talon.configVelocityMeasurementWindow(2, Constants.kLongCANTimeoutMs);
         talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); //TODO: sets a constant accel – s to full – configure
 
         talon.config_kP(Constants.kVelocitySlot, Constants.kDrivekP, Constants.kLongCANTimeoutMs);
         talon.config_kI(Constants.kVelocitySlot, Constants.kDrivekI, Constants.kLongCANTimeoutMs);
         talon.config_kD(Constants.kVelocitySlot, Constants.kDrivekD, Constants.kLongCANTimeoutMs);
         talon.config_kF(Constants.kVelocitySlot, Constants.kDrivekF, Constants.kLongCANTimeoutMs);
-        talon.configOpenloopRamp(1);
+        talon.configOpenloopRamp(.4);
         //talon.config_IntegralZone(Constants.kVelocitySlot, Constants.kDriveIZ, Constants.kLongCANTimeoutMs);
 
     }
