@@ -81,9 +81,9 @@ public class MagicBox extends Subsystem {
 
     elevatorMaster.selectProfileSlot(Constants.kVelocitySlot, 0);
     elevatorMaster.config_kF(Constants.kVelocitySlot, 0.1364, Constants.kLongCANTimeoutMs);
-    elevatorMaster.config_kP(Constants.kVelocitySlot, 0.25, Constants.kLongCANTimeoutMs); // .12
-    elevatorMaster.config_kI(Constants.kVelocitySlot, 0.00001, Constants.kLongCANTimeoutMs); // .00001
-    elevatorMaster.config_kD(Constants.kVelocitySlot, 45, Constants.kLongCANTimeoutMs); // 25
+    elevatorMaster.config_kP(Constants.kVelocitySlot, 0, Constants.kLongCANTimeoutMs); // .12
+    elevatorMaster.config_kI(Constants.kVelocitySlot, 0, Constants.kLongCANTimeoutMs); // .00001
+    elevatorMaster.config_kD(Constants.kVelocitySlot, 0, Constants.kLongCANTimeoutMs); // 25
 
     elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
     elevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
@@ -139,7 +139,7 @@ public class MagicBox extends Subsystem {
     // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
     // Constants.kLongCANTimeoutMs);
     talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-    talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); //TODO: Remove this bad boy!
+    talon.configClosedloopRamp(.25, Constants.kLongCANTimeoutMs); //TODO: Remove this bad boy!
     talon.configNeutralDeadband(nominalV, 100);
   }
 

@@ -176,7 +176,7 @@ public class MagicFork extends Subsystem {
     public void GamepieceDemand(GamepieceDemand demand) {
         if (demand != GamepieceDemand.Hold) {
           elevateToPoint(demand.getHeightPoint());
-          rotateToPoint(demand.getAnglePoint());
+        //   rotateToPoint(demand.getAnglePoint());
         }
       }
 
