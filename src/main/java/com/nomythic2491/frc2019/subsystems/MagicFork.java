@@ -7,7 +7,10 @@
 
 package com.nomythic2491.frc2019.subsystems;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
@@ -16,6 +19,7 @@ import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -41,17 +45,9 @@ public class MagicFork extends Subsystem {
         intakeAngle = new DoubleSolenoid(Constants.kMFIntakeRotateUpChannel, Constants.kMFIntakeRotateDownChannel);
     
         intakeRoller = TalonSRXFactory.createDefaultTalon(Constants.kMFIntakeRollerId);
-        elevator = TalonSRXFactory.createDefaultTalon(Constants.kMFElevatorId);
 
-        intakeRoller.selectProfileSlot(Constants.kVelocitySlot, 0);
-        intakeRoller.config_kP(Constants.kVelocitySlot, Constants.kMFRollerP, Constants.kLongCANTimeoutMs);
-        intakeRoller.config_kI(Constants.kVelocitySlot, Constants.kMFRollerI, Constants.kLongCANTimeoutMs);
-        intakeRoller.config_kD(Constants.kVelocitySlot, Constants.kMFRollerD, Constants.kLongCANTimeoutMs);
-        intakeRoller.config_kF(Constants.kVelocitySlot, Constants.kMFRollerF, Constants.kLongCANTimeoutMs);
-        // intakeRoller.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
-        // intakeRoller.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
-        // intakeRoller.configMotionCruiseVelocity(200, Constants.kLongCANTimeoutMs);
-        // intakeRoller.configMotionAcceleration(400, Constants.kLongCANTimeoutMs);
+        elevator = TalonSRXFactory.createDefaultTalon(Constants.kMFElevatorId);
+        configureMaster(elevator, false, 0.04);
 
         elevator.selectProfileSlot(Constants.kVelocitySlot, 0);
         elevator.config_kP(Constants.kVelocitySlot, Constants.kMFElevatorP, Constants.kLongCANTimeoutMs);
@@ -62,26 +58,29 @@ public class MagicFork extends Subsystem {
         // elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
         // elevator.configMotionCruiseVelocity(6650, Constants.kLongCANTimeoutMs);
         // elevator.configMotionAcceleration(6650, Constants.kLongCANTimeoutMs);
+
+        elevator.configMotionCruiseVelocity(6650, Constants.kLongCANTimeoutMs);
+        elevator.configMotionAcceleration(6650, Constants.kLongCANTimeoutMs);
     }
 
-    // private void configureMaster(TalonSRX talon, boolean left, double nominalV) {
-    //     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
-    //     // primary closed-loop
-    //     final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
-    //         Constants.kLongCANTimeoutMs);
-    //     if (sensorPresent != ErrorCode.OK) {
-    //       DriverStation.reportError("Could not detect " + (left ? "left" : "right") + "encoder: " + sensorPresent, false);
-    //     }
-    //     talon.setInverted(!left);
-    //     talon.setSensorPhase(false);
-    //     talon.enableVoltageCompensation(true);
-    //     talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-    //     // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
-    //     // Constants.kLongCANTimeoutMs);
-    //     talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-    //     talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
-    //     talon.configNeutralDeadband(nominalV, 100);
-    //   }
+    private void configureMaster(TalonSRX talon, boolean left, double nominalV) {
+        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
+        // primary closed-loop
+        final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
+            Constants.kLongCANTimeoutMs);
+        if (sensorPresent != ErrorCode.OK) {
+          DriverStation.reportError("Could not detect " + (left ? "left" : "right") + "encoder: " + sensorPresent, false);
+        }
+        talon.setInverted(!left);
+        talon.setSensorPhase(false);
+        talon.enableVoltageCompensation(true);
+        talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
+        // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
+        // Constants.kLongCANTimeoutMs);
+        talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
+        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
+        talon.configNeutralDeadband(nominalV, 100);
+      }
     
     /**
      * Runs the intake at a given velocity
@@ -170,15 +169,23 @@ public class MagicFork extends Subsystem {
     }
 
     /**
-     * I don't know what da heck dis does
-     * @param demand
+     * I don't know what da heck this does. Okay, I can make an educated guess, but still 
+     * (this is why we need java docs on everything-- so people looking at old code can know what it does)
+     * @param demand eh?
      */
     public void GamepieceDemand(GamepieceDemand demand) {
         if (demand != GamepieceDemand.Hold) {
           elevateToPoint(demand.getHeightPoint());
-        //   rotateToPoint(demand.getAnglePoint());
         }
-      }
+    }
+
+    /**
+     * Checks to see if the motion profile is finished
+     * @return if motion profile has finished
+     */
+    public boolean getIsElevatorRunningMotionProfile() {
+        return elevator.isMotionProfileFinished();
+    }
 
     @Override
     protected void initDefaultCommand() {

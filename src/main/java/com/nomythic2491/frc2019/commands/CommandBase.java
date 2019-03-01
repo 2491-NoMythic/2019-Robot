@@ -10,7 +10,7 @@ package com.nomythic2491.frc2019.commands;
 import com.nomythic2491.frc2019.OI;
 import com.nomythic2491.frc2019.subsystems.Drivetrain;
 import com.nomythic2491.frc2019.subsystems.MagicBox;
-// import com.nomythic2491.frc2019.subsystems.MagicFork;
+import com.nomythic2491.frc2019.subsystems.MagicFork;
 import com.nomythic2491.frc2019.subsystems.Climber;
 // import com.nomythic2491.frc2019.subsystems.Fork;
 
@@ -21,7 +21,7 @@ public abstract class CommandBase extends Command {
 	protected static Drivetrain drivetrain;
 	protected static MagicBox magicbox;
 	protected static Climber climber;
-	// protected static MagicFork magicfork;
+	protected static MagicFork magicfork;
 	// protected static Fork fork;
 
 	public static void init() {
@@ -30,7 +30,7 @@ public abstract class CommandBase extends Command {
 		drivetrain = Drivetrain.getInstance();
 		magicbox = MagicBox.getInstance();
 		climber = Climber.getInstance();
-		// magicfork = MagicFork.getInstance();
+		magicfork = MagicFork.getInstance();
 		// fork = Fork.getInstance();
 
 		oi.init();
