@@ -32,8 +32,9 @@ public class MagicFork extends Subsystem {
     private TalonSRX intakeRoller, elevator;
     private DoubleSolenoid hatchPickup, intakeAngle;
     
-    private AnalogInput cargoSensor;
-    double volts = cargoSensor.getVoltage();
+    private AnalogInput cargoSensor, hatchSensor;
+    double cargoSensorVolts = cargoSensor.getVoltage();
+    double hatchSensorVolts = hatchSensor.getVoltage();
     
     private static MagicFork mInstance = null;
     
@@ -67,6 +68,7 @@ public class MagicFork extends Subsystem {
         elevator.configMotionAcceleration(6650, Constants.kLongCANTimeoutMs);
 
         cargoSensor = new AnalogInput(Constants.kMFCargoSensorChannel);
+        hatchSensor = new AnalogInput(Constants.kMFHatchSensorChannel);
     }
 
     private void configureMaster(TalonSRX talon, boolean left, double nominalV) {
@@ -194,10 +196,10 @@ public class MagicFork extends Subsystem {
     }
 
     /**
-     * Using this to return the voltage of the sensor
+     * Using this to return the voltage of the cargo sensor
      */
     public void testCargoSensor() {
-        System.out.println(volts);
+        System.out.println(cargoSensorVolts);
     }
     
     /**
@@ -205,7 +207,22 @@ public class MagicFork extends Subsystem {
      * @return Whether or not the volts is above 0.83 (1.33v when cargo is in, 0.33 when it isn't)
      */
     public boolean isCargoIn() {
-        return volts > 0.83;
+        return cargoSensorVolts > 0.83;
+    }
+
+    /**
+     * Using this to return the voltage of the hatch sensor
+     */
+    public void testHatchSensor() {
+        System.out.println(hatchSensorVolts);
+    }
+
+    /**
+     * Determines whether or not the hatch sensor senses a cargo
+     * @return Whether or not the volts is above 0.83 (1.33v when hatch is in, 0.33 when it isn't)
+     */
+    public boolean isHatchIn() {
+        return hatchSensorVolts > 0.83;
     }
 
     @Override

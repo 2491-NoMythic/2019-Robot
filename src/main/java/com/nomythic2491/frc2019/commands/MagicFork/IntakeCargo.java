@@ -7,9 +7,14 @@
 
 package com.nomythic2491.frc2019.commands.MagicFork;
 
+import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
 public class IntakeCargo extends CommandBase {
+  
+  /**
+   * Runs the cargo intake motor until cargo is sensed
+   */
   public IntakeCargo() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -24,22 +29,25 @@ public class IntakeCargo extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    magicfork.runIntake(Constants.kMFIntakeSpeed);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return magicfork.isCargoIn();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    magicfork.runIntake(0);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

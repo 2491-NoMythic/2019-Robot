@@ -7,47 +7,49 @@
 
 package com.nomythic2491.frc2019.commands.MagicFork;
 
+import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class HatchPickup extends CommandBase {
+import edu.wpi.first.wpilibj.Timer;
+
+public class OutputCargoTime extends CommandBase {
+
+  private Timer timer;
+  private double time;
   
   /**
-  * Uses the hatch solenoid to pick up a hatch
-  */
-  public HatchPickup() {
+   * Runs the intake motor backwards for a given period of time to shoot a cargo
+   */
+  public OutputCargoTime(double time) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+    timer = new Timer();
     requires(magicfork);
+    this.time = time;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-      magicfork.grabHatch();
+    timer.reset();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    magicfork.runIntake(Constants.kMFShootSpeed);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return timer.get() >= time;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    if(magicfork.isHatchIn()) {
-      System.out.println("Hatch grabbed successfully");
-    }
-
-    else {
-      System.out.println("Hatch grab failed");
-      magicfork.dropHatch();
-    }
+    magicfork.runIntake(0);
   }
 
   // Called when another command which requires one or more of the same

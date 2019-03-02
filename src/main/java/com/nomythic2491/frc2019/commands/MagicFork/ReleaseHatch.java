@@ -9,12 +9,12 @@ package com.nomythic2491.frc2019.commands.MagicFork;
 
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-public class HatchPickup extends CommandBase {
+public class ReleaseHatch extends CommandBase {
   
   /**
-  * Uses the hatch solenoid to pick up a hatch
-  */
-  public HatchPickup() {
+   * Extends the hatch solenoid to release a hatch
+   */
+  public ReleaseHatch() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(magicfork);
@@ -23,7 +23,7 @@ public class HatchPickup extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-      magicfork.grabHatch();
+    magicfork.dropHatch();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -40,14 +40,6 @@ public class HatchPickup extends CommandBase {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    if(magicfork.isHatchIn()) {
-      System.out.println("Hatch grabbed successfully");
-    }
-
-    else {
-      System.out.println("Hatch grab failed");
-      magicfork.dropHatch();
-    }
   }
 
   // Called when another command which requires one or more of the same
