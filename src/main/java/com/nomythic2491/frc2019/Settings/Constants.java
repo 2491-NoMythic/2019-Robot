@@ -135,6 +135,7 @@ public class Constants {
     public static final int kMFHatchGrabChannel = 2491;
     public static final int kMFIntakeRotateDownChannel = 2491;
     public static final int kMFIntakeRotateUpChannel = 2491;
+    public static final int kMFControlPinChannel = 2491;
     public static final int kMFCargoSensorChannel = 0; //May very well need to be changed
     public static final int kMFHatchSensorChannel = 1; //Again, may need changing
 

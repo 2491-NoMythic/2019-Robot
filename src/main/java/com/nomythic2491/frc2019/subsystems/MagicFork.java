@@ -21,6 +21,7 @@ import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -31,6 +32,7 @@ public class MagicFork extends Subsystem {
 
     private TalonSRX intakeRoller, elevator;
     private DoubleSolenoid hatchPickup, intakeAngle;
+    private Solenoid controlPins;
     
     private AnalogInput cargoSensor, hatchSensor;
     double cargoSensorVolts = cargoSensor.getVoltage();
@@ -48,6 +50,7 @@ public class MagicFork extends Subsystem {
     private MagicFork() {
         hatchPickup = new DoubleSolenoid(Constants.kMFHatchReleaseChannel, Constants.kMFHatchGrabChannel);
         intakeAngle = new DoubleSolenoid(Constants.kMFIntakeRotateUpChannel, Constants.kMFIntakeRotateDownChannel);
+        controlPins = new Solenoid(Constants.kMFControlPinChannel);
     
         intakeRoller = TalonSRXFactory.createDefaultTalon(Constants.kMFIntakeRollerId);
 
@@ -132,6 +135,28 @@ public class MagicFork extends Subsystem {
      */
     public Value hatchIntakeInReleasePosition() {
         return hatchPickup.get();
+    }
+
+    /**
+     * Drops the control pins
+     */
+    public void dropControlPins() {
+        controlPins.set(true);
+    }
+
+    /**
+     * Raises the control pins
+     */
+    public void raiseControlPins() {
+        controlPins.set(false);
+    }
+
+    /**
+     * Checks to see if control pins are down
+     * @return True if down, false if retracted
+     */
+    public boolean areControlPinsDown() {
+        return controlPins.get();
     }
 
     /**
