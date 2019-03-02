@@ -18,6 +18,7 @@ import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -30,6 +31,9 @@ public class MagicFork extends Subsystem {
 
     private TalonSRX intakeRoller, elevator;
     private DoubleSolenoid hatchPickup, intakeAngle;
+    
+    private AnalogInput cargoSensor;
+    double volts = cargoSensor.getVoltage();
     
     private static MagicFork mInstance = null;
     
@@ -61,6 +65,8 @@ public class MagicFork extends Subsystem {
 
         elevator.configMotionCruiseVelocity(6650, Constants.kLongCANTimeoutMs);
         elevator.configMotionAcceleration(6650, Constants.kLongCANTimeoutMs);
+
+        cargoSensor = new AnalogInput(Constants.kMFCargoSensorChannel);
     }
 
     private void configureMaster(TalonSRX talon, boolean left, double nominalV) {
@@ -185,6 +191,21 @@ public class MagicFork extends Subsystem {
      */
     public boolean getIsElevatorRunningMotionProfile() {
         return elevator.isMotionProfileFinished();
+    }
+
+    /**
+     * Using this to return the voltage of the sensor
+     */
+    public void testCargoSensor() {
+        System.out.println(volts);
+    }
+    
+    /**
+     * Determines whether or not the cargo sensor senses a cargo
+     * @return Whether or not the volts is above 0.83 (1.33v when cargo is in, 0.33 when it isn't)
+     */
+    public boolean isCargoIn() {
+        return volts > 0.83;
     }
 
     @Override
