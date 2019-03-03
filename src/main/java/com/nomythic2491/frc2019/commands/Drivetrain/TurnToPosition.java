@@ -7,49 +7,69 @@
 
 package com.nomythic2491.frc2019.commands.Drivetrain;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.frc2019.commands.CommandBase;
-import com.nomythic2491.lib.util.DriveSignal;
+
+import edu.wpi.first.wpilibj.Timer;
 
 public class TurnToPosition extends CommandBase {
 
-  double speed, angle, initialPosition;
+  private double target, initialPosition, relative;
+  private Timer timer;
+  private boolean type; 
 
   /**
    * 
    * @param speed Speed the robot turns at from -1 to 1, positive numbers go right, negative go left
    * @param angle The angle the robot will turn to from 0 to 360
    */
-  public TurnToPosition(double speed, double angle) {
+  public TurnToPosition(double angle, boolean absolute) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+    type = absolute;
+    target = angle;
+    timer = new Timer();
+
     requires(drivetrain);
-    this.speed = speed;
-    this.angle = angle;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
     initialPosition = drivetrain.getGyroAngle();
-  }
+    drivetrain.setInputRange(0,360); 
+    drivetrain.setAbsoluteTolerance(2);
+    drivetrain.getPIDController().setPID(Variables.proportionalRotate,Variables.integralRotate, Variables.derivativeRotate);
 
+    relative = ((drivetrain.getGyroAngle() + target) % 360 + 360) % 360;
+    if (type) {
+          drivetrain.setSetpoint(target);
+    }
+    else {
+        drivetrain.setSetpoint(relative);
+    }
+    drivetrain.enable();
+  }
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    drivetrain.driveDemand(ControlMode.PercentOutput, new DriveSignal(speed, -speed));
+
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return drivetrain.getGyroAngle() >= Math.abs(initialPosition + angle);
+    return drivetrain.onTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
     drivetrain.stop();
+    drivetrain.disable();
+
+    System.out.println("Change in angle: " + (drivetrain.getRawGyroAngle()- initialPosition));
+    System.out.println("Time taken: " + timer.get());
   }
 
   // Called when another command which requires one or more of the same

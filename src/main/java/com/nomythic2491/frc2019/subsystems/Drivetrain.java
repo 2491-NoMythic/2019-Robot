@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.frc2019.commands.Drivetrain.DriveLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.lib.util.DriveSignal;
@@ -20,9 +21,10 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends PIDSubsystem {
 
     @Override
     public void initDefaultCommand() {
@@ -45,8 +47,11 @@ public class Drivetrain extends Subsystem {
     private NetworkTable limelight;
     private NetworkTableEntry tx, ty, ta, tv;
     private boolean mBreak;
+    private double CurrentPIDoutput; 
 
     private Drivetrain() {
+
+        super("Drive", Variables.proportionalRotate,Variables.integralRotate, Variables.derivativeRotate);
 
         // Start all Talons in open loop mode.
         mLeftMaster = TalonSRXFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
@@ -268,5 +273,20 @@ public class Drivetrain extends Subsystem {
     public void positon() {
         System.out.println("Right: " + mRightMaster.getSelectedSensorPosition(0) + " Rerror: " + mRightMaster.getClosedLoopError() 
         + "Left: " + mRightMaster.getSelectedSensorPosition(0) + "Lerror: " + mRightMaster.getClosedLoopError());
+      }
+
+      @Override
+      protected double returnPIDInput() {
+        // Return your input value for the PID loop
+        // e.g. a sensor, like a potentiometer:
+        // yourPot.getAverageVoltage() / kYourMaxVoltage;
+        return getGyroAngle(); 
+      }
+    
+      @Override
+      protected void usePIDOutput(double output) {
+          driveDemand(ControlMode.PercentOutput, new DriveSignal(0.8 * output, -0.8 *output));
+        // Use output to drive your system, like a motor
+        // e.g. yourMotor.set(output);
       }
 }
