@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Constants.kDrive;
 import com.nomythic2491.frc2019.commands.Drivetrain.DriveLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.lib.util.DriveSignal;
@@ -49,18 +50,18 @@ public class Drivetrain extends Subsystem {
     private Drivetrain() {
 
         // Start all Talons in open loop mode.
-        mLeftMaster = TalonSRXFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
+        mLeftMaster = TalonSRXFactory.createDefaultTalon(kDrive.kLeftDriveMasterId);
         configureMaster(mLeftMaster, false);
 
-        mLeftSlave = new VictorSPX(Constants.kLeftDriveSlaveId);
+        mLeftSlave = new VictorSPX(kDrive.kLeftDriveSlaveId);
         mLeftSlave.configFactoryDefault();
         mLeftSlave.follow(mLeftMaster);
         mLeftSlave.setInverted(InvertType.FollowMaster);
 
-        mRightMaster = TalonSRXFactory.createDefaultTalon(Constants.kRightDriveMasterId);
+        mRightMaster = TalonSRXFactory.createDefaultTalon(kDrive.kRightDriveMasterId);
         configureMaster(mRightMaster, true);
 
-        mRightSlave = new VictorSPX(Constants.kRightDriveSlaveId);
+        mRightSlave = new VictorSPX(kDrive.kRightDriveSlaveId);
         mRightSlave.configFactoryDefault();
         mRightSlave.follow(mRightMaster);
         mRightSlave.setInverted(InvertType.FollowMaster);
@@ -99,13 +100,11 @@ public class Drivetrain extends Subsystem {
         talon.configVelocityMeasurementWindow(2, Constants.kLongCANTimeoutMs);
         talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); //TODO: sets a constant accel – s to full – configure
 
-        talon.config_kP(Constants.kVelocitySlot, Constants.kDrivekP, Constants.kLongCANTimeoutMs);
-        talon.config_kI(Constants.kVelocitySlot, Constants.kDrivekI, Constants.kLongCANTimeoutMs);
-        talon.config_kD(Constants.kVelocitySlot, Constants.kDrivekD, Constants.kLongCANTimeoutMs);
-        talon.config_kF(Constants.kVelocitySlot, Constants.kDrivekF, Constants.kLongCANTimeoutMs);
-        talon.configOpenloopRamp(.4);
-        //talon.config_IntegralZone(Constants.kVelocitySlot, Constants.kDriveIZ, Constants.kLongCANTimeoutMs);
-
+        talon.config_kP(Constants.kVelocitySlot, kDrive.kDrivekP, Constants.kLongCANTimeoutMs);
+        talon.config_kI(Constants.kVelocitySlot, kDrive.kDrivekI, Constants.kLongCANTimeoutMs);
+        talon.config_kD(Constants.kVelocitySlot, kDrive.kDrivekD, Constants.kLongCANTimeoutMs);
+        talon.config_kF(Constants.kVelocitySlot, kDrive.kDrivekF, Constants.kLongCANTimeoutMs);
+        talon.configOpenloopRamp(.4, Constants.kLongCANTimeoutMs);
     }
 
     /**
@@ -144,7 +143,7 @@ public class Drivetrain extends Subsystem {
      * @return The value of the left drive encoder in inches
      */
     public double getLeftEncoderDistance() {
-        return getLeftEncoderDistanceRaw() * Constants.kDriveEncoderToInches;
+        return getLeftEncoderDistanceRaw() * kDrive.kDriveEncoderToInches;
     }
 
     /**
@@ -167,7 +166,7 @@ public class Drivetrain extends Subsystem {
      * @return The value of the right drive encoder in inches
      */
     public double getRightEncoderDistance() {
-        return getRightEncoderDistanceRaw() * Constants.kDriveEncoderToInches;
+        return getRightEncoderDistanceRaw() * kDrive.kDriveEncoderToInches;
     }
 
     /**

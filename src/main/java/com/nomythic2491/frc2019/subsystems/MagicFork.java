@@ -10,12 +10,16 @@ package com.nomythic2491.frc2019.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
-import com.nomythic2491.frc2019.commands.MagicBox.GamepieceLoop;
+import com.nomythic2491.frc2019.Settings.Constants.kMF;
+import com.nomythic2491.frc2019.commands.MagicFork.GamepieceLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -26,20 +30,19 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- * The system of talons, solenoids and sensors that make up the Magic Fork subsystem..
+ * The system of talons, solenoids and sensors that make up the Magic Fork
+ * subsystem..
  */
 public class MagicFork extends Subsystem {
 
     private TalonSRX intakeRoller, elevator;
     private DoubleSolenoid hatchPickup, intakeAngle;
     private Solenoid controlPins;
-    
+
     private AnalogInput cargoSensor, hatchSensor;
-    double cargoSensorVolts = cargoSensor.getVoltage();
-    double hatchSensorVolts = hatchSensor.getVoltage();
-    
+
     private static MagicFork mInstance = null;
-    
+
     public static MagicFork getInstance() {
         if (mInstance == null) {
             mInstance = new MagicFork();
@@ -48,71 +51,61 @@ public class MagicFork extends Subsystem {
     }
 
     private MagicFork() {
-        hatchPickup = new DoubleSolenoid(Constants.kMFHatchReleaseChannel, Constants.kMFHatchGrabChannel);
-        intakeAngle = new DoubleSolenoid(Constants.kMFIntakeRotateUpChannel, Constants.kMFIntakeRotateDownChannel);
-        controlPins = new Solenoid(Constants.kMFControlPinChannel);
-    
-        intakeRoller = TalonSRXFactory.createDefaultTalon(Constants.kMFIntakeRollerId);
+        hatchPickup = new DoubleSolenoid(kMF.kHatchReleaseChannel, kMF.kHatchGrabChannel);
+        intakeAngle = new DoubleSolenoid(kMF.kIntakeDownChannel, kMF.kIntakeUpChannel);
+        controlPins = new Solenoid(kMF.kControlPinChannel);
 
-        elevator = TalonSRXFactory.createDefaultTalon(Constants.kMFElevatorId);
-        configureMaster(elevator, false, 0.04);
+        intakeRoller = TalonSRXFactory.createDefaultTalon(kMF.kIntakeRollerId);
 
-        elevator.selectProfileSlot(Constants.kVelocitySlot, 0);
-        elevator.config_kP(Constants.kVelocitySlot, Constants.kMFElevatorP, Constants.kLongCANTimeoutMs);
-        elevator.config_kI(Constants.kVelocitySlot, Constants.kMFElevatorI, Constants.kLongCANTimeoutMs);
-        elevator.config_kD(Constants.kVelocitySlot, Constants.kMFElevatorD, Constants.kLongCANTimeoutMs);
-        elevator.config_kF(Constants.kVelocitySlot, Constants.kMFElevatorF, Constants.kLongCANTimeoutMs);
-        // elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
-        // elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
-        // elevator.configMotionCruiseVelocity(6650, Constants.kLongCANTimeoutMs);
-        // elevator.configMotionAcceleration(6650, Constants.kLongCANTimeoutMs);
+        elevator = TalonSRXFactory.createDefaultTalon(kMF.kElevatorId);
+        configureMaster(elevator, false);
 
-        elevator.configMotionCruiseVelocity(6650, Constants.kLongCANTimeoutMs);
-        elevator.configMotionAcceleration(6650, Constants.kLongCANTimeoutMs);
+        elevator.config_kP(Constants.kVelocitySlot, kMF.kElevatorP, Constants.kLongCANTimeoutMs);
+        elevator.config_kI(Constants.kVelocitySlot, kMF.kElevatorI, Constants.kLongCANTimeoutMs);
+        elevator.config_kD(Constants.kVelocitySlot, kMF.kElevatorD, Constants.kLongCANTimeoutMs);
+        elevator.config_kF(Constants.kVelocitySlot, kMF.kElevatorF, Constants.kLongCANTimeoutMs);
+        elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
+        elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
+        elevator.configMotionCruiseVelocity(1600, Constants.kLongCANTimeoutMs);
+        elevator.configMotionAcceleration(6400, Constants.kLongCANTimeoutMs);
 
-        cargoSensor = new AnalogInput(Constants.kMFCargoSensorChannel);
-        hatchSensor = new AnalogInput(Constants.kMFHatchSensorChannel);
+        elevator.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+        elevator.configClearPositionOnLimitR(true, Constants.kLongCANTimeoutMs);
+        elevator.setSelectedSensorPosition(0);
+
+        cargoSensor = new AnalogInput(kMF.kCargoSensor);
+        hatchSensor = new AnalogInput(kMF.kHatchSensor);
+
+        double cargoSensorVolts = cargoSensor.getVoltage();
+        double hatchSensorVolts = hatchSensor.getVoltage();
     }
 
-    private void configureMaster(TalonSRX talon, boolean left, double nominalV) {
+    private void configureMaster(TalonSRX talon, boolean left) {
         talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
         // primary closed-loop
         final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
-            Constants.kLongCANTimeoutMs);
+                Constants.kLongCANTimeoutMs);
         if (sensorPresent != ErrorCode.OK) {
-          DriverStation.reportError("Could not detect " + (left ? "left" : "right") + "encoder: " + sensorPresent, false);
+            DriverStation.reportError("Could not detect " + (left ? "left" : "right") + "encoder: " + sensorPresent,
+                    false);
         }
-        talon.setInverted(!left);
-        talon.setSensorPhase(false);
+        talon.setInverted(left);
+        talon.setSensorPhase(true);
         talon.enableVoltageCompensation(true);
         talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
-        // Constants.kLongCANTimeoutMs);
-        talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
-        talon.configNeutralDeadband(nominalV, 100);
-      }
-    
+        talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_25Ms, Constants.kLongCANTimeoutMs);
+        talon.configVelocityMeasurementWindow(8, Constants.kLongCANTimeoutMs);
+        talon.configClosedloopRamp(.25, Constants.kLongCANTimeoutMs);
+        talon.configNeutralDeadband(0.04, Constants.kLongCANTimeoutMs);
+    }
+
     /**
      * Runs the intake at a given velocity
+     * 
      * @param speed The velocity the intake is run at
      */
     public void runIntake(double speed) {
         intakeRoller.set(ControlMode.PercentOutput, speed);
-    }
-
-    /**
-     * Intakes the cargo at a motor velocity designated in Constants.java
-     */
-    public void intakeCargo() {
-        runIntake(Constants.kMFIntakeSpeed);
-    }
-
-    /**
-     * Outputs the cargo at a motor velocity designated in Constants.java 
-     */
-    public void outputCargo() {
-        runIntake(Constants.kMFShootSpeed);
     }
 
     /**
@@ -131,6 +124,7 @@ public class MagicFork extends Subsystem {
 
     /**
      * Checks to see if the hatch intake is in the released position
+     * 
      * @return True if released; false if grabbed
      */
     public Value hatchIntakeInReleasePosition() {
@@ -153,40 +147,36 @@ public class MagicFork extends Subsystem {
 
     /**
      * Checks to see if control pins are down
+     * 
      * @return True if down, false if retracted
      */
     public boolean areControlPinsDown() {
         return controlPins.get();
     }
 
-    /**
-     * Checks to see if the intake is in the tilted up position
-     * @return True if up; false if down
-     */
-    public Value isIntakeTippedUp() {
-        return intakeAngle.get();
-    }
+    // /**
+    // * Checks to see if the intake is in the tilted up position
+    // * @return True if up; false if down
+    // */
+    // public boolean isIntakeTippedUp() {
+    // return intakeAngle.get();
+    // }
 
     /**
      * Extends angle pistons to tip the intake up
      */
-    public void tipIntakeUp() {
-        intakeAngle.set(Value.kForward);
-    }
-
-    /**
-     * Retracts angle pistons to tip the intake down
-     */
-    public void tipIntakeDown() {
-        intakeAngle.set(Value.kReverse);
+    public void tipIntake(boolean up) {
+        intakeAngle.set(up ? Value.kForward : Value.kReverse);
     }
 
     public void runIoCargo(IoCargo demand) {
-        //this needs code!
+        // this needs code!
+        intakeRoller.set(ControlMode.PercentOutput, demand.getSpeed());
     }
 
     /**
      * Runs magic fork elevator at given speed
+     * 
      * @param speed speed elevator runs at from -1 to 1
      */
     public void runElevator(double speed) {
@@ -195,6 +185,7 @@ public class MagicFork extends Subsystem {
 
     /**
      * Moves the elevator to a set point
+     * 
      * @param setpoint The point the elevator will move to
      */
     private void elevateToPoint(double setpoint) {
@@ -202,53 +193,58 @@ public class MagicFork extends Subsystem {
     }
 
     /**
-     * I don't know what da heck this does. Okay, I can make an educated guess, but still 
-     * (this is why we need java docs on everything-- so people looking at old code can know what it does)
+     * I don't know what da heck this does. Okay, I can make an educated guess, but
+     * still (this is why we need java docs on everything-- so people looking at old
+     * code can know what it does)
+     * 
      * @param demand eh?
      */
     public void GamepieceDemand(GamepieceDemand demand) {
         if (demand != GamepieceDemand.Hold) {
-          elevateToPoint(demand.getHeightPoint());
+            elevateToPoint(demand.getHeightPoint());
         }
     }
 
     /**
      * Checks to see if the motion profile is finished
+     * 
      * @return if motion profile has finished
      */
     public boolean getIsElevatorRunningMotionProfile() {
         return elevator.isMotionProfileFinished();
     }
 
-    /**
-     * Using this to return the voltage of the cargo sensor
-     */
-    public void testCargoSensor() {
-        System.out.println(cargoSensorVolts);
-    }
-    
-    /**
-     * Determines whether or not the cargo sensor senses a cargo
-     * @return Whether or not the volts is above 0.83 (1.33v when cargo is in, 0.33 when it isn't)
-     */
-    public boolean isCargoIn() {
-        return cargoSensorVolts > 0.83;
-    }
+    // /**
+    // * Using this to return the voltage of the cargo sensor
+    // */
+    // public void testCargoSensor() {
+    // System.out.println(cargoSensorVolts);
+    // }
 
-    /**
-     * Using this to return the voltage of the hatch sensor
-     */
-    public void testHatchSensor() {
-        System.out.println(hatchSensorVolts);
-    }
+    // /**
+    // * Determines whether or not the cargo sensor senses a cargo
+    // * @return Whether or not the volts is above 0.83 (1.33v when cargo is in,
+    // 0.33 when it isn't)
+    // */
+    // public boolean isCargoIn() {
+    // return cargoSensorVolts > 0.83;
+    // }
 
-    /**
-     * Determines whether or not the hatch sensor senses a cargo
-     * @return Whether or not the volts is above 0.83 (1.33v when hatch is in, 0.33 when it isn't)
-     */
-    public boolean isHatchIn() {
-        return hatchSensorVolts > 0.83;
-    }
+    // /**
+    // * Using this to return the voltage of the hatch sensor
+    // */
+    // public void testHatchSensor() {
+    // System.out.println(hatchSensorVolts);
+    // }
+
+    // /**
+    // * Determines whether or not the hatch sensor senses a cargo
+    // * @return Whether or not the volts is above 0.83 (1.33v when hatch is in,
+    // 0.33 when it isn't)
+    // */
+    // public boolean isHatchIn() {
+    // return hatchSensorVolts > 0.83;
+    // }
 
     @Override
     protected void initDefaultCommand() {

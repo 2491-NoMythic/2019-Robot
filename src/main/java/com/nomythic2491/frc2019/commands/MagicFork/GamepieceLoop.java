@@ -16,7 +16,7 @@ public class GamepieceLoop extends CommandBase {
    * Runs the cargo intake while a button is held
    */
   public GamepieceLoop() {
-    requires(magicbox);
+    requires(magicfork);
     mBoard = ControlBoard.getInstance();
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);

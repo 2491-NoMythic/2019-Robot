@@ -4,24 +4,28 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class Constants {
     // Motor Controllers have ID's || Solenoids have Channels
+    
+    // Controllers
+    public static final double kDeadbandThrottle = 0.1;
+    public static final double kDeadbandTurn = 0.05;
+
+    // Talons
+    public static final int kTimeoutMs = 10;
+    public static final int kLongCANTimeoutMs = 100;
+    public static final double kDriveVoltageRampRate = .5;
+    public static final int kVelocitySlot = 0;
 
     public enum GamepieceDemand {
-        Test(0, -500), CargoOut_Ship(21, -1100), CargoFloor(5.2, -500), Hold(0, 0), Stow(21, -1500);
+        Test(12), Hold(0), CargoDefault(3), CargoLow(21), CargoMid(42), HatchDefault(0), HatchMid(28);
 
         private double mHeightPoint;
-        private double mAnglePoint;
 
-        private GamepieceDemand(double hight, double angle) {
-            mHeightPoint = hight / Math.PI * 4096;
-            mAnglePoint = angle; // (angle * 4096)/360;
+        private GamepieceDemand(double hight) {
+            mHeightPoint = hight / (.7 * Math.PI) * 4096;
         }
 
         public double getHeightPoint() {
             return mHeightPoint;
-        }
-
-        public double getAnglePoint() {
-            return mAnglePoint;
         }
     }
 
@@ -65,98 +69,61 @@ public class Constants {
         }
     }
 
-    // Talons
-    public static final int kTimeoutMs = 10;
-    public static final int kLongCANTimeoutMs = 100;
-    public static final double kDriveVoltageRampRate = .5;
-    public static final int kVelocitySlot = 0;
+    public static final class kDrive {
+        public static final int kRightDriveMasterId = 10;
+        public static final int kRightDriveSlaveId = 11;
+        public static final int kLeftDriveMasterId = 1;
+        public static final int kLeftDriveSlaveId = 0;
 
-    // Drive
-    public static final int kRightDriveMasterId = 10;
-    public static final int kRightDriveSlaveId = 11;
-    public static final int kLeftDriveMasterId = 1;
-    public static final int kLeftDriveSlaveId = 0;
+        public static final double kDrivekP = 1;
+        public static final double kDrivekI = 0;
+        public static final int kDriveIZ = 0;
+        public static final double kDrivekD = 300;
+        public static final double kDrivekF = .05385; // calculated 0.0000487024 other:.05115
+        public static final double kWheelDiameterInches = 2491; // This is very, very important! Change this before
+                                                                // trying
+                                                                // to
+                                                                // use the encoders to do anything.
+        public static final double kDriveEncoderToInches = 1 / kWheelDiameterInches * Math.PI / 4096.0;
+    }
 
-    public static final double kDrivekP = 1;
-    public static final double kDrivekI = 0;
-    public static final int kDriveIZ = 0;
-    public static final double kDrivekD = 300;
-    public static final double kDrivekF = .05385; // calculated 0.0000487024 other:.05115
+    public static final class kClimber {
+        public static final int kPoleMasterId = 2;
+        public static final int kPoleSlaveId = 3;
+        public static final int kRatchetChannel = 3;
 
-    public static final double kDriveEncoderToInches = 1 / Constants.kWheelDiameterInches * Math.PI / 4096.0;
-    public static final double kWheelDiameterInches = 2491; // This is very, very important! Change this before trying
-                                                            // to
-                                                            // use the encoders to do anything.
-    // Climber
-    public static final int kPoleMasterId = 2;
-    public static final int kPoleSlaveId = 3;
+        public static final int kClimberVelocity = 2491;
+        public static final double doneClimbingHeight = 2491;
 
-    public static final int kSkidsChannel = 6;
-    public static final int kRatchetChannel = 3;
+        public static final double kClimberEncoderToInches = 1;
 
-    public static final int kClimberVelocity = 2491;
-    public static final double doneClimbingHeight = 2491;
+        public static final int kHatchOutChannel = 4;
+        public static final int kHatchInChannel = 5;
 
-    public static final double kClimberEncoderToInches = 1;
+        public static final int kBumperInChannel = 1;
+        public static final int kBumperOutChannel = 0;
 
-    // Box
-    public static final int kRollerId = 9;
-    public static final int kRotatorId = 7;
-    public static final int kElevatorMasterId = 6;
-    public static final int kElevatorSlaveId = 8;
+        public static final double kHatchPickupPause = 0.25;
+    }
 
-    public static final int kHatchOutChannel = 4;
-    public static final int kHatchInChannel = 5;
+    public static final class kMF {
+        public static final int kIntakeRollerId = 9;
+        public static final int kElevatorId = 25;
+        public static final int kHatchReleaseChannel = 5;
+        public static final int kHatchGrabChannel = 4;
+        public static final int kIntakeDownChannel = 7;
+        public static final int kIntakeUpChannel = 6;
+        public static final int kControlPinChannel = 0;
+        public static final int kCargoSensor = 0; // May very well need to be changed
+        public static final int kHatchSensor = 1; // Again, may need changing
 
-    public static final int kBumperInChannel = 1;
-    public static final int kBumperOutChannel = 0;
+        public static final double kElevatorP = 0.32094;
+        public static final double kElevatorI = 0;
+        public static final double kElevatorD = 0;
+        public static final double kElevatorF = 0.609375;
+    }
 
-    public static final double kHatchPickupPause = 0.25;
-    // public static final double kElevatorGroundHeight = 0; //Limit switch will
-    // remove this
-    public static final double kElevatorMaxHeight = 2491;
-    public static final double kElevatorUncertainty = 2491;
-    public static final double kElevatorVelocity = 2491;
-    public static final double kBoxCargoShootSpeed = 2491; // This will have to be negative (assuming
-                                                           // kCargoIntakeVelocity is positive)
-    public static final double kBoxCargoIntakeVelocity = -.75;
-    public static final double kBoxRotateVelocity = 2491;
-    public static final double kBoxTipDownPosition = 2491; // The position in encoder ticks of the lowest position of
-                                                           // the intake rotator
-    public static final double kBoxTipUpPosition = 2491; // The position in encoder ticks of the up position of the
-                                                         // intake rotator
-    public static final double kBoxTipBackPosition = 2491; // The position in encoder ticks of the back position of the
-                                                           // intake rotator
-    
-    //MagicFork
-    public static final int kMFIntakeRollerId = 2491;
-    public static final int kMFElevatorId = 2491;
-    public static final int kMFHatchReleaseChannel = 2491;
-    public static final int kMFHatchGrabChannel = 2491;
-    public static final int kMFIntakeRotateDownChannel = 2491;
-    public static final int kMFIntakeRotateUpChannel = 2491;
-    public static final int kMFControlPinChannel = 2491;
-    public static final int kMFCargoSensorChannel = 0; //May very well need to be changed
-    public static final int kMFHatchSensorChannel = 1; //Again, may need changing
-
-    public static final double kMFShootSpeed = .75;
-    public static final double kMFIntakeSpeed = 2491;
-
-    public static final double kMFElevatorP = 2491;
-    public static final double kMFElevatorI = 2491;
-    public static final double kMFElevatorD = 2491;
-    public static final double kMFElevatorF = 2491;
-
-    public static final double kMFRollerP = 2491;
-    public static final double kMFRollerI = 2491;
-    public static final double kMFRollerD = 2491;
-    public static final double kMFRollerF = 2491;
-
-    // Controllers
-    public static final double kDeadbandThrottle = 0.1;
-    public static final double kDeadbandTurn = 0.05;
-
-    public static final class ArcadeDriver {
+    public static final class kArcade {
         public static final int kId = 0;
         public static final int kThrottleAxis = 1;
         public static final int kTurnAxis = 2;
@@ -167,14 +134,14 @@ public class Constants {
         public static final int kKillSwitchButton2 = 12;
     }
 
-    public static final class JoysticOpertator {
+    public static final class kJoystickOp {
         public static final int kId = 1;
         public static final int kThrottleAxis = 1;
         public static final int kTurnAxis = 2;
         public static final int kQuickturnButton = 1;
     }
 
-    public static final class PS4Operator {
+    public static final class kPS4Op {
         public static final int kId = 1;
         public static final int kThrottleAxis = 1;
         public static final int kTurnAxis = 2;
