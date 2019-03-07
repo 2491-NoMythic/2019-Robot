@@ -10,6 +10,6 @@ public interface IDriveController {
     public boolean getKillSwitch();
 
     public boolean getSlowSpeed();
-
+    
     public IoCargo getIoCargo();
 }

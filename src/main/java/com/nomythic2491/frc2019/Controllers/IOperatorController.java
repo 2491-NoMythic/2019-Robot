@@ -10,5 +10,9 @@ public interface IOperatorController {
     public GamepieceDemand getGamepieceDemand();
 
     public void runPathTest();
+
+    public boolean getTipIntake();
+
+    public boolean getHatch();
     
 }

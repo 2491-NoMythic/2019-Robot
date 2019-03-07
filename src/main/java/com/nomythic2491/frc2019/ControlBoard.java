@@ -67,4 +67,14 @@ public class ControlBoard implements IControlBoard {
     public void runPathTest() {
         mOperatorController.runPathTest();
     }
+
+    @Override
+    public boolean getTipIntake() {
+       return mOperatorController.getTipIntake();
+    }
+
+    @Override
+    public boolean getHatch() {
+        return mOperatorController.getHatch();
+    }
 }

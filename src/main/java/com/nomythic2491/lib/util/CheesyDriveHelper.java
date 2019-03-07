@@ -9,8 +9,8 @@ package com.nomythic2491.lib.util;
  */
 public class CheesyDriveHelper {
 
-    private static final double kThrottleDeadband = 0.02;
-    private static final double kWheelDeadband = 0.02;
+    private static final double kThrottleDeadband = 0.08;
+    private static final double kWheelDeadband = 0.05;
 
     // These factor determine how fast the wheel traverses the "non linear" sine
     // curve.

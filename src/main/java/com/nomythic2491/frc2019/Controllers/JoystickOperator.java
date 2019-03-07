@@ -37,12 +37,14 @@ public class JoystickOperator implements IOperatorController {
 
     @Override
     public GamepieceDemand getGamepieceDemand() {
-        if (mJoystick.getRawButton(5)) {
-            return GamepieceDemand.CargoOut_Ship;
-        } else if (mJoystick.getRawButton(6)) {
-            return GamepieceDemand.CargoFloor;
+        if (mJoystick.getRawButton(6)) {
+            return GamepieceDemand.CargoLow;
+        } else if (mJoystick.getRawButton(4)) {
+            return GamepieceDemand.CargoDefault;
         } else if (mJoystick.getRawButton(3)) {
-            return GamepieceDemand.Stow;
+            return GamepieceDemand.HatchDefault;
+        } else if (mJoystick.getRawButton(5)) {
+            return GamepieceDemand.HatchMid;
         } else {
             return GamepieceDemand.Hold;
         }
@@ -53,6 +55,16 @@ public class JoystickOperator implements IOperatorController {
         if(mJoystick.getRawButton(10)){
             test.start();
         }
+    }
+
+    @Override
+    public boolean getTipIntake() {
+       return mJoystick.getRawButton(1);
+    }
+
+    @Override
+    public boolean getHatch() {
+        return mJoystick.getRawButtonPressed(2);
     }
 
 }
