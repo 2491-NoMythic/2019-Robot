@@ -5,47 +5,31 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.MagicBox;
+package com.nomythic2491.frc2019.commands.Drivetrain;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.nomythic2491.frc2019.ControlBoard;
 import com.nomythic2491.frc2019.commands.CommandBase;
 
-//import edu.wpi.first.wpilibj.Timer;
+public class DriveLoop extends CommandBase {
 
-public class HatchPickup extends CommandBase{
-  //private Timer timer;
+  private ControlBoard mBoard;
 
-  /**
-   * Runs the hatch pickup intake system.
-   * If it is activated, it deactivates and vice versa.
-   */
-  public HatchPickup() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    requires(magicbox);
-    //timer = new Timer();
+  public DriveLoop() {
+    requires(drivetrain);
+    mBoard = ControlBoard.getInstance();
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    magicbox.retractSolenoid();
-    }
-
-    //timer.reset();
+  }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    /**if (magicbox.leftSolenoidExtended()) {
-      magicbox.extendRightHatchSolenoid();
-      timer.delay(.25);
-      magicbox.retractLeftHatchSolenoid();
-    }
-    else if (!magicbox.leftSolenoidExtended()) {
-      magicbox.extendLeftHatchSolenoid();
-      timer.delay(.25);
-      magicbox.retractRightHatchSolenoid();
-    }*/
+    drivetrain.driveDemand(ControlMode.PercentOutput, mBoard.getSignal());
+    mBoard.runPathTest();
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -57,7 +41,7 @@ public class HatchPickup extends CommandBase{
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    magicbox.extendSolenoid();
+    drivetrain.stop();
   }
 
   // Called when another command which requires one or more of the same

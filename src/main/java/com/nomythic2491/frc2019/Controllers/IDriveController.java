@@ -1,5 +1,6 @@
 package com.nomythic2491.frc2019.Controllers;
 
+import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.lib.util.DriveSignal;
 
 public interface IDriveController {
@@ -9,8 +10,6 @@ public interface IDriveController {
     public boolean getKillSwitch();
 
     public boolean getSlowSpeed();
-
-    public boolean getIntakeOut();
-
-    public boolean getIntakeIn();
+    
+    public IoCargo getIoCargo();
 }

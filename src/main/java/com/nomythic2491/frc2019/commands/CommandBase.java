@@ -7,32 +7,22 @@
 
 package com.nomythic2491.frc2019.commands;
 
-import com.nomythic2491.frc2019.OI;
 import com.nomythic2491.frc2019.subsystems.Drivetrain;
-import com.nomythic2491.frc2019.subsystems.MagicBox;
+import com.nomythic2491.frc2019.subsystems.MagicFork;
 import com.nomythic2491.frc2019.subsystems.Climber;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public abstract class CommandBase extends Command {
-	protected static OI oi;
 	protected static Drivetrain drivetrain;
-	protected static MagicBox magicbox;
 	protected static Climber climber;
+	protected static MagicFork magicfork;
 
 	public static void init() {
-		oi = new OI();
 
 		drivetrain = Drivetrain.getInstance();
-		magicbox = MagicBox.getInstance();
 		climber = Climber.getInstance();
-
-		oi.init();
-		// This MUST be here. If the OI creates Commands (which it very likely
-		// will), constructing it during the construction of CommandBase (from
-		// which commands extend), subsystems are not guaranteed to be
-		// yet. Thus, their requires() statements may grab null pointers. Bad
-		// news. Don't move it.
+		magicfork = MagicFork.getInstance();
 
 		// Show what command your subsystem is running on the SmartDashboard
 	}

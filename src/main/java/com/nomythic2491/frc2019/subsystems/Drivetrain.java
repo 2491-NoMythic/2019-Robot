@@ -3,36 +3,35 @@ package com.nomythic2491.frc2019.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.nomythic2491.frc2019.Settings.Constants;
-import com.nomythic2491.frc2019.Settings.Variables;
+import com.nomythic2491.frc2019.Settings.Constants.kDrive;
+import com.nomythic2491.frc2019.commands.Drivetrain.DriveLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
-import com.nomythic2491.lib.drivers.VictorSPXFactory;
 import com.nomythic2491.lib.util.DriveSignal;
-import com.nomythic2491.frc2019.commands.Drivetrain.Drive;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends PIDSubsystem {
+
+    @Override
+    public void initDefaultCommand() {
+        setDefaultCommand(new DriveLoop());
+    }
 
     private static Drivetrain mInstance = null;
-    private TalonSRX mLeftMaster, mRightMaster;
-    private VictorSPX mLeftSlave, mRightSlave;
-    private AHRS gyro;
-    public StringBuilder velocity;
-    private NetworkTable limelight;
-    private NetworkTableEntry tx, ty, ta, tv;
-    private Solenoid controlPins;
 
     public static Drivetrain getInstance() {
         if (mInstance == null) {
@@ -41,29 +40,35 @@ public class Drivetrain extends Subsystem {
         return mInstance;
     }
 
+    private TalonSRX mLeftMaster, mRightMaster;
+    private VictorSPX mLeftSlave, mRightSlave;
+    private AHRS gyro;
+    public StringBuilder velocity;
+    private NetworkTable limelight;
+    private NetworkTableEntry tx, ty, ta, tv;
+    private boolean mBreak;
+    private double CurrentPIDoutput; 
+
     private Drivetrain() {
-        
+
+        super("Drive", Variables.proportionalRotate,Variables.integralRotate, Variables.derivativeRotate);
+
         // Start all Talons in open loop mode.
-        mLeftMaster = TalonSRXFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
-        configureMaster(mLeftMaster, true);
+        mLeftMaster = TalonSRXFactory.createDefaultTalon(kDrive.kLeftDriveMasterId);
+        configureMaster(mLeftMaster, false);
 
-        mLeftSlave = VictorSPXFactory.createPermanentSlaveTalon(Constants.kLeftDriveSlaveId,
-                Constants.kLeftDriveMasterId);
-        mLeftSlave.setInverted(false);
+        mLeftSlave = new VictorSPX(kDrive.kLeftDriveSlaveId);
+        mLeftSlave.configFactoryDefault();
+        mLeftSlave.follow(mLeftMaster);
+        mLeftSlave.setInverted(InvertType.FollowMaster);
 
-        mRightMaster = TalonSRXFactory.createDefaultTalon(Constants.kRightDriveMasterId);
-        configureMaster(mRightMaster, false);
+        mRightMaster = TalonSRXFactory.createDefaultTalon(kDrive.kRightDriveMasterId);
+        configureMaster(mRightMaster, true);
 
-        mRightSlave = VictorSPXFactory.createPermanentSlaveTalon(Constants.kRightDriveSlaveId,
-                Constants.kRightDriveMasterId);
-        mRightSlave.setInverted(true);
-
-        // Corrects sensor direction to match throttle direction
-        mLeftMaster.setSensorPhase(true);
-        mRightMaster.setSensorPhase(true);
-
-        /* Configures FPID constants for Talon's Velocity mode */
-        setTalonPIDF(Constants.kVelocitykP, Constants.kVelocitykI, Constants.kVelocitykD, Constants.kVelocitykF);
+        mRightSlave = new VictorSPX(kDrive.kRightDriveSlaveId);
+        mRightSlave.configFactoryDefault();
+        mRightSlave.follow(mRightMaster);
+        mRightSlave.setInverted(InvertType.FollowMaster);
 
         /**
          * Instantiates the gyro
@@ -82,49 +87,45 @@ public class Drivetrain extends Subsystem {
     }
 
     private void configureMaster(TalonSRX talon, boolean left) {
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
+        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
+        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
+        // primary closed-loop, 100 ms timeout
         final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
-                100); // primary closed-loop, 100 ms timeout
+                Constants.kLongCANTimeoutMs);
         if (sensorPresent != ErrorCode.OK) {
             DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent,
                     false);
         }
-        talon.setInverted(!left);
+        talon.setInverted(left);
         talon.setSensorPhase(true);
         talon.enableVoltageCompensation(true);
         talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
-        // Constants.kLongCANTimeoutMs);
-        talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
-        talon.configNeutralDeadband(0.04, 0);
-    }
+        talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_25Ms, Constants.kLongCANTimeoutMs); //TODO: cofigure this for good data
+        talon.configVelocityMeasurementWindow(2, Constants.kLongCANTimeoutMs);
+        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); //TODO: sets a constant accel – s to full – configure
 
-    private void setTalonPIDF(double proportional, double iterative, double derivative, double feedForward) {
-        mLeftMaster.config_kP(Constants.kVelocitySlotId, proportional, Constants.kTimeoutMs);
-        mRightMaster.config_kP(Constants.kVelocitySlotId, proportional, Constants.kTimeoutMs);
-
-        mLeftMaster.config_kI(Constants.kVelocitySlotId, iterative, Constants.kTimeoutMs);
-        mRightMaster.config_kI(Constants.kVelocitySlotId, iterative, Constants.kTimeoutMs);
-
-        mLeftMaster.config_kD(Constants.kVelocitySlotId, derivative, Constants.kTimeoutMs);
-        mRightMaster.config_kD(Constants.kVelocitySlotId, derivative, Constants.kTimeoutMs);
-
-        mLeftMaster.config_kF(Constants.kVelocitySlotId, feedForward, Constants.kTimeoutMs);
-        mRightMaster.config_kF(Constants.kVelocitySlotId, feedForward, Constants.kTimeoutMs);
+        talon.config_kP(Constants.kVelocitySlot, kDrive.kDrivekP, Constants.kLongCANTimeoutMs);
+        talon.config_kI(Constants.kVelocitySlot, kDrive.kDrivekI, Constants.kLongCANTimeoutMs);
+        talon.config_kD(Constants.kVelocitySlot, kDrive.kDrivekD, Constants.kLongCANTimeoutMs);
+        talon.config_kF(Constants.kVelocitySlot, kDrive.kDrivekF, Constants.kLongCANTimeoutMs);
+        talon.configOpenloopRamp(.4, Constants.kLongCANTimeoutMs);
     }
 
     /**
      * Drives each side of the robot at a given DriveSignal in a given ControlMode
      * 
-     * @param mode  CTRE ControlMode for the talons
+     * @param mode   CTRE ControlMode for the talons
      * @param signal DriveSignal for the motors
      */
     public void driveDemand(ControlMode mode, DriveSignal signal) {
+        if (mBreak != signal.getBrakeMode()) {
+            mRightMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
+            mLeftMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
+            mBreak = signal.getBrakeMode();
+        }
+
         mLeftMaster.set(mode, signal.getLeft());
-        mRightMaster.set(mode, signal.getRight());
-        mRightMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
-        mLeftMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
+        mRightMaster.set(mode, signal.getRight());  
     }
 
     /**
@@ -138,15 +139,15 @@ public class Drivetrain extends Subsystem {
      * Sets left and right encoders to 0
      */
     public void resetEncoders() {
-        mLeftMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
-        mRightMaster.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+        mLeftMaster.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
+        mRightMaster.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
     }
 
     /**
      * @return The value of the left drive encoder in inches
      */
     public double getLeftEncoderDistance() {
-        return mLeftMaster.getSelectedSensorPosition(0) * Constants.kDriveEncoderToInches;
+        return getLeftEncoderDistanceRaw() * kDrive.kDriveEncoderToInches;
     }
 
     /**
@@ -169,7 +170,7 @@ public class Drivetrain extends Subsystem {
      * @return The value of the right drive encoder in inches
      */
     public double getRightEncoderDistance() {
-        return mRightMaster.getSelectedSensorPosition(0) * Constants.kDriveEncoderToInches;
+        return getRightEncoderDistanceRaw() * kDrive.kDriveEncoderToInches;
     }
 
     /**
@@ -180,41 +181,17 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
-     * @return The speed of the left motor in RPS
-     */
-    // public double getLeftEncoderRate() {
-    // return mLeftMaster.getSelectedSensorVelocity(0) *
-    // Constants.driveEncoderVelocityToRPS;
-    // }
-
-    /**
-     * @return The speed of the right motor in RPS
-     */
-    // public double getRightEncoderRate() {
-    // return mRightMaster.getSelectedSensorVelocity(0) *
-    // Constants.driveEncoderVelocityToRPS;
-    // }
-
-    /**
-     * 
-     * @return The average speed of both motors in RPS
-     */
-    // public double getEncoderRate() {
-    // return (getRightEncoderRate() + getLeftEncoderRate()) / 2;
-    // }
-
-    /**
      * @return The left driverail's velocity in NativeUnitsPer100Ms
      */
     public double getLeftVelocityRaw() {
-        return mLeftMaster.getSelectedSensorVelocity(Constants.kVelocitySlotId);
+        return mLeftMaster.getSelectedSensorVelocity(Constants.kVelocitySlot);
     }
 
     /**
      * @return The right driverail's velocity in NativeUnitsPer100Ms
      */
     public double getRightVelocityRaw() {
-        return mRightMaster.getSelectedSensorVelocity(Constants.kVelocitySlotId);
+        return mRightMaster.getSelectedSensorVelocity(Constants.kVelocitySlot);
     }
 
     /**
@@ -230,20 +207,11 @@ public class Drivetrain extends Subsystem {
      * @return
      */
     public double getGyroAngle() {
-        return (gyro.getAngle() % 360 + 360) % 360;
+        return (getRawGyroAngle() % 360 + 360) % 360;
     }
 
     public double getRawGyroAngle() {
         return gyro.getAngle();
-    }
-
-    /**
-     * Gets the drivetrain gyro
-     * 
-     * @return The drivetrain gyro
-     */
-    public AHRS getGyro() {
-        return gyro;
     }
 
     /**
@@ -299,9 +267,24 @@ public class Drivetrain extends Subsystem {
         limelight.getEntry("ledMode").setNumber(1);
         limelight.getEntry("camMode").setNumber(1);
     }
+
+    public void positon() {
+        System.out.println("Right: " + mRightMaster.getSelectedSensorPosition(0) + " Rerror: " + mRightMaster.getClosedLoopError() 
+        + "Left: " + mRightMaster.getSelectedSensorPosition(0) + "Lerror: " + mRightMaster.getClosedLoopError());
+      }
+
+      @Override
+      protected double returnPIDInput() {
+        // Return your input value for the PID loop
+        // e.g. a sensor, like a potentiometer:
+        // yourPot.getAverageVoltage() / kYourMaxVoltage;
+        return getGyroAngle(); 
+      }
     
-    @Override
-    public void initDefaultCommand() {
-        setDefaultCommand(new Drive());
-    }
+      @Override
+      protected void usePIDOutput(double output) {
+          driveDemand(ControlMode.PercentOutput, new DriveSignal(0.8 * output, -0.8 *output));
+        // Use output to drive your system, like a motor
+        // e.g. yourMotor.set(output);
+      }
 }

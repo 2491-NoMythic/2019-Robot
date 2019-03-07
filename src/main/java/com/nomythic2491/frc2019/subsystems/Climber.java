@@ -10,52 +10,69 @@ package com.nomythic2491.frc2019.subsystems;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
+import com.nomythic2491.frc2019.ControlBoard;
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
+import com.nomythic2491.frc2019.Settings.Constants.kClimber;
+
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-
 /**
  * Add your docs here.
  */
 public class Climber extends Subsystem {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
-  private static Climber instance;
-  private TalonSRX mRightClimberTalon, mLeftClimberTalon;
-  private Solenoid mClimberSolenoid, mBrakeSolenoid;
-   DigitalInput limitSwitch;
+
+  @Override
+  public void initDefaultCommand() {
+  }
+
+  private static Climber mInstance = null;
 
   public static Climber getInstance() {
-    if (instance == null) {
-      instance = new Climber();
+    if (mInstance == null) {
+      mInstance = new Climber();
     }
-    return instance;
+    return mInstance;
   }
+
+  ControlBoard mBoard = ControlBoard.getInstance();
+
+  @Override
+  public void periodic() {
+    runClimberDemand(mBoard.getClimberDemand());
+  }
+
+  /**
+   * left is master, right is slave
+   */
+  private TalonSRX mMasterClimber, mSlaveClimber;
+  private Solenoid mRatchetSolenoid;
+  DigitalInput limitSwitch;
 
   private Climber() {
-    mRightClimberTalon = TalonSRXFactory.createDefaultTalon(Constants.kPoleMasterId);
-    configureMaster(mRightClimberTalon, true);
+    mMasterClimber = TalonSRXFactory.createDefaultTalon(kClimber.kPoleMasterId);
+    configureMaster(mMasterClimber, true);
 
-    mLeftClimberTalon = TalonSRXFactory.createPermanentSlaveTalon(Constants.kPoleSlaveId, Constants.kPoleMasterId);
-    mLeftClimberTalon.setInverted(false);
+    mSlaveClimber = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kPoleSlaveId, kClimber.kPoleMasterId);
+    mSlaveClimber.setInverted(InvertType.FollowMaster);
 
-    mClimberSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kSkidChannel);
-    mBrakeSolenoid = new Solenoid(Constants.kPCMCANID, Constants.kBrakeChannel);
-
-  }
-  public void runClimberRacks(double speed) {
-    mRightClimberTalon.set(ControlMode.PercentOutput, speed);
+    mRatchetSolenoid = new Solenoid(kClimber.kRatchetChannel);
   }
 
-  // Elias --- this stuff is all copied from Drivetrain.java and we might not need
-  // it
-  // but its here for now i guess
+  public void runClimberDemand(ClimberDemand demand) {
+    engageRatchet(demand.getRatchet());
+    mMasterClimber.setNeutralMode(demand.getBrake());
+    mMasterClimber.set(ControlMode.PercentOutput, demand.getSpeed());
+  }
+
   private void configureMaster(TalonSRX talon, boolean left) {
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
     final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100);
@@ -66,120 +83,24 @@ public class Climber extends Subsystem {
     talon.setSensorPhase(true);
     talon.enableVoltageCompensation(true);
     talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-    // talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms,
-    // Constants.kLongCANTimeoutMs);
+    talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs); // TODO:
+                                                                                                        // configure V
+                                                                                                        // and Ramp
     talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-    talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
-    talon.configNeutralDeadband(0.04, 0);
+    talon.configClosedloopRamp(1, Constants.kLongCANTimeoutMs);
+    talon.configNeutralDeadband(0.04, Constants.kLongCANTimeoutMs);
   }
 
   public void resetEncoders() {
-    resetRightEncoder();
-    resetLeftEncoder();
+    mMasterClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
+    mSlaveClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
   }
 
-  private void resetRightEncoder() {
-    mRightClimberTalon.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+  public void engageRatchet(boolean engaed) {
+    mRatchetSolenoid.set(engaed);
   }
 
-  private void resetLeftEncoder() {
-    mLeftClimberTalon.setSelectedSensorPosition(0, Constants.kVelocitySlotId, Constants.kTimeoutMs);
+  public boolean getRatchet() {
+    return mRatchetSolenoid.get();
   }
-
-  /**
-   * @return The value of the left drive encoder in inches
-   */
-  public double getLeftEncoderDistance() {
-    try
-    {
-      return mLeftClimberTalon.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
-    }
-    catch(Exception e)
-    {
-    System.out.println("Failed to get left climber encoder distance.");
-    return -1;  
-   }
-  }
-
-  /**
-   * Gets the left encoder value in ticks (4096 per rotation)
-   */
-  public double getLeftEncoderDistanceRaw() {
-    try
-    {
-      return mLeftClimberTalon.getSelectedSensorPosition(0);
-    }
-    catch(Exception e)
-    {
-      System.out.println("Failed to get left climber encoder distance raw.");
-      return -1;  
-    }
-  }
-
-  /**
-   * Gets the right encoder value in ticks (4096 per rotation)
-   * 
-   * @return
-   */
-  public double getRightEncoderDistanceRaw() {
-    try 
-    {
-      return mRightClimberTalon.getSelectedSensorPosition(0);
-    }
-    catch(Exception e)
-    {
-      System.out.println("Failed to get right climber encoder distance raw.");
-      return -1;  
-    }
-  }
-
-  /**
-   * @return The value of the right drive encoder in inches. If return negative 1 it has failed. 
-   */
-  public double getRightEncoderDistance() {
-    try
-    {
-      return mRightClimberTalon.getSelectedSensorPosition(0) * Constants.kClimberEncoderToInches;
-    }
-    catch(Exception e)
-    {
-      System.out.println("Failed to get right climber encoder distance.");
-      return -1;  
-    }
-  }
-
-  /**
-   * @return The average value of the two encoders in inches
-   */
-  public double getDistance() {
-    return (getRightEncoderDistance() + getLeftEncoderDistance()) / 2;
-
-  }
-
-  public void engageSkid() {
-    mClimberSolenoid.set(true);
-  }
-
-  public void disengageSkid() {
-    mClimberSolenoid.set(false);
-  }
-
-  public void engageBrake() {
-    mBrakeSolenoid.set(true);
-  }
-
-  public void disengageBrake() {
-    mBrakeSolenoid.set(false);
-}
-public boolean isSkidUp() {
-  return  mClimberSolenoid.get();
-}
-
-
-  @Override
-  public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
-  }
-
 }

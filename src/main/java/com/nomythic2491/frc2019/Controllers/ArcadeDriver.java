@@ -1,6 +1,7 @@
 package com.nomythic2491.frc2019.Controllers;
 
-import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
+import com.nomythic2491.frc2019.Settings.Constants.kArcade;
 import com.nomythic2491.lib.util.CheesyDriveHelper;
 import com.nomythic2491.lib.util.DriveSignal;
 
@@ -21,21 +22,20 @@ public class ArcadeDriver implements IDriveController {
     private Joystick mJoystick;
 
     private ArcadeDriver() {
-        mJoystick = new Joystick(0);
+        mJoystick = new Joystick(kArcade.kId);
         mHelper = new CheesyDriveHelper();
     }
 
     @Override
     public DriveSignal getSignal() {
-        return mHelper.cheesyDrive(
-                mHelper.handleDeadband(-mJoystick.getRawAxis(Constants.kDriverThrottleAxis), Constants.kDeadband),
-                mHelper.handleDeadband(mJoystick.getRawAxis(Constants.kDriverTurnAxis), Constants.kDeadband),
-                mJoystick.getRawButton(Constants.kQuickturnButton));
+        return mHelper.cheesyDrive(-mJoystick.getRawAxis(kArcade.kThrottleAxis),
+                mJoystick.getRawAxis(kArcade.kTurnAxis), mJoystick.getRawButton(kArcade.kQuickturnButton));
     }
 
     @Override
     public boolean getKillSwitch() {
-        return mJoystick.getRawButton(11);
+        return mJoystick.getRawButton(kArcade.kKillSwitchButton)
+                || mJoystick.getRawButton(kArcade.kKillSwitchButton2);
     }
 
     @Override
@@ -44,13 +44,13 @@ public class ArcadeDriver implements IDriveController {
     }
 
     @Override
-    public boolean getIntakeOut() {
-        return mJoystick.getRawButton(5);
+    public IoCargo getIoCargo() {
+        if (mJoystick.getRawButton(kArcade.kCargoInButton)) {
+            return IoCargo.In;
+        } else if (mJoystick.getRawButton(kArcade.kCargoOutButton)) {
+            return IoCargo.Out;
+        } else {
+            return IoCargo.Stop;
+        }
     }
-
-    @Override
-    public boolean getIntakeIn() {
-        return mJoystick.getRawButton(3);
-    }
-
 }
