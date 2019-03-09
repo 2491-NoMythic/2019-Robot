@@ -6,6 +6,8 @@
 /*----------------------------------------------------------------------------*/
 
 package com.nomythic2491.frc2019;
+
+import com.nomythic2491.frc2019.commands.AutoPlaceHatch;
 import com.nomythic2491.frc2019.commands.CommandBase;
 import com.nomythic2491.frc2019.commands.Drivetrain.RunSCurvePath;
 import com.nomythic2491.frc2019.commands.Drivetrain.TurnToPosition;
@@ -40,6 +42,8 @@ public class Robot extends TimedRobot {
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
     SmartDashboard.putData("Run Path Test", new RunSCurvePath());
+    SmartDashboard.putData("Run Hatch", new AutoPlaceHatch(true));
+    SmartDashboard.putData("Turn to angle", new TurnToPosition(20, true));
   }
 
   /**
@@ -52,6 +56,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putNumber("AngleToTurnTo", 22);
     SmartDashboard.putNumber("angle", Drivetrain.getInstance().getGyroAngle());
   }
 

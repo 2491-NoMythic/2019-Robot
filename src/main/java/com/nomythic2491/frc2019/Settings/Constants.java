@@ -16,7 +16,7 @@ public class Constants {
     public static final int kVelocitySlot = 0;
 
     public enum GamepieceDemand {
-        Test(12), Hold(0), CargoDefault(2), CargoLow(28), CargoMid(42), HatchDefault(0), HatchMid(28);
+        Test(12), Hold(0), CargoDefault(2), CargoMid(32), CargoLow(14), HatchDefault(0), HatchMid(28), Stop(0);
 
         private double mHeightPoint;
 
@@ -89,7 +89,7 @@ public class Constants {
 
     public static final class kClimber {
         public static final int kPoleMasterId = 2;
-        public static final int kPoleSlaveId = 3;
+        public static final int kPoleSlaveId = 9;
         public static final int kRatchetChannel = 3;
 
         public static final int kClimberVelocity = 2491;
@@ -107,7 +107,7 @@ public class Constants {
     }
 
     public static final class kMF {
-        public static final int kIntakeRollerId = 9;
+        public static final int kIntakeRollerId = 3;
         public static final int kElevatorId = 25;
         public static final int kHatchReleaseChannel = 5;
         public static final int kHatchGrabChannel = 4;

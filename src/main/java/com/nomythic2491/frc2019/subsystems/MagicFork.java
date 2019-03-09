@@ -58,19 +58,17 @@ public class MagicFork extends Subsystem {
         GamepieceDemand(mBoard.getGamepieceDemand());
         runIoCargo(mBoard.getIoCargo());
         tipIntake(mBoard.getTipIntake());
+        engageControlPins(mBoard.runControlPins());
         if(mBoard.getHatch()) {
             grab = !grab;
             grabHatch(grab);
         }
-        testCargoSensor();
-        testHatchSensor();
     }
     
     private TalonSRX intakeRoller, elevator;
     private DoubleSolenoid hatchPickup, intakeAngle;
     private Solenoid controlPins;
 
-    private AnalogInput cargoSensor, hatchSensor;
     double cargoSensorVolts, hatchSensorVolts;
 
     private MagicFork() {
@@ -95,12 +93,6 @@ public class MagicFork extends Subsystem {
         elevator.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
         elevator.configClearPositionOnLimitR(true, Constants.kLongCANTimeoutMs);
         elevator.setSelectedSensorPosition(0);
-
-        cargoSensor = new AnalogInput(kMF.kCargoSensor);
-        hatchSensor = new AnalogInput(kMF.kHatchSensor);
-
-        cargoSensorVolts = cargoSensor.getVoltage();
-        hatchSensorVolts = hatchSensor.getVoltage();
     }
 
     private void configureMaster(TalonSRX talon, boolean left) {
@@ -150,15 +142,8 @@ public class MagicFork extends Subsystem {
     /**
      * Drops the control pins
      */
-    public void dropControlPins() {
-        controlPins.set(true);
-    }
-
-    /**
-     * Raises the control pins
-     */
-    public void raiseControlPins() {
-        controlPins.set(false);
+    public void engageControlPins(boolean down) {
+        controlPins.set(down);
     }
 
     /**
@@ -216,7 +201,11 @@ public class MagicFork extends Subsystem {
      * @param demand eh?
      */
     public void GamepieceDemand(GamepieceDemand demand) {
-        if (demand != GamepieceDemand.Hold) {
+        
+        if (demand == GamepieceDemand.Stop){
+            elevator.set(ControlMode.PercentOutput, 0);
+        }
+        else if (demand != GamepieceDemand.Hold) {
             elevateToPoint(demand.getHeightPoint());
         }
     }
@@ -231,25 +220,12 @@ public class MagicFork extends Subsystem {
     }
 
     /**
-    * Using this to return the voltage of the cargo sensor
-    */
-    public void testCargoSensor() {
-        SmartDashboard.putNumber("Cargo V",cargoSensor.getVoltage());
-    }
-
-    /**
     * Determines whether or not the cargo sensor senses a cargo
     * @return Whether or not the volts is above 0.83 (1.33v when cargo is in,
     0.33 when it isn't)
     */
     public boolean isCargoIn() {
         return cargoSensorVolts > 0.83;
-    }
-    /**
-    * Using this to return the voltage of the hatch sensor
-    */
-    public void testHatchSensor() {
-        SmartDashboard.putNumber("Hatch V", hatchSensor.getVoltage());
     }
 
     // /**

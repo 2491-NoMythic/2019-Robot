@@ -12,9 +12,9 @@ package com.nomythic2491.frc2019.Settings;
  */
 public class Variables {
     // PID
-    public static double proportionalRotate = 2491;
-    public static double integralRotate = 2491;
-    public static double derivativeRotate = 2491;
+    public static double proportionalRotate = 0.01;
+    public static double integralRotate = 0;
+    public static double derivativeRotate = 0;
 
     public static boolean useGyroPID;
 

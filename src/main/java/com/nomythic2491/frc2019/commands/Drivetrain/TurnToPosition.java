@@ -41,7 +41,7 @@ public class TurnToPosition extends CommandBase {
     drivetrain.setAbsoluteTolerance(2);
     drivetrain.getPIDController().setPID(Variables.proportionalRotate,Variables.integralRotate, Variables.derivativeRotate);
 
-    relative = ((drivetrain.getGyroAngle() + target) % 360 + 360) % 360;
+    relative = (drivetrain.getGyroAngle() + target);
     if (type) {
           drivetrain.setSetpoint(target);
     }

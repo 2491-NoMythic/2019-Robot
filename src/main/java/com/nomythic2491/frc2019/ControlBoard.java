@@ -77,4 +77,9 @@ public class ControlBoard implements IControlBoard {
     public boolean getHatch() {
         return mOperatorController.getHatch();
     }
+
+    @Override
+    public boolean runControlPins() {
+        return mOperatorController.runControlPins();
+    }
 }

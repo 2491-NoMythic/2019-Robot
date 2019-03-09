@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Variables;
 import com.nomythic2491.frc2019.Settings.Constants.kDrive;
 import com.nomythic2491.frc2019.commands.Drivetrain.DriveLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
@@ -22,7 +23,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Drivetrain extends PIDSubsystem {
 
@@ -47,13 +47,12 @@ public class Drivetrain extends PIDSubsystem {
     private NetworkTable limelight;
     private NetworkTableEntry tx, ty, ta, tv;
     private boolean mBreak;
-    private double CurrentPIDoutput; 
 
     private Drivetrain() {
 
         super("Drive", Variables.proportionalRotate,Variables.integralRotate, Variables.derivativeRotate);
 
-        // Start all Talons in open loop mode.
+        // Start all Talons in open loop moded.
         mLeftMaster = TalonSRXFactory.createDefaultTalon(kDrive.kLeftDriveMasterId);
         configureMaster(mLeftMaster, false);
 
@@ -84,6 +83,8 @@ public class Drivetrain extends PIDSubsystem {
         ty = limelight.getEntry("ty");
         ta = limelight.getEntry("ta");
         tv = limelight.getEntry("tv");
+        
+        mBreak = false;
     }
 
     private void configureMaster(TalonSRX talon, boolean left) {
@@ -100,10 +101,9 @@ public class Drivetrain extends PIDSubsystem {
         talon.setSensorPhase(true);
         talon.enableVoltageCompensation(true);
         talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_25Ms, Constants.kLongCANTimeoutMs); //TODO: cofigure this for good data
+        talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_25Ms, Constants.kLongCANTimeoutMs);
         talon.configVelocityMeasurementWindow(2, Constants.kLongCANTimeoutMs);
-        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); //TODO: sets a constant accel – s to full – configure
-
+        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); 
         talon.config_kP(Constants.kVelocitySlot, kDrive.kDrivekP, Constants.kLongCANTimeoutMs);
         talon.config_kI(Constants.kVelocitySlot, kDrive.kDrivekI, Constants.kLongCANTimeoutMs);
         talon.config_kD(Constants.kVelocitySlot, kDrive.kDrivekD, Constants.kLongCANTimeoutMs);
@@ -119,8 +119,11 @@ public class Drivetrain extends PIDSubsystem {
      */
     public void driveDemand(ControlMode mode, DriveSignal signal) {
         if (mBreak != signal.getBrakeMode()) {
-            mRightMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
-            mLeftMaster.setNeutralMode(signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast);
+            NeutralMode neutral = signal.getBrakeMode() ? NeutralMode.Brake : NeutralMode.Coast;
+            mRightMaster.setNeutralMode(neutral);
+            mRightSlave.setNeutralMode(neutral);
+            mLeftMaster.setNeutralMode(neutral);
+            mLeftSlave.setNeutralMode(neutral);
             mBreak = signal.getBrakeMode();
         }
 

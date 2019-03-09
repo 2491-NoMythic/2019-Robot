@@ -47,5 +47,11 @@ public class PS4Operator implements IOperatorController {
     public boolean getHatch() {
         return false;
     }
+
+    @Override
+    public boolean runControlPins() {
+        return false;
+
+    }
     
 }

@@ -14,5 +14,7 @@ public interface IOperatorController {
     public boolean getTipIntake();
 
     public boolean getHatch();
+
+    public boolean runControlPins();
     
 }
