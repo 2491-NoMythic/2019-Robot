@@ -20,6 +20,7 @@ import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.frc2019.Settings.Constants.kMF;
+import com.nomythic2491.frc2019.commands.AutoLineup;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -35,6 +36,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * subsystem..
  */
 public class MagicFork extends Subsystem {
+
+    public boolean commandMode = false; 
+    private AutoLineup autoLineup;
 
     @Override
     protected void initDefaultCommand() {
@@ -55,13 +59,23 @@ public class MagicFork extends Subsystem {
 
     @Override
     public void periodic() {
-        GamepieceDemand(mBoard.getGamepieceDemand());
-        runIoCargo(mBoard.getIoCargo());
-        tipIntake(mBoard.getTipIntake());
-        engageControlPins(mBoard.runControlPins());
-        if(mBoard.getHatch()) {
-            grab = !grab;
-            grabHatch(grab);
+        if (!commandMode){
+            GamepieceDemand(mBoard.getGamepieceDemand());
+            runIoCargo(mBoard.getIoCargo());
+            tipIntake(mBoard.getTipIntake());
+            engageControlPins(mBoard.runControlPins());
+            if(mBoard.getHatch()) {
+                grab = !grab;
+                grabHatch(grab);
+            }
+            if(mBoard.lineup()){
+                autoLineup = new AutoLineup();
+                autoLineup.init();
+            }
+        }else{
+            if(!mBoard.lineup()){
+                autoLineup.cancel();
+            }
         }
     }
     
