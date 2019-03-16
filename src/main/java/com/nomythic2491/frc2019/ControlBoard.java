@@ -7,7 +7,6 @@ import com.nomythic2491.frc2019.Controllers.JoystickOperator;
 import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
 import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
-import com.nomythic2491.frc2019.commands.Drivetrain.AutoLineup;
 import com.nomythic2491.lib.util.DriveSignal;
 
 public class ControlBoard implements IControlBoard {
@@ -83,10 +82,4 @@ public class ControlBoard implements IControlBoard {
     public boolean runControlPins() {
         return mOperatorController.runControlPins();
     }
-
-    @Override
-    public boolean lineup() {
-        return mDriveController.lineup();
-    }
-
 }

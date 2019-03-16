@@ -111,10 +111,6 @@ public class Drivetrain extends PIDSubsystem {
         talon.configOpenloopRamp(.4, Constants.kLongCANTimeoutMs);
     }
 
-    public double getLimelightTx(){
-        return tx.getDouble(-1);
-    }
-
     /**
      * Drives each side of the robot at a given DriveSignal in a given ControlMode
      * 
