@@ -14,6 +14,7 @@ import com.nomythic2491.frc2019.commands.CommandBase;
 public class DriveLoop extends CommandBase {
 
   private ControlBoard mBoard;
+  private AutoLineup lineup;
 
   public DriveLoop() {
     requires(drivetrain);
@@ -28,8 +29,20 @@ public class DriveLoop extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    drivetrain.driveDemand(ControlMode.PercentOutput, mBoard.getSignal());
-    mBoard.runPathTest();
+    if(!mBoard.lineUp()){
+      if(lineup != null){
+        if(lineup.isRunning()){
+          lineup.cancel();
+        }
+      }
+      drivetrain.driveDemand(ControlMode.PercentOutput, mBoard.getSignal());
+      mBoard.runPathTest();
+    }else{
+      if(lineup == null){
+        lineup = new AutoLineup();
+      }
+      lineup.start();
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

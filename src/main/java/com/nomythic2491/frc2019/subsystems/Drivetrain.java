@@ -255,6 +255,10 @@ public class Drivetrain extends PIDSubsystem {
         return tv.getDouble(0) == 1;
     }
 
+    public double getLimelightTX() {
+        return tx.getDouble(-1);
+    }
+
     /**
      * Sets the robot pipeline to the necessary setting
      */

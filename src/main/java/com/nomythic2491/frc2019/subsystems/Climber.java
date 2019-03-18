@@ -58,10 +58,10 @@ public class Climber extends Subsystem {
   DigitalInput limitSwitch;
 
   private Climber() {
-    mMasterClimber = TalonSRXFactory.createDefaultTalon(kClimber.kPoleMasterId);
+    mMasterClimber = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
     configureMaster(mMasterClimber, true);
 
-    mSlaveClimber = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kPoleSlaveId, kClimber.kPoleMasterId);
+    mSlaveClimber = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kClimberSlaveId, kClimber.kClimberMasterId);
     mSlaveClimber.setInverted(InvertType.FollowMaster);
 
     mRatchetSolenoid = new Solenoid(kClimber.kRatchetChannel);

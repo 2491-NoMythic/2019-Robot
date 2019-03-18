@@ -53,4 +53,9 @@ public class ArcadeDriver implements IDriveController {
             return IoCargo.Stop;
         }
     }
+
+    @Override
+    public boolean lineUp() {
+        return mJoystick.getRawButton(4);
+    }
 }

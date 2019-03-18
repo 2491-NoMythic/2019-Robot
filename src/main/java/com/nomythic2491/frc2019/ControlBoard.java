@@ -82,4 +82,9 @@ public class ControlBoard implements IControlBoard {
     public boolean runControlPins() {
         return mOperatorController.runControlPins();
     }
+
+    @Override
+    public boolean lineUp() {
+        return mDriveController.lineUp();
+    }
 }
