@@ -54,10 +54,6 @@ public class JoystickOperator implements IOperatorController {
 
     @Override
     public void runPathTest() {
-        if(mJoystick.getRawButton(10)){
-            test = new AutoPlaceHatch(true);
-            test.init();
-        }
     }
 
     @Override
