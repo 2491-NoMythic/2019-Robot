@@ -53,24 +53,31 @@ public class Climber extends Subsystem {
   /**
    * left is master, right is slave
    */
-  private TalonSRX mMasterClimber, mSlaveClimber;
+  private TalonSRX mLeftClimber, mRightClimber, mStringRight, mStringleft;
   private Solenoid mRatchetSolenoid;
   DigitalInput limitSwitch;
 
   private Climber() {
-    mMasterClimber = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
-    configureMaster(mMasterClimber, true);
+    mLeftClimber = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
+    configureMaster(mLeftClimber, true);
 
-    mSlaveClimber = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kClimberSlaveId, kClimber.kClimberMasterId);
-    mSlaveClimber.setInverted(InvertType.FollowMaster);
+    mRightClimber = TalonSRXFactory.createDefaultTalon(kClimber.kClimberSlaveId);
+    configureMaster(mRightClimber, true);
+
+    mStringRight = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
+    configureMaster(mStringRight, true);
+    
+    mStringleft = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kLeftStringId, kClimber.kRightStringId);
 
     mRatchetSolenoid = new Solenoid(kClimber.kRatchetChannel);
   }
 
   public void runClimberDemand(ClimberDemand demand) {
     engageRatchet(demand.getRatchet());
-    mMasterClimber.setNeutralMode(demand.getBrake());
-    mMasterClimber.set(ControlMode.PercentOutput, demand.getSpeed());
+    mLeftClimber.setNeutralMode(demand.getBrake());
+    mRightClimber.setNeutralMode(demand.getBrake());
+    mRightClimber.set(ControlMode.PercentOutput, demand.getSpeed());
+    mLeftClimber.set(ControlMode.PercentOutput, demand.getSpeed());
   }
 
   private void configureMaster(TalonSRX talon, boolean left) {
@@ -92,8 +99,8 @@ public class Climber extends Subsystem {
   }
 
   public void resetEncoders() {
-    mMasterClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
-    mSlaveClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
+    mLeftClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
+    mRightClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
   }
 
   public void engageRatchet(boolean engaed) {
