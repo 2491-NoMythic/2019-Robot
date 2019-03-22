@@ -86,8 +86,8 @@ public class Constants {
     public static final class kClimber {
         public static final int kClimberMasterId = 2;
         public static final int kClimberSlaveId = 9;
-        public static final int kLeftStringId = 24;
-        public static final int kRightStringId = 34;
+        public static final int kSlaveStringId = 4;
+        public static final int kMasterStringId = 8;
         public static final int kRatchetChannel = 3;
 
         public static final int kClimberVelocity = 2491;

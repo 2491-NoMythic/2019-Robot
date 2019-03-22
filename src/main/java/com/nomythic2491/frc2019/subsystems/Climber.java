@@ -72,7 +72,8 @@ public class Climber extends Subsystem {
     mClimberSlave = new TalonSRX(kClimber.kClimberSlaveId);
     mClimberSlave.configFactoryDefault(Constants.kLongCANTimeoutMs);
     mClimberSlave.follow(mClimberMaster);
-    mClimberSlave.setInverted(InvertType.OpposeMaster);
+    mClimberSlave.setInverted(InvertType.FollowMaster);
+    
 
     // PIDF
 
@@ -136,11 +137,11 @@ public class Climber extends Subsystem {
     mClimberMaster.configMotionCruiseVelocity(sensorUnitsPer100ms, Constants.kLongCANTimeoutMs);
 
     // Winch
-    mStringMaster = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
+    mStringMaster = TalonSRXFactory.createDefaultTalon(kClimber.kMasterStringId);
     configureMaster(mStringMaster, true);
-
-    mStringSlave = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kLeftStringId, kClimber.kRightStringId);
+    mStringSlave = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kSlaveStringId, kClimber.kMasterStringId);
     mStringSlave.follow(mStringMaster);
+    mStringSlave.setInverted(InvertType.FollowMaster);
 
     mClimberMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
   }
