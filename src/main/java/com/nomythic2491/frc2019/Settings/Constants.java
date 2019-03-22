@@ -44,16 +44,15 @@ public class Constants {
     }
 
     public enum ClimberDemand {
-        Climb(-1, NeutralMode.Brake, true), Reset(1, NeutralMode.Coast, false), Stop(0, NeutralMode.Brake, false);
+        Climb(-1, NeutralMode.Brake),Reset(1, NeutralMode.Coast), Stop(0, NeutralMode.Brake);
 
         double mSpeed;
         NeutralMode mBrake;
-        boolean mRatchet;
+        double mStringSpeed;
 
-        private ClimberDemand(double speed, NeutralMode brake, boolean ratchet) {
+        private ClimberDemand(double speed, NeutralMode brake) {
             mSpeed = speed; // hight / (1.5 * Math.PI) * 4096;
             mBrake = brake;
-            mRatchet = ratchet;
         }
 
         public double getSpeed() {
@@ -62,10 +61,6 @@ public class Constants {
 
         public NeutralMode getBrake() {
             return mBrake;
-        }
-
-        public boolean getRatchet() {
-            return mRatchet;
         }
     }
 

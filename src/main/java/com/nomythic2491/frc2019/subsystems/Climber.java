@@ -54,7 +54,6 @@ public class Climber extends Subsystem {
    * left is master, right is slave
    */
   private TalonSRX mLeftClimber, mRightClimber, mStringRight, mStringleft;
-  private Solenoid mRatchetSolenoid;
   DigitalInput limitSwitch;
 
   private Climber() {
@@ -68,12 +67,9 @@ public class Climber extends Subsystem {
     configureMaster(mStringRight, true);
     
     mStringleft = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kLeftStringId, kClimber.kRightStringId);
-
-    mRatchetSolenoid = new Solenoid(kClimber.kRatchetChannel);
   }
 
   public void runClimberDemand(ClimberDemand demand) {
-    engageRatchet(demand.getRatchet());
     mLeftClimber.setNeutralMode(demand.getBrake());
     mRightClimber.setNeutralMode(demand.getBrake());
     mRightClimber.set(ControlMode.PercentOutput, demand.getSpeed());
@@ -101,13 +97,5 @@ public class Climber extends Subsystem {
   public void resetEncoders() {
     mLeftClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
     mRightClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
-  }
-
-  public void engageRatchet(boolean engaed) {
-    mRatchetSolenoid.set(engaed);
-  }
-
-  public boolean getRatchet() {
-    return mRatchetSolenoid.get();
   }
 }
