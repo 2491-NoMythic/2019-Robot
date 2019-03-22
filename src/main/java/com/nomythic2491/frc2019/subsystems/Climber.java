@@ -12,6 +12,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.SensorTerm;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -58,21 +62,86 @@ public class Climber extends Subsystem {
   DigitalInput limitSwitch;
 
   private Climber() {
+
+    // Master
     mClimberMaster = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
     configureMaster(mClimberMaster, true);
 
+    // Slave
     mClimberSlave = new TalonSRX(kClimber.kClimberSlaveId);
     mClimberSlave.configFactoryDefault(Constants.kLongCANTimeoutMs);
-    mClimberSlave.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kLongCANTimeoutMs);
     mClimberSlave.follow(mClimberMaster);
     mClimberSlave.setInverted(InvertType.OpposeMaster);
-    
 
+    // PIDF
+
+    final ErrorCode rightSensorPresent = mClimberSlave
+        .configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kLongCANTimeoutMs);
+
+    if (rightSensorPresent != ErrorCode.OK) {
+      DriverStation.reportError("Could not detect right climber encoder: " + rightSensorPresent, false);
+    }
+
+    mClimberMaster.configRemoteFeedbackFilter(mClimberSlave.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor,
+        0, Constants.kLongCANTimeoutMs);
+
+    mClimberMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs);
+    final ErrorCode leftSensorPresent = mClimberMaster.configSensorTerm(SensorTerm.Sum1,
+        FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kLongCANTimeoutMs);
+
+    if (leftSensorPresent != ErrorCode.OK) {
+      DriverStation.reportError("Could not detect left climber encoder: " + rightSensorPresent, false);
+    }
+
+    mClimberMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs);
+    mClimberMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.CTRE_MagEncoder_Relative,
+        Constants.kLongCANTimeoutMs);
+
+    mClimberMaster.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 0, Constants.kLongCANTimeoutMs);
+    mClimberMaster.configSelectedFeedbackCoefficient(0.5, 0, Constants.kLongCANTimeoutMs);
+
+    mClimberMaster.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, 1, Constants.kLongCANTimeoutMs);
+    mClimberMaster.configSelectedFeedbackCoefficient(1, 1, Constants.kLongCANTimeoutMs);
+
+    /* Set status frame periods to ensure we don't have stale data */
+		mClimberMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
+		mClimberMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+		mClimberMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
+		mClimberMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+    mClimberSlave.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+
+    /* FPID Gains for distance servo */
+    mClimberMaster.config_kP(Constants.kSlot_Distanc, Constants.kGains_Distanc.kP, Constants.kTimeoutMs);
+    mClimberMaster.config_kI(Constants.kSlot_Distanc, Constants.kGains_Distanc.kI, Constants.kTimeoutMs);
+    mClimberMaster.config_kD(Constants.kSlot_Distanc, Constants.kGains_Distanc.kD, Constants.kTimeoutMs);
+    mClimberMaster.config_kF(Constants.kSlot_Distanc, Constants.kGains_Distanc.kF, Constants.kTimeoutMs);
+    mClimberMaster.config_IntegralZone(Constants.kSlot_Distanc, Constants.kGains_Distanc.kIzone, Constants.kTimeoutMs);
+    mClimberMaster.configClosedLoopPeakOutput(Constants.kSlot_Distanc, Constants.kGains_Distanc.kPeakOutput,
+        Constants.kTimeoutMs);
+    mClimberMaster.configAllowableClosedloopError(Constants.kSlot_Distanc, 0, Constants.kTimeoutMs);
+
+    /* FPID Gains for turn servo */
+    mClimberMaster.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
+    mClimberMaster.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
+    mClimberMaster.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
+    mClimberMaster.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
+    mClimberMaster.config_IntegralZone(Constants.kSlot_Turning, (int) Constants.kGains_Turning.kIzone,
+        Constants.kTimeoutMs);
+    mClimberMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput,
+        Constants.kTimeoutMs);
+    mClimberMaster.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);
+
+    mClimberMaster.configMotionAcceleration(sensorUnitsPer100msPerSec, Constants.kLongCANTimeoutMs);
+    mClimberMaster.configMotionCruiseVelocity(sensorUnitsPer100ms, Constants.kLongCANTimeoutMs);
+
+    // Winch
     mStringMaster = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
     configureMaster(mStringMaster, true);
-    
+
     mStringSlave = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kLeftStringId, kClimber.kRightStringId);
     mStringSlave.follow(mStringMaster);
+
+    mClimberMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
   }
 
   public void runClimberDemand(ClimberDemand demand) {
@@ -82,11 +151,7 @@ public class Climber extends Subsystem {
   }
 
   private void configureMaster(TalonSRX talon, boolean left) {
-    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
-    final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100);
-    if (sensorPresent != ErrorCode.OK) {
-      DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent, false);
-    }
+    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
     talon.setInverted(!left);
     talon.setSensorPhase(true);
     talon.enableVoltageCompensation(true);

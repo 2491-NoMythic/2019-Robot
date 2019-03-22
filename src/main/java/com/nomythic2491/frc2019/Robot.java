@@ -16,8 +16,10 @@ import com.nomythic2491.frc2019.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -29,6 +31,7 @@ public class Robot extends TimedRobot {
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
+  ShuffleboardTab mainTab;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -38,12 +41,19 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     CommandBase.init();
     ControlBoard.getInstance();
-    // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
-    // chooser.addOption("My Auto", new MyAutoCommand());
-    SmartDashboard.putData("Auto mode", m_chooser);
-    SmartDashboard.putData("Run Path Test", new RunSCurvePath());
-    SmartDashboard.putData("Run Hatch", new AutoPlaceHatch(true));
-    SmartDashboard.putData("Turn to angle", new TurnToPosition(20, true));
+
+    Shuffleboard.addEventMarker("Robot initilized", EventImportance.kNormal);
+    mainTab = Shuffleboard.getTab("Main");
+    mainTab.add("AutoMode", m_chooser);
+    mainTab.add(new RunSCurvePath());
+    mainTab.add(new AutoPlaceHatch(true));
+    mainTab.add( new TurnToPosition(20, true));
+    mainTab.add("angle", Drivetrain.getInstance().getGyroAngle());
+    mainTab.addPersistent("AngleToTurnTo", 22);
+
+    // SmartDashboard.putData("Run Path Test", new RunSCurvePath());
+    // SmartDashboard.putData("Run Hatch", new AutoPlaceHatch(true));
+    // SmartDashboard.putData("Turn to angle", new TurnToPosition(20, true));
   }
 
   /**
@@ -56,8 +66,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("AngleToTurnTo", 22);
-    SmartDashboard.putNumber("angle", Drivetrain.getInstance().getGyroAngle());
+    // SmartDashboard.putNumber("AngleToTurnTo", 22);
+    // SmartDashboard.putNumber("angle", Drivetrain.getInstance().getGyroAngle());
   }
 
   /**
@@ -89,13 +99,6 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_chooser.getSelected();
 
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
-
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.start();
@@ -112,13 +115,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.cancel();
+    // }
   }
 
   /**

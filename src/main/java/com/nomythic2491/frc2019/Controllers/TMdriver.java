@@ -25,6 +25,7 @@ public class TMdriver implements IDriveController {
         mJoystick = new Joystick(kTM.kId);
         mHelper = new CheesyDriveHelper();
     }
+    
     @Override
     public DriveSignal getSignal() {
         return mHelper.cheesyDrive(-mJoystick.getRawAxis(kTM.kThrottleAxis),

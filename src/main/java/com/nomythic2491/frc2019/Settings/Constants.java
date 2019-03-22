@@ -8,6 +8,8 @@ public class Constants {
     // Controllers
     public static final double kDeadbandThrottle = 0.1;
     public static final double kDeadbandTurn = 0.05;
+    public static final boolean kUseDriveAlternateContoller = false;
+    public static final boolean kUseOpAlternateContoller = false;
 
     // Talons
     public static final int kTimeoutMs = 10;
@@ -141,6 +143,13 @@ public class Constants {
     }
 
     public static final class kJoystickOp {
+        public static final int kId = 1;
+        public static final int kThrottleAxis = 1;
+        public static final int kTurnAxis = 2;
+        public static final int kQuickturnButton = 1;
+    }
+
+    public static final class kButtonOp {
         public static final int kId = 1;
         public static final int kThrottleAxis = 1;
         public static final int kTurnAxis = 2;

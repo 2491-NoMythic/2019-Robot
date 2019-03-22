@@ -24,7 +24,6 @@ public abstract class CommandBase extends Command {
 		climber = Climber.getInstance();
 		magicfork = MagicFork.getInstance();
 
-		// Show what command your subsystem is running on the SmartDashboard
 	}
 
 	/**
