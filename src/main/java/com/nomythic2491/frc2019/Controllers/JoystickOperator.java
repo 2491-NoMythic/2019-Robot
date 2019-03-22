@@ -4,6 +4,7 @@ import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
 import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.commands.AutoPlaceHatch;
 import com.nomythic2491.frc2019.commands.Drivetrain.RunSCurvePath;
+import com.nomythic2491.frc2019.subsystems.Climber;
 import com.nomythic2491.frc2019.subsystems.MagicFork;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -30,7 +31,13 @@ public class JoystickOperator implements IOperatorController {
 
     @Override
     public ClimberDemand getClimberDemand() {
-        return ClimberDemand.Stop; //TODO: joystick returns 0 if not plugged in
+        if(mJoystick.getRawButton(4)){
+            return ClimberDemand.Climb;
+        } else if(mJoystick.getRawButton(5)){
+            return ClimberDemand.Reset;
+        }else{
+            return ClimberDemand.Stop;
+        } //TODO: joystick returns 0 if not plugged in
     }
 
     @Override

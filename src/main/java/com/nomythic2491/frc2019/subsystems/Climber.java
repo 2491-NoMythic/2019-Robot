@@ -53,6 +53,7 @@ public class Climber extends Subsystem {
   @Override
   public void periodic() {
     runClimberDemand(mBoard.getClimberDemand());
+
   }
 
   /**
@@ -148,6 +149,10 @@ public class Climber extends Subsystem {
     mClimberMaster.setNeutralMode(demand.getBrake());
     mClimberSlave.setNeutralMode(demand.getBrake());
     mClimberMaster.set(ControlMode.MotionMagic, demand.getHeightPoint(), DemandType.AuxPID, 0);
+  }
+
+  public double getEncoderDiffrence(){
+    return Math.abs( mClimberMaster.getSelectedSensorPosition() - mClimberSlave.getSelectedSensorPosition() ); 
   }
 
   private void configureMaster(TalonSRX talon, boolean left) {
