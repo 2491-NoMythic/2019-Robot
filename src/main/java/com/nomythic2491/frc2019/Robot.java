@@ -7,11 +7,14 @@
 
 package com.nomythic2491.frc2019;
 
+import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
 import com.nomythic2491.frc2019.commands.AutoPlaceHatch;
 import com.nomythic2491.frc2019.commands.CommandBase;
 import com.nomythic2491.frc2019.commands.Drivetrain.RunSCurvePath;
 import com.nomythic2491.frc2019.commands.Drivetrain.TurnToPosition;
+import com.nomythic2491.frc2019.subsystems.Climber;
 import com.nomythic2491.frc2019.subsystems.Drivetrain;
+import com.nomythic2491.frc2019.subsystems.MagicFork;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -29,6 +32,8 @@ public class Robot extends TimedRobot {
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
+  String encoderDiffrence;
+  int count = 0;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -58,6 +63,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     SmartDashboard.putNumber("AngleToTurnTo", 22);
     SmartDashboard.putNumber("angle", Drivetrain.getInstance().getGyroAngle());
+    SmartDashboard.putNumber("Diffrence in climber", Climber.getInstance().getEncoderDiffrence());
+    encoderDiffrence = encoderDiffrence + Climber.getInstance().getEncoderDiffrence() + "," + count + "\r\n";
+    count++;
   }
 
   /**
