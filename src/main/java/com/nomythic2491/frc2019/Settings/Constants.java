@@ -16,7 +16,7 @@ public class Constants {
     public static final int kVelocitySlot = 0;
 
     public enum GamepieceDemand {
-        Test(12), Hold(0), CargoDefault(2), CargoMid(32), CargoLow(14), HatchDefault(0), HatchMid(28), Stop(0);
+        Test(12), Hold(0), CargoDefault(2), CargoMid(32), CargoLow(19), HatchDefault(0), HatchMid(28), Stop(0);
 
         private double mHeightPoint;
 
@@ -44,19 +44,18 @@ public class Constants {
     }
 
     public enum ClimberDemand {
-        Climb(-1, NeutralMode.Brake),Reset(1, NeutralMode.Coast), Stop(0, NeutralMode.Brake);
+        Climb(18, NeutralMode.Brake), Reset(0, NeutralMode.Coast), Stop(0, NeutralMode.Brake);
 
-        double mSpeed;
+        double mHightPoint;
         NeutralMode mBrake;
-        double mStringSpeed;
 
-        private ClimberDemand(double speed, NeutralMode brake) {
-            mSpeed = speed; // hight / (1.5 * Math.PI) * 4096;
+        private ClimberDemand(double hight, NeutralMode brake) {
+            mHightPoint = hight; // hight / (1.5 * Math.PI) * 4096;
             mBrake = brake;
         }
 
-        public double getSpeed() {
-            return mSpeed;
+        public double getHeightPoint() {
+            return mHightPoint;
         }
 
         public NeutralMode getBrake() {
@@ -129,6 +128,16 @@ public class Constants {
         public static final int kCargoOutButton = 5;
         public static final int kKillSwitchButton = 11;
         public static final int kKillSwitchButton2 = 12;
+    }
+    public static final class kTM {
+        public static final int kId = 0;
+        public static final int kThrottleAxis = 1;
+        public static final int kTurnAxis = 2;
+        public static final int kQuickturnButton = 1;
+        public static final int kCargoInButton = 2;
+        public static final int kCargoOutButton = 3;
+        public static final int kKillSwitchButton = 10;
+        public static final int kKillSwitchButton2 = 5;
     }
 
     public static final class kJoystickOp {

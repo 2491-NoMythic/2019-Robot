@@ -115,15 +115,6 @@ public class MagicFork extends Subsystem {
     }
 
     /**
-     * Runs the intake at a given velocity
-     * 
-     * @param speed The velocity the intake is run at
-     */
-    public void runIntake(double speed) {
-        intakeRoller.set(ControlMode.PercentOutput, speed);
-    }
-
-    /**
      * Retracts hatch pistons to grab a hatch panel
      */
     public void grabHatch(boolean grab) {

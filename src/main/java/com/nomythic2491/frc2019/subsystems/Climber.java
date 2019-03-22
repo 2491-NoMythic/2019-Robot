@@ -9,6 +9,7 @@ package com.nomythic2491.frc2019.subsystems;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
@@ -53,27 +54,31 @@ public class Climber extends Subsystem {
   /**
    * left is master, right is slave
    */
-  private TalonSRX mLeftClimber, mRightClimber, mStringRight, mStringleft;
+  private TalonSRX mClimberMaster, mClimberSlave, mStringMaster, mStringSlave;
   DigitalInput limitSwitch;
 
   private Climber() {
-    mLeftClimber = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
-    configureMaster(mLeftClimber, true);
+    mClimberMaster = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
+    configureMaster(mClimberMaster, true);
 
-    mRightClimber = TalonSRXFactory.createDefaultTalon(kClimber.kClimberSlaveId);
-    configureMaster(mRightClimber, true);
-
-    mStringRight = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
-    configureMaster(mStringRight, true);
+    mClimberSlave = new TalonSRX(kClimber.kClimberSlaveId);
+    mClimberSlave.configFactoryDefault(Constants.kLongCANTimeoutMs);
+    mClimberSlave.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kLongCANTimeoutMs);
+    mClimberSlave.follow(mClimberMaster);
+    mClimberSlave.setInverted(InvertType.OpposeMaster);
     
-    mStringleft = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kLeftStringId, kClimber.kRightStringId);
+
+    mStringMaster = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
+    configureMaster(mStringMaster, true);
+    
+    mStringSlave = TalonSRXFactory.createPermanentSlaveTalon(kClimber.kLeftStringId, kClimber.kRightStringId);
+    mStringSlave.follow(mStringMaster);
   }
 
   public void runClimberDemand(ClimberDemand demand) {
-    mLeftClimber.setNeutralMode(demand.getBrake());
-    mRightClimber.setNeutralMode(demand.getBrake());
-    mRightClimber.set(ControlMode.PercentOutput, demand.getSpeed());
-    mLeftClimber.set(ControlMode.PercentOutput, demand.getSpeed());
+    mClimberMaster.setNeutralMode(demand.getBrake());
+    mClimberSlave.setNeutralMode(demand.getBrake());
+    mClimberMaster.set(ControlMode.MotionMagic, demand.getHeightPoint(), DemandType.AuxPID, 0);
   }
 
   private void configureMaster(TalonSRX talon, boolean left) {
@@ -95,7 +100,7 @@ public class Climber extends Subsystem {
   }
 
   public void resetEncoders() {
-    mLeftClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
-    mRightClimber.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
+    mClimberMaster.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
+    mClimberSlave.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
   }
 }

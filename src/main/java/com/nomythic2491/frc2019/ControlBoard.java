@@ -4,6 +4,7 @@ import com.nomythic2491.frc2019.Controllers.ArcadeDriver;
 import com.nomythic2491.frc2019.Controllers.IDriveController;
 import com.nomythic2491.frc2019.Controllers.IOperatorController;
 import com.nomythic2491.frc2019.Controllers.JoystickOperator;
+import com.nomythic2491.frc2019.Controllers.TMdriver;
 import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
 import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
@@ -25,7 +26,7 @@ public class ControlBoard implements IControlBoard {
 
     private ControlBoard() {
         if (true) {
-            mDriveController = ArcadeDriver.getInstance();
+            mDriveController = TMdriver.getInstance();//ArcadeDriver.getInstance();
         }
 
         if (true) {
