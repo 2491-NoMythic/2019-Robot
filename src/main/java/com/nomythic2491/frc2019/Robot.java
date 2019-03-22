@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.I2C;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -29,6 +30,8 @@ public class Robot extends TimedRobot {
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
+  byte dataSend;
+  I2C i2c;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -44,6 +47,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Run Path Test", new RunSCurvePath());
     SmartDashboard.putData("Run Hatch", new AutoPlaceHatch(true));
     SmartDashboard.putData("Turn to angle", new TurnToPosition(20, true));
+
+    i2c = new I2C(I2C.Port.kOnboard, 12);
   }
 
   /**
@@ -58,6 +63,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     SmartDashboard.putNumber("AngleToTurnTo", 22);
     SmartDashboard.putNumber("angle", Drivetrain.getInstance().getGyroAngle());
+
+    dataSend = 2;
+    i2c.write(1, 2);
   }
 
   /**
