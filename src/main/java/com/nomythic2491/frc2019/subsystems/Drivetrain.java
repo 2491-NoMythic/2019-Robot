@@ -104,10 +104,10 @@ public class Drivetrain extends PIDSubsystem {
         talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_25Ms, Constants.kLongCANTimeoutMs);
         talon.configVelocityMeasurementWindow(2, Constants.kLongCANTimeoutMs);
         talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); 
-        talon.config_kP(Constants.kVelocitySlot, kDrive.kDrivekP, Constants.kLongCANTimeoutMs);
-        talon.config_kI(Constants.kVelocitySlot, kDrive.kDrivekI, Constants.kLongCANTimeoutMs);
-        talon.config_kD(Constants.kVelocitySlot, kDrive.kDrivekD, Constants.kLongCANTimeoutMs);
-        talon.config_kF(Constants.kVelocitySlot, kDrive.kDrivekF, Constants.kLongCANTimeoutMs);
+        talon.config_kP(Constants.kPrimarySlot, kDrive.kDrivekP, Constants.kLongCANTimeoutMs);
+        talon.config_kI(Constants.kPrimarySlot, kDrive.kDrivekI, Constants.kLongCANTimeoutMs);
+        talon.config_kD(Constants.kPrimarySlot, kDrive.kDrivekD, Constants.kLongCANTimeoutMs);
+        talon.config_kF(Constants.kPrimarySlot, kDrive.kDrivekF, Constants.kLongCANTimeoutMs);
         talon.configOpenloopRamp(.4, Constants.kLongCANTimeoutMs);
     }
 
@@ -142,8 +142,8 @@ public class Drivetrain extends PIDSubsystem {
      * Sets left and right encoders to 0
      */
     public void resetEncoders() {
-        mLeftMaster.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
-        mRightMaster.setSelectedSensorPosition(0, Constants.kVelocitySlot, Constants.kTimeoutMs);
+        mLeftMaster.setSelectedSensorPosition(0, Constants.kPrimarySlot, Constants.kTimeoutMs);
+        mRightMaster.setSelectedSensorPosition(0, Constants.kPrimarySlot, Constants.kTimeoutMs);
     }
 
     /**
@@ -187,14 +187,14 @@ public class Drivetrain extends PIDSubsystem {
      * @return The left driverail's velocity in NativeUnitsPer100Ms
      */
     public double getLeftVelocityRaw() {
-        return mLeftMaster.getSelectedSensorVelocity(Constants.kVelocitySlot);
+        return mLeftMaster.getSelectedSensorVelocity(Constants.kPrimarySlot);
     }
 
     /**
      * @return The right driverail's velocity in NativeUnitsPer100Ms
      */
     public double getRightVelocityRaw() {
-        return mRightMaster.getSelectedSensorVelocity(Constants.kVelocitySlot);
+        return mRightMaster.getSelectedSensorVelocity(Constants.kPrimarySlot);
     }
 
     /**

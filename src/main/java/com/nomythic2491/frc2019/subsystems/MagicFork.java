@@ -81,10 +81,10 @@ public class MagicFork extends Subsystem {
         elevator = TalonSRXFactory.createDefaultTalon(kMF.kElevatorId);
         configureMaster(elevator, false);
 
-        elevator.config_kP(Constants.kVelocitySlot, kMF.kElevatorP, Constants.kLongCANTimeoutMs);
-        elevator.config_kI(Constants.kVelocitySlot, kMF.kElevatorI, Constants.kLongCANTimeoutMs);
-        elevator.config_kD(Constants.kVelocitySlot, kMF.kElevatorD, Constants.kLongCANTimeoutMs);
-        elevator.config_kF(Constants.kVelocitySlot, kMF.kElevatorF, Constants.kLongCANTimeoutMs);
+        elevator.config_kP(Constants.kPrimarySlot, kMF.kElevatorP, Constants.kLongCANTimeoutMs);
+        elevator.config_kI(Constants.kPrimarySlot, kMF.kElevatorI, Constants.kLongCANTimeoutMs);
+        elevator.config_kD(Constants.kPrimarySlot, kMF.kElevatorD, Constants.kLongCANTimeoutMs);
+        elevator.config_kF(Constants.kPrimarySlot, kMF.kElevatorF, Constants.kLongCANTimeoutMs);
         elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
         elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
         elevator.configMotionCruiseVelocity(1600, Constants.kLongCANTimeoutMs);

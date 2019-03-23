@@ -9,13 +9,14 @@ public class Constants {
     public static final double kDeadbandThrottle = 0.1;
     public static final double kDeadbandTurn = 0.05;
     public static final boolean kUseDriveAlternateContoller = false;
-    public static final boolean kUseOpAlternateContoller = false;
+    public static final boolean kUseOpAlternateContoller = true;
 
     // Talons
     public static final int kTimeoutMs = 10;
     public static final int kLongCANTimeoutMs = 100;
     public static final double kDriveVoltageRampRate = .5;
-    public static final int kVelocitySlot = 0;
+    public static final int kPrimarySlot = 0;
+    public static final int kAuxilarySlot = 1;
 
     public enum GamepieceDemand {
         Test(12), Hold(0), CargoDefault(2), CargoMid(32), CargoLow(19), HatchDefault(0), HatchMid(28), Stop(0);
@@ -102,6 +103,22 @@ public class Constants {
         public static final int kBumperOutChannel = 0;
 
         public static final double kHatchPickupPause = 0.25;
+
+        public static final class kGains_Distanc {
+            public static final double kP = 0;
+            public static final double kI = 0;
+            public static final int kZ = 0;
+            public static final double kD = 0;
+            public static final double kF = 0;
+        }
+
+        public static final class kGains_Turning {
+            public static final double kP = 0;
+            public static final double kI = 0;
+            public static final int kZ = 0;
+            public static final double kD = 0;
+            public static final double kF = 0;
+        }
     }
 
     public static final class kMF {
