@@ -14,6 +14,8 @@ public class ButtonOperator implements IOperatorController {
         if (mInstance == null) {
             mInstance = new ButtonOperator();
         }
+
+
         return mInstance;
     }
 
@@ -28,9 +30,20 @@ public class ButtonOperator implements IOperatorController {
         return null;
     }
 
-    @Override
     public GamepieceDemand getGamepieceDemand() {
-        return null;
+        if (mJoystick.getRawButton(1)) {
+            return GamepieceDemand.CargoMid;
+        } else if (mJoystick.getRawButton(3)) {
+            return GamepieceDemand.CargoIntake;
+        } else if (mJoystick.getRawButton(5)) {
+            return GamepieceDemand.HatchDefault;
+        } else if (mJoystick.getRawButton(4)) {
+            return GamepieceDemand.HatchMid;
+        } else if (mJoystick.getRawButton(2)){
+            return GamepieceDemand.CargoLow;
+        } else {
+            return GamepieceDemand.Hold;
+        }
     }
 
     @Override

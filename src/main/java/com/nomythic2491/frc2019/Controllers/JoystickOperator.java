@@ -45,7 +45,7 @@ public class JoystickOperator implements IOperatorController {
         if (mJoystick.getRawButton(6)) {
             return GamepieceDemand.CargoMid;
         } else if (mJoystick.getRawButton(9)) {
-            return GamepieceDemand.CargoDefault;
+            return GamepieceDemand.CargoIntake;
         } else if (mJoystick.getRawButton(10)) {
             return GamepieceDemand.HatchDefault;
         } else if (mJoystick.getRawButton(8)) {

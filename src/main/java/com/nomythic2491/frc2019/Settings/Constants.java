@@ -19,7 +19,8 @@ public class Constants {
     public static final int kAuxilarySlot = 1;
 
     public enum GamepieceDemand {
-        Test(12), Hold(0), CargoDefault(2), CargoMid(32), CargoLow(19), HatchDefault(0), HatchMid(28), Stop(0);
+        Test(12), Hold(0), CargoIntake
+        (2), CargoMid(32), CargoLow(19), HatchDefault(0), HatchMid(28), Stop(0);
 
         private double mHeightPoint;
 
