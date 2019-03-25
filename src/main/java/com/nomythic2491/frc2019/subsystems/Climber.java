@@ -11,10 +11,12 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
@@ -68,15 +70,13 @@ public class Climber extends Subsystem {
 
     // Master
     mClimberMaster = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
-    configureMaster(mClimberMaster, true);
-    mClimberMaster.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled, Constants.kLongCANTimeoutMs);
+    configureMaster(mClimberMaster, false);
 
     // Slave
     mClimberSlave = new TalonSRX(kClimber.kClimberSlaveId);
     mClimberSlave.configFactoryDefault(Constants.kLongCANTimeoutMs);
-    mClimberSlave.follow(mClimberMaster);
+    mClimberSlave.follow(mClimberMaster, FollowerType.AuxOutput1);
     mClimberSlave.setInverted(InvertType.FollowMaster);
-    
 
     // PIDF
 
@@ -109,10 +109,10 @@ public class Climber extends Subsystem {
     mClimberMaster.configSelectedFeedbackCoefficient(1, 1, Constants.kLongCANTimeoutMs);
 
     /* Set status frame periods to ensure we don't have stale data */
-		mClimberMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
-		mClimberMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
-		mClimberMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
-		mClimberMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+    mClimberMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
+    mClimberMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+    mClimberMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
+    mClimberMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
     mClimberSlave.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
 
     /* FPID Gains for distance servo */
@@ -120,23 +120,31 @@ public class Climber extends Subsystem {
     mClimberMaster.config_kI(Constants.kPrimarySlot, kClimber.kGains_Distanc.kI, Constants.kTimeoutMs);
     mClimberMaster.config_kD(Constants.kPrimarySlot, kClimber.kGains_Distanc.kD, Constants.kTimeoutMs);
     mClimberMaster.config_kF(Constants.kPrimarySlot, kClimber.kGains_Distanc.kF, Constants.kTimeoutMs);
-    // mClimberMaster.config_IntegralZone(Constants.kPrimarySlot, kClimber.kGains_Distanc.kIzone, Constants.kTimeoutMs);
-    // mClimberMaster.configClosedLoopPeakOutput(Constants.kPrimarySlot, kClimber.kGains_Distanc.kPeakOutput,
-    //     Constants.kTimeoutMs);
-    mClimberMaster.configAllowableClosedloopError(Constants.kPrimarySlot, 0, Constants.kTimeoutMs);
+    // mClimberMaster.config_IntegralZone(Constants.kPrimarySlot,
+    // kClimber.kGains_Distanc.kIzone, Constants.kTimeoutMs);
+    // mClimberMaster.configClosedLoopPeakOutput(Constants.kPrimarySlot,
+    // kClimber.kGains_Distanc.kPeakOutput,
+    // Constants.kTimeoutMs);
 
     /* FPID Gains for turn servo */
     mClimberMaster.config_kP(Constants.kAuxilarySlot, kClimber.kGains_Turning.kP, Constants.kTimeoutMs);
     mClimberMaster.config_kI(Constants.kAuxilarySlot, kClimber.kGains_Turning.kI, Constants.kTimeoutMs);
     mClimberMaster.config_kD(Constants.kAuxilarySlot, kClimber.kGains_Turning.kD, Constants.kTimeoutMs);
     mClimberMaster.config_kF(Constants.kAuxilarySlot, kClimber.kGains_Turning.kF, Constants.kTimeoutMs);
-    // mClimberMaster.config_IntegralZone(Constants.kAuxilarySlot, (int) kClimber.kGains_Turning.kIzone,
-    //     Constants.kTimeoutMs);
-    // mClimberMaster.configClosedLoopPeakOutput(Constants.kAuxilarySlot, kClimber.kGains_Turning.kPeakOutput,
-    //     Constants.kTimeoutMs);
+    // mClimberMaster.config_IntegralZone(Constants.kAuxilarySlot, (int)
+    // kClimber.kGains_Turning.kIzone,
+    // Constants.kTimeoutMs);
+    // mClimberMaster.configClosedLoopPeakOutput(Constants.kAuxilarySlot,
+    // kClimber.kGains_Turning.kPeakOutput,
+    // Constants.kTimeoutMs);
     mClimberMaster.configAllowableClosedloopError(Constants.kAuxilarySlot, 0, Constants.kTimeoutMs);
-    mClimberMaster.configMotionAcceleration(20000, Constants.kLongCANTimeoutMs);
-    mClimberMaster.configMotionCruiseVelocity(200, Constants.kLongCANTimeoutMs);
+    mClimberMaster.configMotionAcceleration(800, Constants.kLongCANTimeoutMs);
+    mClimberMaster.configMotionCruiseVelocity(3200, Constants.kLongCANTimeoutMs);
+    mClimberMaster.configClosedloopRamp(0.25, Constants.kLongCANTimeoutMs);
+
+    mClimberMaster.configAuxPIDPolarity(false, Constants.kLongCANTimeoutMs);
+    mClimberMaster.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
+        LimitSwitchNormal.NormallyOpen, Constants.kMF.kElevatorId, Constants.kLongCANTimeoutMs);
 
     // Winch
     mStringMaster = TalonSRXFactory.createDefaultTalon(kClimber.kMasterStringId);
@@ -145,17 +153,24 @@ public class Climber extends Subsystem {
     mStringSlave.follow(mStringMaster);
     mStringSlave.setInverted(InvertType.FollowMaster);
 
+    mClimberMaster.selectProfileSlot(Constants.kPrimarySlot, 0);
+    mClimberMaster.selectProfileSlot(Constants.kAuxilarySlot, 1);
+
     mClimberMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
+    mClimberMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+    mClimberSlave.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
   }
 
   public void runClimberDemand(ClimberDemand demand) {
-    mClimberMaster.setNeutralMode(demand.getBrake());
-    mClimberSlave.setNeutralMode(demand.getBrake());
-    mClimberMaster.set(ControlMode.MotionMagic, demand.getHeightPoint(), DemandType.AuxPID, 0);
+    if (demand != ClimberDemand.Stop) {
+      mClimberMaster.setNeutralMode(demand.getBrake());
+      mClimberSlave.setNeutralMode(demand.getBrake());
+      mClimberMaster.set(ControlMode.MotionMagic, demand.getHeightPoint(), DemandType.AuxPID, 0);
+    }
   }
 
-  public double getEncoderDiffrence(){
-    return Math.abs( mClimberMaster.getSelectedSensorPosition() - mClimberSlave.getSelectedSensorPosition() ); 
+  public double getEncoderDiffrence() {
+    return Math.abs(mClimberMaster.getSelectedSensorPosition() - mClimberSlave.getSelectedSensorPosition());
   }
 
   private void configureMaster(TalonSRX talon, boolean left) {
@@ -168,7 +183,6 @@ public class Climber extends Subsystem {
                                                                                                         // configure V
                                                                                                         // and Ramp
     talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-    talon.configClosedloopRamp(1, Constants.kLongCANTimeoutMs);
     talon.configNeutralDeadband(0.04, Constants.kLongCANTimeoutMs);
   }
 
