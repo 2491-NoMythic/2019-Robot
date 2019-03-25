@@ -54,7 +54,7 @@ public class Constants {
         NeutralMode mBrake;
 
         private ClimberDemand(double hight, NeutralMode brake) {
-            mHightPoint = hight; // hight / (1.5 * Math.PI) * 4096;
+            mHightPoint = hight / (1.5*Math.PI)*4096;
             mBrake = brake;
         }
 
@@ -110,11 +110,11 @@ public class Constants {
             public static final double kI = 0;
             public static final int kZ = 0;
             public static final double kD = 0;
-            public static final double kF = 0;
+            public static final double kF = 1.27875;
         }
 
         public static final class kGains_Turning {
-            public static final double kP = 0;
+            public static final double kP = 0.003;
             public static final double kI = 0;
             public static final int kZ = 0;
             public static final double kD = 0;
