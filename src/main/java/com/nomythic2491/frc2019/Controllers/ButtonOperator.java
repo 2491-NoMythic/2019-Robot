@@ -27,19 +27,24 @@ public class ButtonOperator implements IOperatorController {
 
     @Override
     public ClimberDemand getClimberDemand() {
-        return null;
+        // if (mJoystick.getRawButton(5)){
+        //     return ClimberDemand.Climb;
+        // }
+        return ClimberDemand.Stop;
     }
 
+
+
     public GamepieceDemand getGamepieceDemand() {
-        if (mJoystick.getRawButton(1)) {
+        if (mJoystick.getRawButton(10)) {
             return GamepieceDemand.CargoMid;
-        } else if (mJoystick.getRawButton(3)) {
+        } else if (mJoystick.getRawButton(11)) {
             return GamepieceDemand.CargoIntake;
-        } else if (mJoystick.getRawButton(5)) {
+        } else if (mJoystick.getRawButton(8)) {
             return GamepieceDemand.HatchDefault;
-        } else if (mJoystick.getRawButton(4)) {
+        } else if (mJoystick.getRawButton(7)) {
             return GamepieceDemand.HatchMid;
-        } else if (mJoystick.getRawButton(2)){
+        } else if (mJoystick.getRawButton(9)){
             return GamepieceDemand.CargoLow;
         } else {
             return GamepieceDemand.Hold;
@@ -53,12 +58,12 @@ public class ButtonOperator implements IOperatorController {
 
     @Override
     public boolean getTipIntake() {
-        return false;
+        return mJoystick.getRawButton(1);
     }
 
     @Override
     public boolean getHatch() {
-        return false;
+        return mJoystick.getRawButton(2);
     }
 
     @Override

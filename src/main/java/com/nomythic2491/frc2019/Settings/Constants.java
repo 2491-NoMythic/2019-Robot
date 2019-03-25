@@ -9,7 +9,7 @@ public class Constants {
     public static final double kDeadbandThrottle = 0.1;
     public static final double kDeadbandTurn = 0.05;
     public static final boolean kUseDriveAlternateContoller = false;
-    public static final boolean kUseOpAlternateContoller = true;
+    public static final boolean kUseOpAlternateContoller = false;
 
     // Talons
     public static final int kTimeoutMs = 10;
