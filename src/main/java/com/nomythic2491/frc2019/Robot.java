@@ -30,8 +30,10 @@ public class Robot extends TimedRobot {
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
-  byte dataSend;
+  byte[] dataSend;
+  byte[] dataRecieve;
   I2C i2c;
+  int counter;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -48,7 +50,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Run Hatch", new AutoPlaceHatch(true));
     SmartDashboard.putData("Turn to angle", new TurnToPosition(20, true));
 
-    i2c = new I2C(I2C.Port.kOnboard, 12);
+    i2c = new I2C(I2C.Port.kMXP, 4);
+    dataSend = new byte[1];
+    dataRecieve = new byte[1];
+    counter = 0;
+    System.out.println("Init I2C");
   }
 
   /**
@@ -63,9 +69,24 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     SmartDashboard.putNumber("AngleToTurnTo", 22);
     SmartDashboard.putNumber("angle", Drivetrain.getInstance().getGyroAngle());
+    SmartDashboard.putNumber("Left distance (ft)", Drivetrain.getInstance().getLeftEncoderDistance() / 12);
+    SmartDashboard.putNumber("Right distance (ft)", Drivetrain.getInstance().getRightEncoderDistance() / 12);
+    
+    counter++;
+    if (counter > 100) {
+      counter = 0;
+      handleI2cSend();
+    }
+  }
 
-    dataSend = 2;
-    i2c.write(1, 2);
+  private void handleI2cSend() {
+    if (dataSend[0] == 1) {
+      dataSend[0] = 2;
+    } else {
+      dataSend[0] = 1;
+    }
+    i2c.transaction(dataSend, 1, dataRecieve, 1);
+    System.out.println("Send: "+dataSend[0]+" Recieve: "+dataRecieve[0]);
   }
 
   /**
