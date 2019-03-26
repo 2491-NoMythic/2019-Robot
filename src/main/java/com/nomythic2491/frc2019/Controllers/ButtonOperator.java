@@ -26,9 +26,9 @@ public class ButtonOperator implements IOperatorController {
 
     @Override
     public ClimberDemand getClimberDemand() {
-        // if (mJoystick.getRawButton(5)){
-        // return ClimberDemand.Climb;
-        // }
+        if (mJoystick.getRawButton(5) && mJoystick.getRawButton(3)){
+            return ClimberDemand.Climb;
+        }
         return ClimberDemand.Stop;
     }
 
