@@ -16,5 +16,7 @@ public interface IOperatorController {
     public boolean getHatch();
 
     public boolean runControlPins();
+
+    public double getElevotrOverride();
     
 }

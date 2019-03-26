@@ -79,4 +79,9 @@ public class JoystickOperator implements IOperatorController {
         
     }
 
+    @Override
+    public double getElevotrOverride() {
+        return 0;
+    }
+
 }

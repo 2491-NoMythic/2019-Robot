@@ -38,7 +38,7 @@ public class MagicFork extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
-        //setDefaultCommand(new);
+        // setDefaultCommand(new);
     }
 
     private static MagicFork mInstance = null;
@@ -50,21 +50,18 @@ public class MagicFork extends Subsystem {
         return mInstance;
     }
 
-    ControlBoard mBoard = ControlBoard.getInstance();  
+    ControlBoard mBoard = ControlBoard.getInstance();
     boolean grab = false;
 
     @Override
     public void periodic() {
-        GamepieceDemand(mBoard.getGamepieceDemand());
+        GamepieceDemand(mBoard.getGamepieceDemand(), mBoard.getElevotrOverride());
         runIoCargo(mBoard.getIoCargo());
         tipIntake(mBoard.getTipIntake());
         engageControlPins(mBoard.runControlPins());
-        if(mBoard.getHatch()) {
-            grab = !grab;
-            grabHatch(grab);
-        }
+        grabHatch(mBoard.getHatch());
     }
-    
+
     private TalonSRX intakeRoller, elevator;
     private DoubleSolenoid hatchPickup, intakeAngle;
     private Solenoid controlPins;
@@ -90,7 +87,7 @@ public class MagicFork extends Subsystem {
         elevator.configMotionCruiseVelocity(1600, Constants.kLongCANTimeoutMs);
         elevator.configMotionAcceleration(6400, Constants.kLongCANTimeoutMs);
 
-        elevator.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+        elevator.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Constants.kLongCANTimeoutMs);
         elevator.configClearPositionOnLimitR(true, Constants.kLongCANTimeoutMs);
         elevator.setSelectedSensorPosition(0);
     }
@@ -118,7 +115,7 @@ public class MagicFork extends Subsystem {
      * Retracts hatch pistons to grab a hatch panel
      */
     public void grabHatch(boolean grab) {
-        hatchPickup.set(grab ? Value.kReverse : Value.kForward);
+        hatchPickup.set(grab ? Value.kForward : Value.kReverse );
     }
 
     /**
@@ -191,12 +188,14 @@ public class MagicFork extends Subsystem {
      * 
      * @param demand eh?
      */
-    public void GamepieceDemand(GamepieceDemand demand) {
-        
-        if (demand == GamepieceDemand.Stop){
-            elevator.set(ControlMode.PercentOutput, 0);
+    public void GamepieceDemand(GamepieceDemand demand, double override) {
+
+        if (demand == GamepieceDemand.Override) {
+            elevator.set(ControlMode.PercentOutput, override * 0.6);
         }
-        else if (demand != GamepieceDemand.Hold) {
+        else if  (demand == GamepieceDemand.Stop) {
+            elevator.set(ControlMode.PercentOutput, 0);
+        } else if (demand != GamepieceDemand.Hold) {
             elevateToPoint(demand.getHeightPoint());
         }
     }
@@ -211,10 +210,11 @@ public class MagicFork extends Subsystem {
     }
 
     /**
-    * Determines whether or not the cargo sensor senses a cargo
-    * @return Whether or not the volts is above 0.83 (1.33v when cargo is in,
-    0.33 when it isn't)
-    */
+     * Determines whether or not the cargo sensor senses a cargo
+     * 
+     * @return Whether or not the volts is above 0.83 (1.33v when cargo is in, 0.33
+     *         when it isn't)
+     */
     public boolean isCargoIn() {
         return cargoSensorVolts > 0.83;
     }

@@ -20,7 +20,7 @@ public class Constants {
 
     public enum GamepieceDemand {
         Test(12), Hold(0), CargoIntake
-        (2), CargoMid(32), CargoLow(19), HatchDefault(0), HatchMid(28), Stop(0);
+        (1), CargoMid(32), CargoLow(19), HatchDefault(0), HatchMid(28), Stop(0), Override(0);
 
         private double mHeightPoint;
 

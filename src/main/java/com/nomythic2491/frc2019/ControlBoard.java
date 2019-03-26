@@ -28,9 +28,9 @@ public class ControlBoard implements IControlBoard {
 
     private ControlBoard() {
         if (Constants.kUseDriveAlternateContoller) {
-            mDriveController = TMdriver.getInstance();
-        } else {
             mDriveController = ArcadeDriver.getInstance();
+        } else {
+            mDriveController =  TMdriver.getInstance(); 
         }
 
         if (Constants.kUseOpAlternateContoller) {
@@ -93,5 +93,10 @@ public class ControlBoard implements IControlBoard {
     @Override
     public boolean lineUp() {
         return mDriveController.lineUp();
+    }
+
+    @Override
+    public double getElevotrOverride() {
+        return mOperatorController.getElevotrOverride();
     }
 }

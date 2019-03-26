@@ -36,7 +36,10 @@ public class ButtonOperator implements IOperatorController {
 
 
     public GamepieceDemand getGamepieceDemand() {
-        if (mJoystick.getRawButton(10)) {
+        if (mJoystick.getRawButton(12)) {
+            return GamepieceDemand.Override;
+        }
+        else if (mJoystick.getRawButton(10)) {
             return GamepieceDemand.CargoMid;
         } else if (mJoystick.getRawButton(11)) {
             return GamepieceDemand.CargoIntake;
@@ -69,6 +72,14 @@ public class ButtonOperator implements IOperatorController {
     @Override
     public boolean runControlPins() {
         return false;
+    }
+
+    @Override
+    public double getElevotrOverride() {
+        if (mJoystick.getRawButton(12)) {
+            return mJoystick.getRawAxis(1);
+        }
+        return 0;
     }
 
 }
