@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The system of talons, solenoids and sensors that make up the Magic Fork
@@ -51,7 +50,6 @@ public class MagicFork extends Subsystem {
     }
 
     ControlBoard mBoard = ControlBoard.getInstance();
-    boolean grab = false;
 
     @Override
     public void periodic() {
@@ -59,37 +57,47 @@ public class MagicFork extends Subsystem {
         runIoCargo(mBoard.getIoCargo());
         tipIntake(mBoard.getTipIntake());
         engageControlPins(mBoard.runControlPins());
-        grabHatch(mBoard.getHatch());
+        releaseHatch(mBoard.getHatch());
     }
 
-    private TalonSRX intakeRoller, elevator;
+    private TalonSRX mIntakeRoller, mCaridge;
     private DoubleSolenoid hatchPickup, intakeAngle;
     private Solenoid controlPins;
-
-    double cargoSensorVolts, hatchSensorVolts;
+    private AnalogInput cargoPresent, hatchPresent;
 
     private MagicFork() {
+
+        /* Pnematics */
         hatchPickup = new DoubleSolenoid(kMF.kHatchReleaseChannel, kMF.kHatchGrabChannel);
         intakeAngle = new DoubleSolenoid(kMF.kIntakeDownChannel, kMF.kIntakeUpChannel);
         controlPins = new Solenoid(kMF.kControlPinChannel);
 
-        intakeRoller = TalonSRXFactory.createDefaultTalon(kMF.kIntakeRollerId);
+        /* Sensors */
+        cargoPresent = new AnalogInput(0);
+        hatchPresent = new AnalogInput(1);
 
-        elevator = TalonSRXFactory.createDefaultTalon(kMF.kElevatorId);
-        configureMaster(elevator, false);
+        /* Intake Roller */
+        mIntakeRoller = TalonSRXFactory.createDefaultTalon(kMF.kIntakeRollerId);
 
-        elevator.config_kP(Constants.kPrimarySlot, kMF.kElevatorP, Constants.kLongCANTimeoutMs);
-        elevator.config_kI(Constants.kPrimarySlot, kMF.kElevatorI, Constants.kLongCANTimeoutMs);
-        elevator.config_kD(Constants.kPrimarySlot, kMF.kElevatorD, Constants.kLongCANTimeoutMs);
-        elevator.config_kF(Constants.kPrimarySlot, kMF.kElevatorF, Constants.kLongCANTimeoutMs);
-        elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
-        elevator.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
-        elevator.configMotionCruiseVelocity(1600, Constants.kLongCANTimeoutMs);
-        elevator.configMotionAcceleration(6400, Constants.kLongCANTimeoutMs);
+        /* Caridge */
+        mCaridge = TalonSRXFactory.createDefaultTalon(kMF.kElevatorId);
+        configureMaster(mCaridge, false);
 
-        elevator.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Constants.kLongCANTimeoutMs);
-        elevator.configClearPositionOnLimitR(true, Constants.kLongCANTimeoutMs);
-        elevator.setSelectedSensorPosition(0);
+        mCaridge.config_kP(Constants.kPrimarySlot, kMF.kElevatorP, Constants.kLongCANTimeoutMs);
+        mCaridge.config_kI(Constants.kPrimarySlot, kMF.kElevatorI, Constants.kLongCANTimeoutMs);
+        mCaridge.config_kD(Constants.kPrimarySlot, kMF.kElevatorD, Constants.kLongCANTimeoutMs);
+        mCaridge.config_kF(Constants.kPrimarySlot, kMF.kElevatorF, Constants.kLongCANTimeoutMs);
+
+        mCaridge.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
+        mCaridge.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
+
+        mCaridge.configMotionCruiseVelocity(1600, Constants.kLongCANTimeoutMs);
+        mCaridge.configMotionAcceleration(6400, Constants.kLongCANTimeoutMs);
+
+        mCaridge.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,
+                Constants.kLongCANTimeoutMs);
+        mCaridge.configClearPositionOnLimitR(true, Constants.kLongCANTimeoutMs);
+        mCaridge.setSelectedSensorPosition(0);
     }
 
     private void configureMaster(TalonSRX talon, boolean left) {
@@ -112,10 +120,33 @@ public class MagicFork extends Subsystem {
     }
 
     /**
+     * I don't know what da heck this does. Okay, I can make an educated guess, but
+     * still (this is why we need java docs on everything-- so people looking at old
+     * code can know what it does)
+     * 
+     * @param demand eh?
+     */
+    public void GamepieceDemand(GamepieceDemand demand, double override) {
+        if (demand == GamepieceDemand.Override) {
+            mCaridge.set(ControlMode.PercentOutput, override * 0.6);
+        } else if (demand != GamepieceDemand.Hold) {
+            mCaridge.set(ControlMode.MotionMagic, demand.getHeightPoint());
+        }
+    }
+
+    public void runIoCargo(IoCargo demand) {
+        if (!isCargoIn()) {
+            mIntakeRoller.set(ControlMode.PercentOutput, demand.getSpeed());
+        } else {
+            mIntakeRoller.set(ControlMode.PercentOutput, 0);
+        }
+    }
+
+    /**
      * Retracts hatch pistons to grab a hatch panel
      */
-    public void grabHatch(boolean grab) {
-        hatchPickup.set(grab ? Value.kForward : Value.kReverse );
+    public void releaseHatch(boolean release) {
+        hatchPickup.set(release ? Value.kForward : Value.kReverse);
     }
 
     /**
@@ -123,8 +154,8 @@ public class MagicFork extends Subsystem {
      * 
      * @return True if released; false if grabbed
      */
-    public Value hatchIntakeInReleasePosition() {
-        return hatchPickup.get();
+    public boolean isHatchHeld() {
+        return hatchPickup.get() == Value.kReverse ? true : false;
     }
 
     /**
@@ -143,14 +174,6 @@ public class MagicFork extends Subsystem {
         return controlPins.get();
     }
 
-    // /**
-    // * Checks to see if the intake is in the tilted up position
-    // * @return True if up; false if down
-    // */
-    // public boolean isIntakeTippedUp() {
-    // return intakeAngle.get();
-    // }
-
     /**
      * Extends angle pistons to tip the intake up
      */
@@ -158,55 +181,13 @@ public class MagicFork extends Subsystem {
         intakeAngle.set(up ? Value.kReverse : Value.kForward);
     }
 
-    public void runIoCargo(IoCargo demand) {
-        // this needs code!
-        intakeRoller.set(ControlMode.PercentOutput, demand.getSpeed());
-    }
-
     /**
-     * Runs magic fork elevator at given speed
+     * Checks to see if the intake is in the tilted up position
      * 
-     * @param speed speed elevator runs at from -1 to 1
+     * @return True if up; false if down
      */
-    public void runElevator(double speed) {
-        elevator.set(ControlMode.PercentOutput, speed);
-    }
-
-    /**
-     * Moves the elevator to a set point
-     * 
-     * @param setpoint The point the elevator will move to
-     */
-    private void elevateToPoint(double setpoint) {
-        elevator.set(ControlMode.MotionMagic, setpoint);
-    }
-
-    /**
-     * I don't know what da heck this does. Okay, I can make an educated guess, but
-     * still (this is why we need java docs on everything-- so people looking at old
-     * code can know what it does)
-     * 
-     * @param demand eh?
-     */
-    public void GamepieceDemand(GamepieceDemand demand, double override) {
-
-        if (demand == GamepieceDemand.Override) {
-            elevator.set(ControlMode.PercentOutput, override * 0.6);
-        }
-        else if  (demand == GamepieceDemand.Stop) {
-            elevator.set(ControlMode.PercentOutput, 0);
-        } else if (demand != GamepieceDemand.Hold) {
-            elevateToPoint(demand.getHeightPoint());
-        }
-    }
-
-    /**
-     * Checks to see if the motion profile is finished
-     * 
-     * @return if motion profile has finished
-     */
-    public boolean getIsElevatorRunningMotionProfile() {
-        return elevator.isMotionProfileFinished();
+    public boolean isIntakeTippedUp() {
+        return intakeAngle.get() == Value.kReverse ? true : false;
     }
 
     /**
@@ -216,22 +197,16 @@ public class MagicFork extends Subsystem {
      *         when it isn't)
      */
     public boolean isCargoIn() {
-        return cargoSensorVolts > 0.83;
+        return cargoPresent.getVoltage() > 0.83;
     }
 
-    // /**
-    // * Using this to return the voltage of the hatch sensor
-    // */
-    // public void testHatchSensor() {
-    // System.out.println(hatchSensorVolts);
-    // }
-
-    // /**
-    // * Determines whether or not the hatch sensor senses a cargo
-    // * @return Whether or not the volts is above 0.83 (1.33v when hatch is in,
-    // 0.33 when it isn't)
-    // */
-    // public boolean isHatchIn() {
-    // return hatchSensorVolts > 0.83;
-    // }
+    /**
+     * Determines whether or not the hatch sensor senses a cargo
+     * 
+     * @return Whether or not the volts is above 0.83 (1.33v when hatch is in, 0.33
+     *         when it isn't)
+     */
+    public boolean isHatchIn() {
+        return hatchPresent.getVoltage() > 0.83;
+    }
 }

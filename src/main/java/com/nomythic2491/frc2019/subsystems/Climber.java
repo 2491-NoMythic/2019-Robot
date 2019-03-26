@@ -14,8 +14,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
@@ -30,7 +28,6 @@ import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
 import com.nomythic2491.frc2019.Settings.Constants.kClimber;
 
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -64,7 +61,7 @@ public class Climber extends Subsystem {
    * left is master, right is slave
    */
   private TalonSRX mClimberMaster, mClimberSlave, mStringMaster, mStringSlave;
-  DigitalInput limitSwitch;
+  private Solenoid mLock;  
 
   private Climber() {
 
@@ -120,23 +117,19 @@ public class Climber extends Subsystem {
     mClimberMaster.config_kI(Constants.kPrimarySlot, kClimber.kGains_Distanc.kI, Constants.kTimeoutMs);
     mClimberMaster.config_kD(Constants.kPrimarySlot, kClimber.kGains_Distanc.kD, Constants.kTimeoutMs);
     mClimberMaster.config_kF(Constants.kPrimarySlot, kClimber.kGains_Distanc.kF, Constants.kTimeoutMs);
-    // mClimberMaster.config_IntegralZone(Constants.kPrimarySlot,
-    // kClimber.kGains_Distanc.kIzone, Constants.kTimeoutMs);
-    // mClimberMaster.configClosedLoopPeakOutput(Constants.kPrimarySlot,
-    // kClimber.kGains_Distanc.kPeakOutput,
-    // Constants.kTimeoutMs);
+    mClimberMaster.config_IntegralZone(Constants.kPrimarySlot, kClimber.kGains_Distanc.kIzone, Constants.kTimeoutMs);
+    mClimberMaster.configClosedLoopPeakOutput(Constants.kPrimarySlot, kClimber.kGains_Distanc.kPeakOutput,
+        Constants.kTimeoutMs);
 
     /* FPID Gains for turn servo */
     mClimberMaster.config_kP(Constants.kAuxilarySlot, kClimber.kGains_Turning.kP, Constants.kTimeoutMs);
     mClimberMaster.config_kI(Constants.kAuxilarySlot, kClimber.kGains_Turning.kI, Constants.kTimeoutMs);
     mClimberMaster.config_kD(Constants.kAuxilarySlot, kClimber.kGains_Turning.kD, Constants.kTimeoutMs);
     mClimberMaster.config_kF(Constants.kAuxilarySlot, kClimber.kGains_Turning.kF, Constants.kTimeoutMs);
-    // mClimberMaster.config_IntegralZone(Constants.kAuxilarySlot, (int)
-    // kClimber.kGains_Turning.kIzone,
-    // Constants.kTimeoutMs);
-    // mClimberMaster.configClosedLoopPeakOutput(Constants.kAuxilarySlot,
-    // kClimber.kGains_Turning.kPeakOutput,
-    // Constants.kTimeoutMs);
+    mClimberMaster.config_IntegralZone(Constants.kAuxilarySlot, (int) kClimber.kGains_Turning.kIzone,
+        Constants.kTimeoutMs);
+    mClimberMaster.configClosedLoopPeakOutput(Constants.kAuxilarySlot, kClimber.kGains_Turning.kPeakOutput,
+        Constants.kTimeoutMs);
     mClimberMaster.configAllowableClosedloopError(Constants.kAuxilarySlot, 0, Constants.kTimeoutMs);
     mClimberMaster.configMotionAcceleration(800, Constants.kLongCANTimeoutMs);
     mClimberMaster.configMotionCruiseVelocity(3200, Constants.kLongCANTimeoutMs);

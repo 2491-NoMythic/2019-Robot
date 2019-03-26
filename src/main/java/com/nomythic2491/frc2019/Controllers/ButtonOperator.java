@@ -15,7 +15,6 @@ public class ButtonOperator implements IOperatorController {
             mInstance = new ButtonOperator();
         }
 
-
         return mInstance;
     }
 
@@ -28,35 +27,27 @@ public class ButtonOperator implements IOperatorController {
     @Override
     public ClimberDemand getClimberDemand() {
         // if (mJoystick.getRawButton(5)){
-        //     return ClimberDemand.Climb;
+        // return ClimberDemand.Climb;
         // }
         return ClimberDemand.Stop;
     }
 
-
-
     public GamepieceDemand getGamepieceDemand() {
         if (mJoystick.getRawButton(12)) {
             return GamepieceDemand.Override;
-        }
-        else if (mJoystick.getRawButton(10)) {
+        } else if (mJoystick.getRawButton(10)) {
             return GamepieceDemand.CargoMid;
         } else if (mJoystick.getRawButton(11)) {
             return GamepieceDemand.CargoIntake;
         } else if (mJoystick.getRawButton(8)) {
-            return GamepieceDemand.HatchDefault;
+            return GamepieceDemand.HatchLow;
         } else if (mJoystick.getRawButton(7)) {
             return GamepieceDemand.HatchMid;
-        } else if (mJoystick.getRawButton(9)){
+        } else if (mJoystick.getRawButton(9)) {
             return GamepieceDemand.CargoLow;
         } else {
             return GamepieceDemand.Hold;
         }
-    }
-
-    @Override
-    public void runPathTest() {
-
     }
 
     @Override

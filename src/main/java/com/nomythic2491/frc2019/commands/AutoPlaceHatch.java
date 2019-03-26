@@ -12,7 +12,6 @@ import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.lib.util.DriveSignal;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 
 public class AutoPlaceHatch extends CommandBase {
   Timer timer;

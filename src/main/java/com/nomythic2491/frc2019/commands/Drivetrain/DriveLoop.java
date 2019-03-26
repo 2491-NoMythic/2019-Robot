@@ -36,7 +36,6 @@ public class DriveLoop extends CommandBase {
         }
       }
       drivetrain.driveDemand(ControlMode.PercentOutput, mBoard.getSignal());
-      mBoard.runPathTest();
     }else{
       if(lineup == null){
         lineup = new AutoLineup();

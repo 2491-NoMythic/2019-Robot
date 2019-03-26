@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class Constants {
     // Motor Controllers have ID's || Solenoids have Channels
-    
+
     // Controllers
     public static final double kDeadbandThrottle = 0.1;
     public static final double kDeadbandTurn = 0.05;
@@ -19,8 +19,7 @@ public class Constants {
     public static final int kAuxilarySlot = 1;
 
     public enum GamepieceDemand {
-        Test(12), Hold(0), CargoIntake
-        (1), CargoMid(32), CargoLow(19), HatchDefault(0), HatchMid(28), Stop(0), Override(0);
+        Test(12), Hold(0), CargoIntake(1), CargoMid(32), CargoLow(19), HatchLow(0), HatchMid(28), Override(0);
 
         private double mHeightPoint;
 
@@ -54,7 +53,7 @@ public class Constants {
         NeutralMode mBrake;
 
         private ClimberDemand(double hight, NeutralMode brake) {
-            mHightPoint = hight / (1.5*Math.PI)*4096;
+            mHightPoint = hight / (1.5 * Math.PI) * 4096;
             mBrake = brake;
         }
 
@@ -108,17 +107,20 @@ public class Constants {
         public static final class kGains_Distanc {
             public static final double kP = 0;
             public static final double kI = 0;
-            public static final int kZ = 0;
+            public static final int kIzone = 0;
             public static final double kD = 0;
             public static final double kF = 1.27875;
+            public static final double kPeakOutput = 1;
         }
 
         public static final class kGains_Turning {
             public static final double kP = 0.003;
             public static final double kI = 0;
-            public static final int kZ = 0;
+            public static final int kIzone = 0;
             public static final double kD = 0;
             public static final double kF = 0;
+            public static final double kPeakOutput = 1;
+
         }
     }
 
@@ -149,6 +151,7 @@ public class Constants {
         public static final int kKillSwitchButton = 11;
         public static final int kKillSwitchButton2 = 12;
     }
+
     public static final class kTM {
         public static final int kId = 0;
         public static final int kThrottleAxis = 1;

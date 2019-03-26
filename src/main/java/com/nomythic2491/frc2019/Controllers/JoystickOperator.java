@@ -3,9 +3,6 @@ package com.nomythic2491.frc2019.Controllers;
 import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
 import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.commands.AutoPlaceHatch;
-import com.nomythic2491.frc2019.commands.Drivetrain.RunSCurvePath;
-import com.nomythic2491.frc2019.subsystems.Climber;
-import com.nomythic2491.frc2019.subsystems.MagicFork;
 
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -13,7 +10,6 @@ public class JoystickOperator implements IOperatorController {
 
     private static JoystickOperator mInstance = null;
 
-    private AutoPlaceHatch test;
 
     public static JoystickOperator getInstance() {
         if (mInstance == null) {
@@ -37,7 +33,7 @@ public class JoystickOperator implements IOperatorController {
             return ClimberDemand.Reset;
         }else{
             return ClimberDemand.Stop;
-        } //TODO: joystick returns 0 if not plugged in
+        }
     }
 
     @Override
@@ -47,20 +43,14 @@ public class JoystickOperator implements IOperatorController {
         } else if (mJoystick.getRawButton(9)) {
             return GamepieceDemand.CargoIntake;
         } else if (mJoystick.getRawButton(10)) {
-            return GamepieceDemand.HatchDefault;
+            return GamepieceDemand.HatchLow;
         } else if (mJoystick.getRawButton(8)) {
             return GamepieceDemand.HatchMid;
         } else if (mJoystick.getRawButton(7)){
             return GamepieceDemand.CargoLow;
-        } else if (mJoystick.getRawButton(12)){
-            return GamepieceDemand.Stop;
         } else {
             return GamepieceDemand.Hold;
         }
-    }
-
-    @Override
-    public void runPathTest() {
     }
 
     @Override

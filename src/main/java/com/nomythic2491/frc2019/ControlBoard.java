@@ -30,7 +30,7 @@ public class ControlBoard implements IControlBoard {
         if (Constants.kUseDriveAlternateContoller) {
             mDriveController = ArcadeDriver.getInstance();
         } else {
-            mDriveController =  TMdriver.getInstance(); 
+            mDriveController = TMdriver.getInstance();
         }
 
         if (Constants.kUseOpAlternateContoller) {
@@ -71,13 +71,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public void runPathTest() {
-        mOperatorController.runPathTest();
-    }
-
-    @Override
     public boolean getTipIntake() {
-       return mOperatorController.getTipIntake();
+        return mOperatorController.getTipIntake();
     }
 
     @Override
