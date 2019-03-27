@@ -25,17 +25,15 @@ public class TMdriver implements IDriveController {
         mJoystick = new Joystick(kTM.kId);
         mHelper = new CheesyDriveHelper();
     }
-    
+
     @Override
     public DriveSignal getSignal() {
-        return mHelper.cheesyDrive(-mJoystick.getRawAxis(kTM.kThrottleAxis),
-        mJoystick.getRawAxis(kTM.kTurnAxis), mJoystick.getRawButton(kTM.kQuickturnButton));
+        return mHelper.cheesyDrive(getThrottle(), getTurn(), mJoystick.getRawButton(kTM.kQuickturnButton));
     }
 
     @Override
     public boolean getKillSwitch() {
-        return mJoystick.getRawButton(kTM.kKillSwitchButton)
-                || mJoystick.getRawButton(kTM.kKillSwitchButton2);
+        return mJoystick.getRawButton(kTM.kKillSwitchButton) || mJoystick.getRawButton(kTM.kKillSwitchButton2);
     }
 
     @Override
@@ -57,5 +55,20 @@ public class TMdriver implements IDriveController {
     @Override
     public boolean lineUp() {
         return mJoystick.getRawButton(4);
+    }
+
+    @Override
+    public double getThrottle() {
+        return -mJoystick.getRawAxis(kTM.kThrottleAxis);
+    }
+
+    @Override
+    public double getTurn() {
+        return mJoystick.getRawAxis(kTM.kTurnAxis);
+    }
+
+    @Override
+    public boolean getLineupLock() {
+        return mJoystick.getRawButton(12); //TODO: set this button
     }
 }

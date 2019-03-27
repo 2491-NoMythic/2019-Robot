@@ -5,14 +5,16 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.Drivetrain;
+package com.nomythic2491.frc2019.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.nomythic2491.frc2019.ControlBoard;
-import com.nomythic2491.frc2019.commands.CommandBase;
+import com.nomythic2491.frc2019.Robot;
 import com.nomythic2491.lib.util.DriveSignal;
 
-public class AutoLineup extends CommandBase {
+import edu.wpi.first.wpilibj.command.Command;
+
+public class AutoLineup extends Command {
   DriveSignal driveSignal; 
   double currentAngle;
   double kP, kI, kD, integral, previousError, error, derivative, out;
@@ -21,7 +23,7 @@ public class AutoLineup extends CommandBase {
   public AutoLineup() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(drivetrain);
+    requires(Robot.drivetrain);
   }
 
   // Called just before this Command runs the first time
@@ -40,7 +42,7 @@ public class AutoLineup extends CommandBase {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    currentAngle = drivetrain.getLimelightTX();
+    currentAngle = Robot.drivetrain.getLimelightTX();
     if(currentAngle == 2491){
       endEarly = true;
     }
@@ -50,7 +52,7 @@ public class AutoLineup extends CommandBase {
     previousError = error;
     out = kP * error + integral * kI + derivative * kD;
     driveSignal = new DriveSignal(out, -out);
-    drivetrain.driveDemand(ControlMode.PercentOutput, driveSignal);
+    Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveSignal);
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -63,7 +65,7 @@ public class AutoLineup extends CommandBase {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    drivetrain.stop();
+    Robot.drivetrain.stop();
   }
 
   // Called when another command which requires one or more of the same

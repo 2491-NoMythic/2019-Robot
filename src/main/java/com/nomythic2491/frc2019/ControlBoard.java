@@ -99,4 +99,24 @@ public class ControlBoard implements IControlBoard {
     public boolean getAutoClimb() {
         return mOperatorController.getAutoClimb();
     }
+
+    @Override
+    public boolean getClimbEnable() {
+        return mOperatorController.getClimbEnable();
+    }
+
+    @Override
+    public double getThrottle() {
+        return mDriveController.getThrottle();
+    }
+
+    @Override
+    public double getTurn() {
+        return mDriveController.getTurn();
+    }
+
+    @Override
+    public boolean getLineupLock() {
+        return mDriveController.getLineupLock();
+    }
 }

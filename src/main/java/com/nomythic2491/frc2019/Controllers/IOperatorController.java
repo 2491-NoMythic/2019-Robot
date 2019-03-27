@@ -18,4 +18,6 @@ public interface IOperatorController {
     public double getElevotrOverride();
 
     public boolean getAutoClimb();
+
+    public boolean getClimbEnable();
 }

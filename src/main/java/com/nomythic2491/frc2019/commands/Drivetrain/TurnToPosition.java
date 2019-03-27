@@ -5,22 +5,24 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.Drivetrain;
+package com.nomythic2491.frc2019.commands.drivetrain;
 
+import com.nomythic2491.frc2019.Robot;
 import com.nomythic2491.frc2019.Settings.Variables;
-import com.nomythic2491.frc2019.commands.CommandBase;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
 
-public class TurnToPosition extends CommandBase {
+public class TurnToPosition extends Command {
 
   private double target, initialPosition, relative;
   private Timer timer;
-  private boolean type; 
+  private boolean type;
 
   /**
    * 
-   * @param speed Speed the robot turns at from -1 to 1, positive numbers go right, negative go left
+   * @param speed Speed the robot turns at from -1 to 1, positive numbers go
+   *              right, negative go left
    * @param angle The angle the robot will turn to from 0 to 360
    */
   public TurnToPosition(double angle, boolean absolute) {
@@ -30,26 +32,27 @@ public class TurnToPosition extends CommandBase {
     target = angle;
     timer = new Timer();
 
-    requires(drivetrain);
+    requires(Robot.drivetrain);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    initialPosition = drivetrain.getGyroAngle();
-    drivetrain.setInputRange(0,360); 
-    drivetrain.setAbsoluteTolerance(2);
-    drivetrain.getPIDController().setPID(Variables.proportionalRotate,Variables.integralRotate, Variables.derivativeRotate);
+    initialPosition = Robot.drivetrain.getGyroAngle();
+    Robot.drivetrain.setInputRange(0, 360);
+    Robot.drivetrain.setAbsoluteTolerance(2);
+    Robot.drivetrain.getPIDController().setPID(Variables.proportionalRotate, Variables.integralRotate,
+        Variables.derivativeRotate);
 
-    relative = (drivetrain.getGyroAngle() + target);
+    relative = (Robot.drivetrain.getGyroAngle() + target);
     if (type) {
-          drivetrain.setSetpoint(target);
+      Robot.drivetrain.setSetpoint(target);
+    } else {
+      Robot.drivetrain.setSetpoint(relative);
     }
-    else {
-        drivetrain.setSetpoint(relative);
-    }
-    drivetrain.enable();
+    Robot.drivetrain.enable();
   }
+
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
@@ -59,16 +62,16 @@ public class TurnToPosition extends CommandBase {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return drivetrain.onTarget();
+    return Robot.drivetrain.onTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    drivetrain.stop();
-    drivetrain.disable();
+    Robot.drivetrain.stop();
+    Robot.drivetrain.disable();
 
-    System.out.println("Change in angle: " + (drivetrain.getRawGyroAngle()- initialPosition));
+    System.out.println("Change in angle: " + (Robot.drivetrain.getRawGyroAngle() - initialPosition));
     System.out.println("Time taken: " + timer.get());
   }
 

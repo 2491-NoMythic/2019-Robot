@@ -8,12 +8,13 @@
 package com.nomythic2491.frc2019.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
+import com.nomythic2491.frc2019.Robot;
 import com.nomythic2491.lib.util.DriveSignal;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
 
-public class AutoPlaceHatch extends CommandBase {
+public class AutoPlaceHatch extends Command {
   Timer timer;
   double tipToReleaseDelay;
   double releaseToDriveDelay;
@@ -24,8 +25,8 @@ public class AutoPlaceHatch extends CommandBase {
   public AutoPlaceHatch(boolean reverse) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(magicfork);
-    requires(drivetrain);
+    requires(Robot.magicFork);
+    requires(Robot.drivetrain);
     b = reverse;
   }
 
@@ -46,7 +47,7 @@ public class AutoPlaceHatch extends CommandBase {
     switch(state){
       case 0:
       {
-        magicfork.tipIntake(b);
+        Robot.magicFork.tipIntake(b);
         timer.reset();
         state++;
         System.out.println("case 0");
@@ -64,7 +65,7 @@ public class AutoPlaceHatch extends CommandBase {
       {
         timer.start();
         if(timer.get() > releaseToDriveDelay){
-          drivetrain.driveDemand(ControlMode.PercentOutput, drive);
+          Robot.drivetrain.driveDemand(ControlMode.PercentOutput, drive);
           timer.reset();
           System.out.println("case 2");
           state++;
@@ -74,7 +75,7 @@ public class AutoPlaceHatch extends CommandBase {
       {
         timer.start();
         if(timer.get() > driveLength){
-          drivetrain.stop();
+          Robot.drivetrain.stop();
           System.out.println("case 0");
           state++;
         }
@@ -97,7 +98,7 @@ public class AutoPlaceHatch extends CommandBase {
   @Override
   protected void end() {
     System.out.println("done");
-    drivetrain.stop();
+    Robot.drivetrain.stop();
   }
 
   // Called when another command which requires one or more of the same

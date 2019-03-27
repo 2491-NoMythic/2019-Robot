@@ -16,6 +16,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.ControlBoard;
+import com.nomythic2491.frc2019.Robot;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
@@ -49,11 +50,11 @@ public class MagicFork extends Subsystem {
         return mInstance;
     }
 
-    ControlBoard mBoard = ControlBoard.getInstance();
+    ControlBoard mBoard = Robot.controller;
 
     @Override
     public void periodic() {
-        GamepieceDemand(mBoard.getGamepieceDemand(), mBoard.getElevotrOverride());
+        runGamepieceDemand(mBoard.getGamepieceDemand(), mBoard.getElevotrOverride());
         runIoCargo(mBoard.getIoCargo());
         tipIntake(mBoard.getTipIntake());
         engageControlPins(mBoard.runControlPins());
@@ -126,7 +127,7 @@ public class MagicFork extends Subsystem {
      * 
      * @param demand eh?
      */
-    public void GamepieceDemand(GamepieceDemand demand, double override) {
+    public void runGamepieceDemand(GamepieceDemand demand, double override) {
         if (demand == GamepieceDemand.Override) {
             mCarriage.set(ControlMode.PercentOutput, override * 0.6);
         } else if (demand != GamepieceDemand.Hold) {

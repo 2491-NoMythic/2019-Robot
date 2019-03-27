@@ -26,14 +26,13 @@ public class ButtonOperator implements IOperatorController {
 
     @Override
     public ClimberDemand getClimberDemand() {
-        if (mJoystick.getRawButton(12) && mJoystick.getRawAxis(0) == 1){
+        if (mJoystick.getRawButton(12) && mJoystick.getRawAxis(0) == 1) {
             return ClimberDemand.Up;
         } else if (mJoystick.getRawButton(12) && mJoystick.getRawAxis(0) == -1) {
             return ClimberDemand.Down;
-        } else if (mJoystick.getRawButton(3) && mJoystick.getRawButton(5)){
-            return ClimberDemand.Forward;
+        } else {
+            return ClimberDemand.Stop;
         }
-        return ClimberDemand.Stop;
     }
 
     public GamepieceDemand getGamepieceDemand() {
@@ -79,7 +78,12 @@ public class ButtonOperator implements IOperatorController {
 
     @Override
     public boolean getAutoClimb() {
-        return mJoystick.getRawButton(3) && mJoystick.getRawButtonPressed(5);
+        return getClimbEnable() && mJoystick.getRawButtonPressed(5);
+    }
+
+    @Override
+    public boolean getClimbEnable() {
+        return mJoystick.getRawButton(3);
     }
 
 }

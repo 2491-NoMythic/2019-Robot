@@ -2,7 +2,6 @@ package com.nomythic2491.frc2019.Controllers;
 
 import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
 import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
-import com.nomythic2491.frc2019.commands.AutoPlaceHatch;
 
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -76,6 +75,11 @@ public class JoystickOperator implements IOperatorController {
 
     @Override
     public boolean getAutoClimb() {
+        return false;
+    }
+
+    @Override
+    public boolean getClimbEnable() {
         return false;
     }
 

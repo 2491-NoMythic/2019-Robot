@@ -5,18 +5,19 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.Drivetrain;
+package com.nomythic2491.frc2019.commands.drivetrain;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.nomythic2491.frc2019.commands.CommandBase;
+import com.nomythic2491.frc2019.Robot;
 import com.nomythic2491.lib.util.DriveSignal;
 
+import edu.wpi.first.wpilibj.command.Command;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
 import jaci.pathfinder.modifiers.TankModifier;
 
-public class RunSCurvePath extends CommandBase {
+public class RunSCurvePath extends Command {
   Waypoint[] waypoints;
   Trajectory.Config config;
   int count;
@@ -27,7 +28,7 @@ public class RunSCurvePath extends CommandBase {
   public RunSCurvePath() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(drivetrain);
+    requires(Robot.drivetrain);
     double wheelbase_width = 25.75/39.37;
     waypoints = new Waypoint[] {
       new Waypoint(-3,-1,0),
@@ -57,7 +58,7 @@ public class RunSCurvePath extends CommandBase {
     double adjustedSegLeft = segLeft.velocity*mpstoetpms;
     double adjustedSegRight = segRight.velocity*mpstoetpms;
     DriveSignal signal = new DriveSignal(adjustedSegRight,adjustedSegLeft); //2*mpstoetpms, 2*mpstoetpms
-    drivetrain.driveDemand(ControlMode.Velocity, signal);
+    Robot.drivetrain.driveDemand(ControlMode.Velocity, signal);
     count++;
   }
 
@@ -72,7 +73,7 @@ public class RunSCurvePath extends CommandBase {
   @Override
   protected void end() {
     System.out.println("Done");
-    drivetrain.stop();
+    Robot.drivetrain.stop();
     System.out.println(path);
   }
 

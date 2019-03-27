@@ -7,11 +7,13 @@
 
 package com.nomythic2491.frc2019;
 
+import com.nomythic2491.frc2019.commands.AutoClimb;
 import com.nomythic2491.frc2019.commands.AutoPlaceHatch;
-import com.nomythic2491.frc2019.commands.CommandBase;
-import com.nomythic2491.frc2019.commands.Drivetrain.RunSCurvePath;
-import com.nomythic2491.frc2019.commands.Drivetrain.TurnToPosition;
+import com.nomythic2491.frc2019.commands.drivetrain.RunSCurvePath;
+import com.nomythic2491.frc2019.commands.drivetrain.TurnToPosition;
+import com.nomythic2491.frc2019.subsystems.Climber;
 import com.nomythic2491.frc2019.subsystems.Drivetrain;
+import com.nomythic2491.frc2019.subsystems.MagicFork;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -32,6 +34,10 @@ public class Robot extends TimedRobot {
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
   ShuffleboardTab mainTab;
+  public static ControlBoard controller;
+  public static Drivetrain drivetrain;
+  public static Climber climber;
+  public static MagicFork magicFork;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -39,21 +45,21 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    CommandBase.init();
-    ControlBoard.getInstance();
+    controller = ControlBoard.getInstance();
+    drivetrain = Drivetrain.getInstance();
+		climber = Climber.getInstance();
+		magicFork = MagicFork.getInstance();
 
     Shuffleboard.addEventMarker("Robot initilized", EventImportance.kNormal);
     mainTab = Shuffleboard.getTab("Main");
     mainTab.add("AutoMode", m_chooser);
     mainTab.add(new RunSCurvePath());
     mainTab.add(new AutoPlaceHatch(true));
-    mainTab.add( new TurnToPosition(20, true));
+    mainTab.add(new TurnToPosition(20, true));
     mainTab.add("angle", Drivetrain.getInstance().getGyroAngle());
     mainTab.addPersistent("AngleToTurnTo", 22);
+    mainTab.add(new AutoClimb());
 
-    // SmartDashboard.putData("Run Path Test", new RunSCurvePath());
-    // SmartDashboard.putData("Run Hatch", new AutoPlaceHatch(true));
-    // SmartDashboard.putData("Turn to angle", new TurnToPosition(20, true));
   }
 
   /**

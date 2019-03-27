@@ -18,6 +18,9 @@ public class Constants {
     public static final int kPrimarySlot = 0;
     public static final int kAuxilarySlot = 1;
 
+    public enum ControlState {
+        OperatorControl, CommandControl;
+      }
     public enum GamepieceDemand {
         Test(12), Hold(0), CargoIntake(1), CargoMid(32), CargoLow(19), HatchLow(0), HatchMid(28), Override(0);
 
@@ -95,7 +98,7 @@ public class Constants {
         public static final int kClimberSlaveId = 9;
         public static final int kSlaveStringId = 4;
         public static final int kMasterStringId = 8;
-        public static final int kRatchetChannel = 3;
+        public static final int kLockChannel = 3;
 
         public static final int kClimberVelocity = 2491;
         public static final double doneClimbingHeight = 2491;

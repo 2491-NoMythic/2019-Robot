@@ -22,10 +22,12 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
-import com.nomythic2491.frc2019.ControlBoard;
+import com.nomythic2491.frc2019.Robot;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
+import com.nomythic2491.frc2019.Settings.Constants.ControlState;
 import com.nomythic2491.frc2019.Settings.Constants.kClimber;
+import com.nomythic2491.frc2019.commands.AutoClimb;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -35,9 +37,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * Add your docs here.
  */
 public class Climber extends Subsystem {
-  public enum ControlState {
-    OperatorControl, CommandControl;
-  }
 
   @Override
   public void initDefaultCommand() {
@@ -52,27 +51,32 @@ public class Climber extends Subsystem {
     return mInstance;
   }
 
-  ControlBoard mBoard = ControlBoard.getInstance();
-
   private ControlState mState = ControlState.OperatorControl;
 
-  private boolean isClimbing = false;
+  private boolean hasAttemptedClimb = false;
+  private AutoClimb climb;
 
   @Override
   public void periodic() {
-    if (mBoard.getAutoClimb() && !isClimbing) {
-      isClimbing = true;
+    if (Robot.controller.getAutoClimb() && !hasAttemptedClimb) {
+      unlockFoot(true);
+      hasAttemptedClimb = true;
       mState = ControlState.CommandControl;
+      climb = new AutoClimb();
+      climb.start();
     }
 
     switch (mState) {
     case OperatorControl:
-      runClimberDemand(mBoard.getClimberDemand());
+      runClimberDemand(Robot.controller.getClimberDemand());
       break;
     case CommandControl:
+      if (Robot.controller.getKillSwitch()) {
+        mInstance.getCurrentCommand().cancel();
+      }
       break;
     default:
-      System.out.println("invalid state");
+      System.out.println("Invalid Climber state");
       break;
     }
 
@@ -85,6 +89,8 @@ public class Climber extends Subsystem {
   private Solenoid mLock;
 
   private Climber() {
+
+    mLock = new Solenoid(kClimber.kLockChannel);
 
     // Master
     mClimberMaster = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
@@ -199,8 +205,17 @@ public class Climber extends Subsystem {
     talon.configNeutralDeadband(0.04, Constants.kLongCANTimeoutMs);
   }
 
+  public void unlockFoot(boolean unlock) {
+    mLock.set(unlock);
+  }
+
   public void resetEncoders() {
     mClimberMaster.setSelectedSensorPosition(0, Constants.kPrimarySlot, Constants.kTimeoutMs);
     mClimberSlave.setSelectedSensorPosition(0, Constants.kPrimarySlot, Constants.kTimeoutMs);
+  }
+
+  public void commandDone() {
+    // isClimbing = false; //TODO: figure out correct reset procedure
+    mState = ControlState.OperatorControl;
   }
 }

@@ -14,4 +14,10 @@ public interface IDriveController {
     public IoCargo getIoCargo();
 
     public boolean lineUp();
+
+    public double getThrottle();
+
+    public double getTurn();
+
+    public boolean getLineupLock();
 }

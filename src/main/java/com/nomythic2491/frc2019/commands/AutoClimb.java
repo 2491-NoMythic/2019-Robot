@@ -8,31 +8,33 @@
 package com.nomythic2491.frc2019.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.nomythic2491.frc2019.Robot;
 import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
 import com.nomythic2491.lib.util.DriveSignal;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
 
-public class AutoClimb extends CommandBase {
+public class AutoClimb extends Command {
 
   Timer timer = new Timer();
   int counter;
+  double time;
+
   double upTime = 3.71;
   double forwardTime = upTime + 3.6;
-  double driveBackTime = forwardTime + 3;
-  //double downTime = driveBackTime + 2.75;
-  double driveSleepyTime = driveBackTime + 1;
+  double driveUpTime = forwardTime + 3;
+  double driveSleepyTime = driveUpTime + 1;
 
-  DriveSignal backwards = new DriveSignal(-.75, -.75);
+  DriveSignal driveBackwards = new DriveSignal(-.75, -.75);
 
   public AutoClimb() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    requires(climber);
-    requires(drivetrain);
+    requires(Robot.climber);
+    requires(Robot.drivetrain);
+    requires(Robot.magicFork);
+    setInterruptible(false);
   }
 
-  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
     timer.reset();
@@ -40,49 +42,53 @@ public class AutoClimb extends CommandBase {
     timer.start();
   }
 
-  // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
-    
+  protected void execute() { 
+    time = timer.get();
     switch (counter) {
     case 0:
-      climber.runClimberDemand(ClimberDemand.Up);
-      if (timer.get() > upTime) {
+      Robot.climber.runClimberDemand(ClimberDemand.Up);
+      if (time > upTime) {
         counter++;
       }
       break;
     case 1:
-    climber.runClimberDemand(ClimberDemand.Forward);
-    if (timer.get() > forwardTime) {
-      counter++;
-    }
+      Robot.climber.runClimberDemand(ClimberDemand.Forward);
+      if (time > forwardTime) {
+        counter++;
+      }
       break;
     case 2:
-    drivetrain.driveDemand(ControlMode.PercentOutput, backwards);
-    climber.runClimberDemand(ClimberDemand.Down);
-    if (timer.get() > driveBackTime) {
-      counter++;
-    }
+    Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveBackwards);
+      Robot.climber.runClimberDemand(ClimberDemand.Down);
+      if (time > driveUpTime) {
+        Robot.climber.runClimberDemand(ClimberDemand.Stop);
+        counter++;
+      }
       break;
+    case 3:
+    Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveBackwards);
+      if (time > driveSleepyTime) {
+        Robot.drivetrain.stop();
+        counter++;
+      }
     default:
       System.out.println("invalid auto climb state");
       break;
     }
   }
 
-  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return counter == 3;
+    return counter == 4;
   }
 
-  // Called once after isFinished returns true
   @Override
   protected void end() {
+    timer.stop();
+    Robot.climber.commandDone();
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
   }

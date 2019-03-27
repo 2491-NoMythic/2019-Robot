@@ -10,10 +10,11 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
+import com.nomythic2491.frc2019.Robot;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Variables;
+import com.nomythic2491.frc2019.Settings.Constants.ControlState;
 import com.nomythic2491.frc2019.Settings.Constants.kDrive;
-import com.nomythic2491.frc2019.commands.Drivetrain.DriveLoop;
 import com.nomythic2491.lib.drivers.TalonSRXFactory;
 import com.nomythic2491.lib.util.DriveSignal;
 
@@ -28,7 +29,6 @@ public class Drivetrain extends PIDSubsystem {
 
     @Override
     public void initDefaultCommand() {
-        setDefaultCommand(new DriveLoop());
     }
 
     private static Drivetrain mInstance = null;
@@ -38,6 +38,32 @@ public class Drivetrain extends PIDSubsystem {
             mInstance = new Drivetrain();
         }
         return mInstance;
+    }
+
+    private ControlState mState = ControlState.OperatorControl;
+
+    @Override
+    public void periodic() {
+        switch (mState) {
+        case OperatorControl:
+            if (Robot.controller.getClimbEnable()) {
+                double speed = -Math.abs(Robot.controller.getThrottle()) * 0.5;
+                driveDemand(ControlMode.PercentOutput, new DriveSignal(speed, speed));
+            } else if (Robot.controller.getLineupLock()) {
+                //TODO: putlimelight linupe code here
+            } else {
+                driveDemand(ControlMode.PercentOutput, Robot.controller.getSignal());
+            }
+            break;
+        case CommandControl:
+            if (Robot.controller.getKillSwitch()) {
+                mInstance.getCurrentCommand().cancel();
+            }
+            break;
+        default:
+            System.out.println("Invaild Drivetrain State");
+            break;
+        }
     }
 
     private TalonSRX mLeftMaster, mRightMaster;
@@ -50,7 +76,7 @@ public class Drivetrain extends PIDSubsystem {
 
     private Drivetrain() {
 
-        super("Drive", Variables.proportionalRotate,Variables.integralRotate, Variables.derivativeRotate);
+        super("Drive", Variables.proportionalRotate, Variables.integralRotate, Variables.derivativeRotate);
 
         // Start all Talons in open loop moded.
         mLeftMaster = TalonSRXFactory.createDefaultTalon(kDrive.kLeftDriveMasterId);
@@ -83,7 +109,7 @@ public class Drivetrain extends PIDSubsystem {
         ty = limelight.getEntry("ty");
         ta = limelight.getEntry("ta");
         tv = limelight.getEntry("tv");
-        
+
         mBreak = false;
     }
 
@@ -103,7 +129,7 @@ public class Drivetrain extends PIDSubsystem {
         talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
         talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_25Ms, Constants.kLongCANTimeoutMs);
         talon.configVelocityMeasurementWindow(2, Constants.kLongCANTimeoutMs);
-        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs); 
+        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
         talon.config_kP(Constants.kPrimarySlot, kDrive.kDrivekP, Constants.kLongCANTimeoutMs);
         talon.config_kI(Constants.kPrimarySlot, kDrive.kDrivekI, Constants.kLongCANTimeoutMs);
         talon.config_kD(Constants.kPrimarySlot, kDrive.kDrivekD, Constants.kLongCANTimeoutMs);
@@ -126,9 +152,8 @@ public class Drivetrain extends PIDSubsystem {
             mLeftSlave.setNeutralMode(neutral);
             mBreak = signal.getBrakeMode();
         }
-
         mLeftMaster.set(mode, signal.getLeft());
-        mRightMaster.set(mode, signal.getRight());  
+        mRightMaster.set(mode, signal.getRight());
     }
 
     /**
@@ -256,7 +281,7 @@ public class Drivetrain extends PIDSubsystem {
     }
 
     public double getLimelightTX() {
-        return tx.getDouble(2491);//Leave it alone Emilio
+        return tx.getDouble(2491);// Leave it alone Emilio
     }
 
     /**
@@ -276,22 +301,27 @@ public class Drivetrain extends PIDSubsystem {
     }
 
     public void positon() {
-        System.out.println("Right: " + mRightMaster.getSelectedSensorPosition(0) + " Rerror: " + mRightMaster.getClosedLoopError() 
-        + "Left: " + mRightMaster.getSelectedSensorPosition(0) + "Lerror: " + mRightMaster.getClosedLoopError());
-      }
+        System.out.println("Right: " + mRightMaster.getSelectedSensorPosition(0) + " Rerror: "
+                + mRightMaster.getClosedLoopError() + "Left: " + mRightMaster.getSelectedSensorPosition(0) + "Lerror: "
+                + mRightMaster.getClosedLoopError());
+    }
 
-      @Override
-      protected double returnPIDInput() {
+    @Override
+    protected double returnPIDInput() {
         // Return your input value for the PID loop
         // e.g. a sensor, like a potentiometer:
         // yourPot.getAverageVoltage() / kYourMaxVoltage;
-        return getGyroAngle(); 
-      }
-    
-      @Override
-      protected void usePIDOutput(double output) {
-          driveDemand(ControlMode.PercentOutput, new DriveSignal(0.8 * output, -0.8 *output));
+        return getGyroAngle();
+    }
+
+    @Override
+    protected void usePIDOutput(double output) {
+        driveDemand(ControlMode.PercentOutput, new DriveSignal(0.8 * output, -0.8 * output));
         // Use output to drive your system, like a motor
         // e.g. yourMotor.set(output);
-      }
+    }
+
+    public void commandDone() {
+        mState = ControlState.OperatorControl;
+    }
 }

@@ -8,7 +8,7 @@ import com.nomythic2491.lib.util.DriveSignal;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class ArcadeDriver implements IDriveController {
-
+    //TODO: update Controller implentation;
     private static ArcadeDriver mInstance = null;
     private CheesyDriveHelper mHelper;
 
@@ -57,5 +57,20 @@ public class ArcadeDriver implements IDriveController {
     @Override
     public boolean lineUp() {
         return mJoystick.getRawButton(4);
+    }
+
+    @Override
+    public double getThrottle() {
+        return 0;
+    }
+
+    @Override
+    public double getTurn() {
+        return 0;
+    }
+
+    @Override
+    public boolean getLineupLock() {
+        return mJoystick.getRawButton(2);
     }
 }
