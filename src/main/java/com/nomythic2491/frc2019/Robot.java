@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.I2C;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -33,6 +36,15 @@ public class Robot extends TimedRobot {
   SendableChooser<Command> m_chooser = new SendableChooser<>();
   ShuffleboardTab mainTab;
 
+  boolean is30Sec;
+
+  // I2C Variables
+  private I2C.Port i2cPort;
+  private byte[] dataSend;
+  private byte[] dataRecieve;
+  private I2C i2c;
+  private int deviceNo;
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -41,7 +53,9 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     CommandBase.init();
     ControlBoard.getInstance();
-
+    
+    doI2cSetup();
+    
     Shuffleboard.addEventMarker("Robot initilized", EventImportance.kNormal);
     mainTab = Shuffleboard.getTab("Main");
     mainTab.add("AutoMode", m_chooser);
@@ -54,6 +68,20 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putData("Run Path Test", new RunSCurvePath());
     // SmartDashboard.putData("Run Hatch", new AutoPlaceHatch(true));
     // SmartDashboard.putData("Turn to angle", new TurnToPosition(20, true));
+  }
+
+  private void doI2cSetup() {
+    i2cPort = I2C.Port.kMXP; // when using the MXP expansion Port
+    // i2cPort = I2C.Port.kOnboard; // when using the RoboRio built in port
+    deviceNo = 4; // needs to match Arduino
+    i2c = new I2C(i2cPort, deviceNo);
+    dataSend = new byte[1];
+    dataRecieve = new byte[1];
+    System.out.println("Init I2C");
+
+    dataSend[0] = 2;
+    i2c.transaction(dataSend, 1, dataRecieve, 1);
+    System.out.println("Turn purple lights on");
   }
 
   /**
@@ -118,6 +146,7 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.cancel();
     // }
+    is30Sec = false;
   }
 
   /**
@@ -126,6 +155,14 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
+    double timeLeft = DriverStation.getInstance().getMatchTime();
+    // if less than 30 sec run once
+    if (timeLeft <= 30 && is30Sec == false) {
+      dataSend[0] = 3;
+      i2c.transaction(dataSend, 1, dataRecieve, 1);
+      System.out.println("Turn on 30sec animation");
+      is30Sec = true;
+    }
   }
 
   /**
