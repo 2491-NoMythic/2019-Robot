@@ -94,4 +94,9 @@ public class ControlBoard implements IControlBoard {
     public double getElevotrOverride() {
         return mOperatorController.getElevotrOverride();
     }
+
+    @Override
+    public boolean getAutoClimb() {
+        return mOperatorController.getAutoClimb();
+    }
 }

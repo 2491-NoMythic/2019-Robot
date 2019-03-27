@@ -16,5 +16,6 @@ public interface IOperatorController {
     public boolean runControlPins();
 
     public double getElevotrOverride();
-    
+
+    public boolean getAutoClimb();
 }

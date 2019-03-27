@@ -60,7 +60,7 @@ public class MagicFork extends Subsystem {
         releaseHatch(mBoard.getHatch());
     }
 
-    private TalonSRX mIntakeRoller, mCaridge;
+    private TalonSRX mIntakeRoller, mCarriage;
     private DoubleSolenoid hatchPickup, intakeAngle;
     private Solenoid controlPins;
     private AnalogInput cargoPresent, hatchPresent;
@@ -80,24 +80,24 @@ public class MagicFork extends Subsystem {
         mIntakeRoller = TalonSRXFactory.createDefaultTalon(kMF.kIntakeRollerId);
 
         /* Caridge */
-        mCaridge = TalonSRXFactory.createDefaultTalon(kMF.kElevatorId);
-        configureMaster(mCaridge, false);
+        mCarriage = TalonSRXFactory.createDefaultTalon(kMF.kElevatorId);
+        configureMaster(mCarriage, false);
 
-        mCaridge.config_kP(Constants.kPrimarySlot, kMF.kElevatorP, Constants.kLongCANTimeoutMs);
-        mCaridge.config_kI(Constants.kPrimarySlot, kMF.kElevatorI, Constants.kLongCANTimeoutMs);
-        mCaridge.config_kD(Constants.kPrimarySlot, kMF.kElevatorD, Constants.kLongCANTimeoutMs);
-        mCaridge.config_kF(Constants.kPrimarySlot, kMF.kElevatorF, Constants.kLongCANTimeoutMs);
+        mCarriage.config_kP(Constants.kPrimarySlot, kMF.kElevatorP, Constants.kLongCANTimeoutMs);
+        mCarriage.config_kI(Constants.kPrimarySlot, kMF.kElevatorI, Constants.kLongCANTimeoutMs);
+        mCarriage.config_kD(Constants.kPrimarySlot, kMF.kElevatorD, Constants.kLongCANTimeoutMs);
+        mCarriage.config_kF(Constants.kPrimarySlot, kMF.kElevatorF, Constants.kLongCANTimeoutMs);
 
-        mCaridge.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
-        mCaridge.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
+        mCarriage.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kLongCANTimeoutMs);
+        mCarriage.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs);
 
-        mCaridge.configMotionCruiseVelocity(1600, Constants.kLongCANTimeoutMs);
-        mCaridge.configMotionAcceleration(6400, Constants.kLongCANTimeoutMs);
+        mCarriage.configMotionCruiseVelocity(1600, Constants.kLongCANTimeoutMs);
+        mCarriage.configMotionAcceleration(6400, Constants.kLongCANTimeoutMs);
 
-        mCaridge.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,
+        mCarriage.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,
                 Constants.kLongCANTimeoutMs);
-        mCaridge.configClearPositionOnLimitR(true, Constants.kLongCANTimeoutMs);
-        mCaridge.setSelectedSensorPosition(0);
+        mCarriage.configClearPositionOnLimitR(true, Constants.kLongCANTimeoutMs);
+        mCarriage.setSelectedSensorPosition(0);
     }
 
     private void configureMaster(TalonSRX talon, boolean left) {
@@ -128,9 +128,9 @@ public class MagicFork extends Subsystem {
      */
     public void GamepieceDemand(GamepieceDemand demand, double override) {
         if (demand == GamepieceDemand.Override) {
-            mCaridge.set(ControlMode.PercentOutput, override * 0.6);
+            mCarriage.set(ControlMode.PercentOutput, override * 0.6);
         } else if (demand != GamepieceDemand.Hold) {
-            mCaridge.set(ControlMode.MotionMagic, demand.getHeightPoint());
+            mCarriage.set(ControlMode.MotionMagic, demand.getHeightPoint());
         }
     }
 

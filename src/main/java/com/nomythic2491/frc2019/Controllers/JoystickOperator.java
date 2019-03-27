@@ -28,9 +28,9 @@ public class JoystickOperator implements IOperatorController {
     @Override
     public ClimberDemand getClimberDemand() {
         if(mJoystick.getRawButton(4)){
-            return ClimberDemand.Climb;
+            return ClimberDemand.Up;
         } else if(mJoystick.getRawButton(5)){
-            return ClimberDemand.Reset;
+            return ClimberDemand.Down;
         }else{
             return ClimberDemand.Stop;
         }
@@ -72,6 +72,11 @@ public class JoystickOperator implements IOperatorController {
     @Override
     public double getElevotrOverride() {
         return 0;
+    }
+
+    @Override
+    public boolean getAutoClimb() {
+        return false;
     }
 
 }

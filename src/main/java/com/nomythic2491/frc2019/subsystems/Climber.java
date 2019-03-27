@@ -35,6 +35,9 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * Add your docs here.
  */
 public class Climber extends Subsystem {
+  public enum ControlState {
+    OperatorControl, CommandControl;
+  }
 
   @Override
   public void initDefaultCommand() {
@@ -51,9 +54,27 @@ public class Climber extends Subsystem {
 
   ControlBoard mBoard = ControlBoard.getInstance();
 
+  private ControlState mState = ControlState.OperatorControl;
+
+  private boolean isClimbing = false;
+
   @Override
   public void periodic() {
-    runClimberDemand(mBoard.getClimberDemand());
+    if (mBoard.getAutoClimb() && !isClimbing) {
+      isClimbing = true;
+      mState = ControlState.CommandControl;
+    }
+
+    switch (mState) {
+    case OperatorControl:
+      runClimberDemand(mBoard.getClimberDemand());
+      break;
+    case CommandControl:
+      break;
+    default:
+      System.out.println("invalid state");
+      break;
+    }
 
   }
 
@@ -61,7 +82,7 @@ public class Climber extends Subsystem {
    * left is master, right is slave
    */
   private TalonSRX mClimberMaster, mClimberSlave, mStringMaster, mStringSlave;
-  private Solenoid mLock;  
+  private Solenoid mLock;
 
   private Climber() {
 
@@ -155,11 +176,10 @@ public class Climber extends Subsystem {
   }
 
   public void runClimberDemand(ClimberDemand demand) {
-    if (demand != ClimberDemand.Stop) {
-      mClimberMaster.setNeutralMode(demand.getBrake());
-      mClimberSlave.setNeutralMode(demand.getBrake());
-      mClimberMaster.set(ControlMode.MotionMagic, demand.getHeightPoint(), DemandType.AuxPID, 0);
-    }
+    mClimberMaster.setNeutralMode(demand.getBrake());
+    mClimberSlave.setNeutralMode(demand.getBrake());
+    mClimberMaster.set(ControlMode.PercentOutput, demand.getHeightPoint(), DemandType.AuxPID, 0);
+    mStringMaster.set(ControlMode.PercentOutput, demand.getSpool());
   }
 
   public double getEncoderDiffrence() {
