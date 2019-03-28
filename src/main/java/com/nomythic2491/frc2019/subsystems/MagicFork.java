@@ -64,6 +64,10 @@ public class MagicFork extends Subsystem {
             releaseHatch(Robot.controller.getHatch());
             break;
         case CommandControl:
+            if (Robot.controller.getKillSwitch()) {
+                mInstance.getCurrentCommand().cancel();
+                stop();
+            }
             break;
         default:
             break;
@@ -222,5 +226,9 @@ public class MagicFork extends Subsystem {
 
     public void commandActive(boolean active) {
         mState = active ? ControlState.CommandControl : ControlState.OperatorControl;
+    }
+
+    private void stop() {
+        runGamepieceDemand(GamepieceDemand.Override, 0);
     }
 }

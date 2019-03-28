@@ -58,6 +58,7 @@ public class Drivetrain extends PIDSubsystem {
         case CommandControl:
             if (Robot.controller.getKillSwitch()) {
                 mInstance.getCurrentCommand().cancel();
+                stop();
             }
             break;
         default:

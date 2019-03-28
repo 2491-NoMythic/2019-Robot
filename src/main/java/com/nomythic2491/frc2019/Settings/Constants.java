@@ -52,26 +52,26 @@ public class Constants {
     public enum ClimberDemand {
         Up(0.75, -0.28, NeutralMode.Brake), Down(-0.75, 0.5, NeutralMode.Coast), Stop(0, 0, NeutralMode.Brake), Forward(0.3, 0.75, NeutralMode.Brake);
 
-        double mHightPoint;
+        double mClimbSpeed;
         double mSpoolRate;
         NeutralMode mBrake;
 
-        private ClimberDemand(double hight, double spool, NeutralMode brake) {
-            mHightPoint = hight; // (1.5 * Math.PI) * 4096;
+        private ClimberDemand(double speed, double spool, NeutralMode brake) {
+            mClimbSpeed = speed; // (1.5 * Math.PI) * 4096;
             mSpoolRate = spool;
             mBrake = brake;
         }
 
-        public double getHeightPoint() {
-            return mHightPoint;
+        public double getClimbSpeed() {
+            return mClimbSpeed;
+        }
+
+        public double getSpoolRate() {
+            return mSpoolRate;
         }
 
         public NeutralMode getBrake() {
             return mBrake;
-        }
-
-        public double getSpool() {
-            return mSpoolRate;
         }
     }
 

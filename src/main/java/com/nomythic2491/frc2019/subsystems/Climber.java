@@ -73,6 +73,7 @@ public class Climber extends Subsystem {
     case CommandControl:
       if (Robot.controller.getKillSwitch()) {
         mInstance.getCurrentCommand().cancel();
+        stop();
       }
       break;
     default:
@@ -184,8 +185,8 @@ public class Climber extends Subsystem {
   public void runClimberDemand(ClimberDemand demand) {
     mClimberMaster.setNeutralMode(demand.getBrake());
     mClimberSlave.setNeutralMode(demand.getBrake());
-    mClimberMaster.set(ControlMode.PercentOutput, demand.getHeightPoint(), DemandType.AuxPID, 0);
-    mStringMaster.set(ControlMode.PercentOutput, demand.getSpool());
+    mClimberMaster.set(ControlMode.PercentOutput, demand.getClimbSpeed(), DemandType.AuxPID, 0);
+    mStringMaster.set(ControlMode.PercentOutput, demand.getSpoolRate());
   }
 
   public double getEncoderDiffrence() {
@@ -216,5 +217,9 @@ public class Climber extends Subsystem {
 
   public void commandActive(boolean active) {
     mState = active ? ControlState.CommandControl : ControlState.OperatorControl;
+  }
+
+  private void stop() {
+    runClimberDemand(ClimberDemand.Stop);
   }
 }
