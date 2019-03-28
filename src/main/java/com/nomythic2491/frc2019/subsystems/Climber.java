@@ -214,8 +214,7 @@ public class Climber extends Subsystem {
     mClimberSlave.setSelectedSensorPosition(0, Constants.kPrimarySlot, Constants.kTimeoutMs);
   }
 
-  public void commandDone() {
-    // isClimbing = false; //TODO: figure out correct reset procedure
-    mState = ControlState.OperatorControl;
+  public void commandActive(boolean active) {
+    mState = active ? ControlState.CommandControl : ControlState.OperatorControl;
   }
 }

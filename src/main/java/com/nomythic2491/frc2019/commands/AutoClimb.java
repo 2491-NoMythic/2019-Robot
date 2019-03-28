@@ -26,7 +26,8 @@ public class AutoClimb extends Command {
   double driveUpTime = forwardTime + 3;
   double driveSleepyTime = driveUpTime + 1;
 
-  DriveSignal driveBackwards = new DriveSignal(-.75, -.75);
+  DriveSignal driveSleepy = new DriveSignal(-0.15, -0.15);
+  DriveSignal driveBackwards = new DriveSignal(-0.75, -0.75);
 
   public AutoClimb() {
     requires(Robot.climber);
@@ -38,12 +39,15 @@ public class AutoClimb extends Command {
   @Override
   protected void initialize() {
     timer.reset();
+    Robot.drivetrain.commandActive(true);
+    Robot.climber.commandActive(true);
+    Robot.climber.commandActive(true);
     counter = 0;
     timer.start();
   }
 
   @Override
-  protected void execute() { 
+  protected void execute() {
     time = timer.get();
     switch (counter) {
     case 0:
@@ -54,12 +58,13 @@ public class AutoClimb extends Command {
       break;
     case 1:
       Robot.climber.runClimberDemand(ClimberDemand.Forward);
+      Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveSleepy);
       if (time > forwardTime) {
         counter++;
       }
       break;
     case 2:
-    Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveBackwards);
+      Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveBackwards);
       Robot.climber.runClimberDemand(ClimberDemand.Down);
       if (time > driveUpTime) {
         Robot.climber.runClimberDemand(ClimberDemand.Stop);
@@ -67,7 +72,7 @@ public class AutoClimb extends Command {
       }
       break;
     case 3:
-    Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveBackwards);
+      Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveBackwards);
       if (time > driveSleepyTime) {
         Robot.drivetrain.stop();
         counter++;
@@ -86,7 +91,9 @@ public class AutoClimb extends Command {
   @Override
   protected void end() {
     timer.stop();
-    Robot.climber.commandDone();
+    Robot.climber.commandActive(false);
+    Robot.drivetrain.commandActive(false);
+    Robot.magicFork.commandActive(false);
   }
 
   @Override

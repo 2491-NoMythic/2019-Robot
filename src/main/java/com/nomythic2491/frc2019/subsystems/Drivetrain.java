@@ -321,7 +321,7 @@ public class Drivetrain extends PIDSubsystem {
         // e.g. yourMotor.set(output);
     }
 
-    public void commandDone() {
-        mState = ControlState.OperatorControl;
+    public void commandActive(boolean active) {
+        mState = active ? ControlState.CommandControl :ControlState.OperatorControl;
     }
 }

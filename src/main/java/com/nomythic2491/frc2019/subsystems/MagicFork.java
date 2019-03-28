@@ -18,6 +18,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.nomythic2491.frc2019.ControlBoard;
 import com.nomythic2491.frc2019.Robot;
 import com.nomythic2491.frc2019.Settings.Constants;
+import com.nomythic2491.frc2019.Settings.Constants.ControlState;
 import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.frc2019.Settings.Constants.kMF;
@@ -50,15 +51,23 @@ public class MagicFork extends Subsystem {
         return mInstance;
     }
 
-    ControlBoard mBoard = Robot.controller;
+    private ControlState mState = ControlState.OperatorControl;
 
     @Override
     public void periodic() {
-        runGamepieceDemand(mBoard.getGamepieceDemand(), mBoard.getElevotrOverride());
-        runIoCargo(mBoard.getIoCargo());
-        tipIntake(mBoard.getTipIntake());
-        engageControlPins(mBoard.runControlPins());
-        releaseHatch(mBoard.getHatch());
+        switch (mState) {
+        case OperatorControl:
+            runGamepieceDemand(Robot.controller.getGamepieceDemand(), Robot.controller.getElevotrOverride());
+            runIoCargo(Robot.controller.getIoCargo());
+            tipIntake(Robot.controller.getTipIntake());
+            engageControlPins(Robot.controller.runControlPins());
+            releaseHatch(Robot.controller.getHatch());
+            break;
+        case CommandControl:
+            break;
+        default:
+            break;
+        }
     }
 
     private TalonSRX mIntakeRoller, mCarriage;
@@ -209,5 +218,9 @@ public class MagicFork extends Subsystem {
      */
     public boolean isHatchIn() {
         return hatchPresent.getVoltage() > 0.83;
+    }
+
+    public void commandActive(boolean active) {
+        mState = active ? ControlState.CommandControl : ControlState.OperatorControl;
     }
 }
