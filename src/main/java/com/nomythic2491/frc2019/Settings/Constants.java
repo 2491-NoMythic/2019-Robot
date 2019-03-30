@@ -22,7 +22,7 @@ public class Constants {
         OperatorControl, CommandControl;
       }
     public enum GamepieceDemand {
-        Test(12), Hold(0), CargoIntake(1), CargoMid(32), CargoLow(19), HatchLow(0), HatchMid(28), Override(0);
+        Test(12), Hold(0), CargoIntake(1), CargoMid(32), CargoLow(19), HatchLow(0), HatchMid(28), Override(0), Climb(25);
 
         private double mHeightPoint;
 
@@ -50,16 +50,18 @@ public class Constants {
     }
 
     public enum ClimberDemand {
-        Up(0.75, -0.28, NeutralMode.Brake), Down(-0.75, 0.5, NeutralMode.Coast), Stop(0, 0, NeutralMode.Brake), Forward(0.3, 0.75, NeutralMode.Brake);
+        Up(0.75, -0.33, NeutralMode.Brake, true), Down(-0.75, 0.6, NeutralMode.Coast, true), Stop(0, 0, NeutralMode.Brake, false), Forward(0.3, 0.75, NeutralMode.Brake, false);
 
         double mClimbSpeed;
         double mSpoolRate;
         NeutralMode mBrake;
+        boolean mFootUnlock;
 
-        private ClimberDemand(double speed, double spool, NeutralMode brake) {
+        private ClimberDemand(double speed, double spool, NeutralMode brake, boolean foot) {
             mClimbSpeed = speed; // (1.5 * Math.PI) * 4096;
             mSpoolRate = spool;
             mBrake = brake;
+            mFootUnlock = foot;
         }
 
         public double getClimbSpeed() {
@@ -72,6 +74,10 @@ public class Constants {
 
         public NeutralMode getBrake() {
             return mBrake;
+        }
+
+        public boolean getFootUnlock() {
+            return mFootUnlock;
         }
     }
 
@@ -96,8 +102,8 @@ public class Constants {
     public static final class kClimber {
         public static final int kClimberMasterId = 2;
         public static final int kClimberSlaveId = 9;
-        public static final int kSlaveStringId = 4;
-        public static final int kMasterStringId = 8;
+        public static final int kSlaveStringId = 12;
+        public static final int kMasterStringId = 4;
         public static final int kLockChannel = 3;
 
         public static final int kClimberVelocity = 2491;

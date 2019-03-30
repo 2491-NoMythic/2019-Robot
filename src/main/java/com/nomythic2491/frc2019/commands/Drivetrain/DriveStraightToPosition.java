@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package com.nomythic2491.frc2019.commands.drivetrain;
+package com.nomythic2491.frc2019.commands.Drivetrain;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.nomythic2491.frc2019.Robot;

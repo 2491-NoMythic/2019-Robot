@@ -26,9 +26,9 @@ public class ButtonOperator implements IOperatorController {
 
     @Override
     public ClimberDemand getClimberDemand() {
-        if (mJoystick.getRawButton(12) && mJoystick.getRawAxis(0) == 1) {
+        if (mJoystick.getRawButton(12) && mJoystick.getRawButton(13)) {
             return ClimberDemand.Up;
-        } else if (mJoystick.getRawButton(12) && mJoystick.getRawAxis(0) == -1) {
+        } else if (mJoystick.getRawButton(12) && mJoystick.getRawButton(14)) {
             return ClimberDemand.Down;
         } else {
             return ClimberDemand.Stop;
@@ -55,7 +55,11 @@ public class ButtonOperator implements IOperatorController {
 
     @Override
     public boolean getTipIntake() {
-        return mJoystick.getRawButton(1);
+        if (!mJoystick.getRawButton(6)) {
+            return mJoystick.getRawButton(1);
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -69,21 +73,32 @@ public class ButtonOperator implements IOperatorController {
     }
 
     @Override
-    public double getElevotrOverride() {
+    public double getElevatorOverride() {
         if (mJoystick.getRawButton(12)) {
-            return mJoystick.getRawAxis(1);
+
+            if (mJoystick.getRawButton(15)) {
+                return 1;
+
+            } else if (mJoystick.getRawButton(16)) {
+                return -1;
+            }
         }
         return 0;
     }
 
     @Override
-    public boolean getAutoClimb() {
-        return getClimbEnable() && mJoystick.getRawButtonPressed(5);
+    public boolean getClimbEnable() {
+        return mJoystick.getRawButton(3);
     }
 
     @Override
-    public boolean getClimbEnable() {
-        return mJoystick.getRawButton(3);
+    public boolean getLevel2Climb() {
+        return mJoystick.getRawButtonPressed(4);
+    }
+
+    @Override
+    public boolean getLevel3Climb() {
+        return mJoystick.getRawButtonPressed(5);
     }
 
 }

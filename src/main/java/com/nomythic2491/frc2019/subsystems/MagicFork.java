@@ -57,7 +57,7 @@ public class MagicFork extends Subsystem {
     public void periodic() {
         switch (mState) {
         case OperatorControl:
-            runGamepieceDemand(Robot.controller.getGamepieceDemand(), Robot.controller.getElevotrOverride());
+            runGamepieceDemand(Robot.controller.getGamepieceDemand(), Robot.controller.getElevatorOverride());
             runIoCargo(Robot.controller.getIoCargo());
             tipIntake(Robot.controller.getTipIntake());
             engageControlPins(Robot.controller.runControlPins());
@@ -93,7 +93,7 @@ public class MagicFork extends Subsystem {
         /* Intake Roller */
         mIntakeRoller = TalonSRXFactory.createDefaultTalon(kMF.kIntakeRollerId);
 
-        /* Caridge */
+        /* Carriage */
         mCarriage = TalonSRXFactory.createDefaultTalon(kMF.kElevatorId);
         configureMaster(mCarriage, false);
 
@@ -110,8 +110,12 @@ public class MagicFork extends Subsystem {
 
         mCarriage.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,
                 Constants.kLongCANTimeoutMs);
+        mCarriage.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,
+                Constants.kLongCANTimeoutMs);
+
         mCarriage.configClearPositionOnLimitR(true, Constants.kLongCANTimeoutMs);
         mCarriage.setSelectedSensorPosition(0);
+        mCarriage.overrideLimitSwitchesEnable(false);
     }
 
     private void configureMaster(TalonSRX talon, boolean left) {

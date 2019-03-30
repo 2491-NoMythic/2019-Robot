@@ -58,12 +58,18 @@ public class Climber extends Subsystem {
 
   @Override
   public void periodic() {
-    if (Robot.controller.getAutoClimb() && !hasAttemptedClimb) {
-      unlockFoot(true);
-      hasAttemptedClimb = true;
-      mState = ControlState.CommandControl;
-      climb = new AutoClimb();
-      climb.start();
+    if (Robot.controller.getClimbEnable() && !hasAttemptedClimb) {
+      if (Robot.controller.getLevel3Climb()) {
+        hasAttemptedClimb = true;
+        mState = ControlState.CommandControl;
+        climb = new AutoClimb(3.4, 3.1);
+        climb.start();
+      } else if (Robot.controller.getLevel2Climb()) {
+        hasAttemptedClimb = true;
+        mState = ControlState.CommandControl;
+        climb = new AutoClimb(1.5, 1.1);
+        climb.start();
+      }
     }
 
     switch (mState) {
@@ -95,7 +101,7 @@ public class Climber extends Subsystem {
 
     // Master
     mClimberMaster = TalonSRXFactory.createDefaultTalon(kClimber.kClimberMasterId);
-    configureMaster(mClimberMaster, false);
+    configureMaster(mClimberMaster, true);
 
     // Slave
     mClimberSlave = new TalonSRX(kClimber.kClimberSlaveId);
@@ -183,10 +189,13 @@ public class Climber extends Subsystem {
   }
 
   public void runClimberDemand(ClimberDemand demand) {
+    unlockFoot(demand.getFootUnlock());
+    mStringMaster.set(ControlMode.PercentOutput, demand.getSpoolRate());
+    // System.out.println("Spool rate" + demand.getSpoolRate());
     mClimberMaster.setNeutralMode(demand.getBrake());
     mClimberSlave.setNeutralMode(demand.getBrake());
     mClimberMaster.set(ControlMode.PercentOutput, demand.getClimbSpeed(), DemandType.AuxPID, 0);
-    mStringMaster.set(ControlMode.PercentOutput, demand.getSpoolRate());
+
   }
 
   public double getEncoderDiffrence() {

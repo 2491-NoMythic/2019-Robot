@@ -9,8 +9,8 @@ package com.nomythic2491.frc2019;
 
 import com.nomythic2491.frc2019.commands.AutoClimb;
 import com.nomythic2491.frc2019.commands.AutoPlaceHatch;
-import com.nomythic2491.frc2019.commands.drivetrain.RunSCurvePath;
-import com.nomythic2491.frc2019.commands.drivetrain.TurnToPosition;
+import com.nomythic2491.frc2019.commands.Drivetrain.RunSCurvePath;
+import com.nomythic2491.frc2019.commands.Drivetrain.TurnToPosition;
 import com.nomythic2491.frc2019.subsystems.Climber;
 import com.nomythic2491.frc2019.subsystems.Drivetrain;
 import com.nomythic2491.frc2019.subsystems.MagicFork;
@@ -71,7 +71,6 @@ public class Robot extends TimedRobot {
     mainTab.add(new TurnToPosition(20, true));
     mainTab.add("angle", Drivetrain.getInstance().getGyroAngle());
     mainTab.addPersistent("AngleToTurnTo", 22);
-    mainTab.add(new AutoClimb());
 
   }
 
@@ -162,7 +161,7 @@ public class Robot extends TimedRobot {
     Scheduler.getInstance().run();
     double timeLeft = DriverStation.getInstance().getMatchTime();
     // if less than 30 sec run once
-    if (timeLeft <= 30 && is30Sec == false) {
+    if (timeLeft <= 30 && is30Sec == false && timeLeft != -1) {
       dataSend[0] = 3;
       i2c.transaction(dataSend, 1, dataRecieve, 1);
       System.out.println("Turn on 30sec animation");

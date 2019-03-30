@@ -15,9 +15,11 @@ public interface IOperatorController {
 
     public boolean runControlPins();
 
-    public double getElevotrOverride();
-
-    public boolean getAutoClimb();
+    public double getElevatorOverride();
 
     public boolean getClimbEnable();
+
+    public boolean getLevel2Climb();
+
+    public boolean getLevel3Climb();
 }

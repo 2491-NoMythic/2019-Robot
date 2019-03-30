@@ -26,26 +26,22 @@ public class JoystickOperator implements IOperatorController {
 
     @Override
     public ClimberDemand getClimberDemand() {
-        if(mJoystick.getRawButton(4)){
-            return ClimberDemand.Up;
-        } else if(mJoystick.getRawButton(5)){
-            return ClimberDemand.Down;
-        }else{
             return ClimberDemand.Stop;
-        }
     }
 
     @Override
     public GamepieceDemand getGamepieceDemand() {
-        if (mJoystick.getRawButton(6)) {
+        if (mJoystick.getRawButton(12)) {
+            return GamepieceDemand.Override;
+        } else if (mJoystick.getRawButton(7)) {
             return GamepieceDemand.CargoMid;
-        } else if (mJoystick.getRawButton(9)) {
+        } else if (mJoystick.getRawButton(11)) {
             return GamepieceDemand.CargoIntake;
         } else if (mJoystick.getRawButton(10)) {
             return GamepieceDemand.HatchLow;
         } else if (mJoystick.getRawButton(8)) {
             return GamepieceDemand.HatchMid;
-        } else if (mJoystick.getRawButton(7)){
+        } else if (mJoystick.getRawButton(9)) {
             return GamepieceDemand.CargoLow;
         } else {
             return GamepieceDemand.Hold;
@@ -59,28 +55,38 @@ public class JoystickOperator implements IOperatorController {
 
     @Override
     public boolean getHatch() {
-        return mJoystick.getRawButtonPressed(2);
+        return mJoystick.getRawButton(2);
     }
 
     @Override
     public boolean runControlPins() {
-        return mJoystick.getPOV() == 0;
+        return false;
         
     }
 
     @Override
-    public double getElevotrOverride() {
+    public double getElevatorOverride() {
+        if (mJoystick.getPOV(0) == 180) {
+            return -1;
+        } else if (mJoystick.getPOV(0)== 0) {
+            return 1;
+        }
         return 0;
     }
+    
+    @Override
+    public boolean getClimbEnable() {
+        return mJoystick.getRawButton(5);
+    }
 
     @Override
-    public boolean getAutoClimb() {
+    public boolean getLevel2Climb() {
         return false;
     }
 
     @Override
-    public boolean getClimbEnable() {
-        return false;
+    public boolean getLevel3Climb() {
+        return mJoystick.getRawButton(6);
     }
 
 }

@@ -91,13 +91,8 @@ public class ControlBoard implements IControlBoard {
     }
 
     @Override
-    public double getElevotrOverride() {
-        return mOperatorController.getElevotrOverride();
-    }
-
-    @Override
-    public boolean getAutoClimb() {
-        return mOperatorController.getAutoClimb();
+    public double getElevatorOverride() {
+        return mOperatorController.getElevatorOverride();
     }
 
     @Override
@@ -118,5 +113,15 @@ public class ControlBoard implements IControlBoard {
     @Override
     public boolean getLineupLock() {
         return mDriveController.getLineupLock();
+    }
+
+    @Override
+    public boolean getLevel2Climb() {
+        return mOperatorController.getLevel2Climb();
+    }
+
+    @Override
+    public boolean getLevel3Climb() {
+        return mOperatorController.getLevel3Climb();
     }
 }
