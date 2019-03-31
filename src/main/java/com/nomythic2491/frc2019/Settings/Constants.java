@@ -11,6 +11,9 @@ public class Constants {
     public static final boolean kUseDriveAlternateContoller = false;
     public static final boolean kUseOpAlternateContoller = false;
 
+    // This is an attempt to do something extra cool!
+    public static String replayOfDrive = "";
+
     // Talons
     public static final int kTimeoutMs = 10;
     public static final int kLongCANTimeoutMs = 100;

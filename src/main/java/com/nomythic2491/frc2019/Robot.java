@@ -7,6 +7,7 @@
 
 package com.nomythic2491.frc2019;
 
+import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.commands.AutoClimb;
 import com.nomythic2491.frc2019.commands.AutoPlaceHatch;
 import com.nomythic2491.frc2019.commands.drivetrain.RunSCurvePath;
@@ -60,7 +61,8 @@ public class Robot extends TimedRobot {
     controller = ControlBoard.getInstance();
     drivetrain = Drivetrain.getInstance();
 		climber = Climber.getInstance();
-		magicFork = MagicFork.getInstance();
+    magicFork = MagicFork.getInstance();
+    Constants.replayOfDrive = "";
 
     doI2cSetup();
     Shuffleboard.addEventMarker("Robot initilized", EventImportance.kNormal);
@@ -110,6 +112,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    System.out.println(Constants.replayOfDrive);
   }
 
   @Override
@@ -152,6 +155,7 @@ public class Robot extends TimedRobot {
     //   m_autonomousCommand.cancel();
     // }
     is30Sec = false;
+    Constants.replayOfDrive = "";
   }
 
   /**

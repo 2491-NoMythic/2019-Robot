@@ -1,11 +1,13 @@
 package com.nomythic2491.frc2019.Controllers;
 
+import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Constants.IoCargo;
 import com.nomythic2491.frc2019.Settings.Constants.kTM;
 import com.nomythic2491.lib.util.CheesyDriveHelper;
 import com.nomythic2491.lib.util.DriveSignal;
 
 import edu.wpi.first.wpilibj.Joystick;
+import sun.tools.java.Environment;
 
 public class TMdriver implements IDriveController {
 
@@ -28,6 +30,7 @@ public class TMdriver implements IDriveController {
 
     @Override
     public DriveSignal getSignal() {
+        Constants.replayOfDrive = Constants.replayOfDrive + getThrottle() + "," + getTurn() + "," + mJoystick.getRawButton(kTM.kQuickturnButton) + "\r\n"; 
         return mHelper.cheesyDrive(getThrottle(), getTurn(), mJoystick.getRawButton(kTM.kQuickturnButton));
     }
 
