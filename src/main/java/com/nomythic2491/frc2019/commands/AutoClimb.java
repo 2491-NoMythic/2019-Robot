@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.nomythic2491.frc2019.Robot;
 import com.nomythic2491.frc2019.Settings.Constants;
 import com.nomythic2491.frc2019.Settings.Constants.ClimberDemand;
+import com.nomythic2491.frc2019.Settings.Constants.GamepieceDemand;
 import com.nomythic2491.lib.util.DriveSignal;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -27,8 +28,9 @@ public class AutoClimb extends Command {
   double forwardTime;
   double driveUpTime;
   double driveSleepyTime;
-  DriveSignal driveSleepy = new DriveSignal(-0.05, -0.05);
-  DriveSignal driveBackwards = new DriveSignal(-0.75, -0.75);
+  DriveSignal driveForward = new DriveSignal(-.1, -0.1);
+  DriveSignal driveSleepy = new DriveSignal(-0.30, -0.30);
+  DriveSignal driveBackwards = new DriveSignal(-0.6, -0.6);
 
   public AutoClimb(double upTime, double downTime) {
     requires(Robot.climber);
@@ -57,7 +59,7 @@ public class AutoClimb extends Command {
     time = timer.get();
     switch (counter) {
     case 0:
-      Robot.magicFork.runGamepieceDemand(Constants.GamepieceDemand.Climb, Robot.controller.getElevatorOverride());
+      Robot.magicFork.runGamepieceDemand(Constants.GamepieceDemand.Climb, 0);
       if (time > carriageUp) {
         counter++;
       }
@@ -70,7 +72,7 @@ public class AutoClimb extends Command {
       break;
     case 2:
       Robot.climber.runClimberDemand(ClimberDemand.Forward);
-      Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveSleepy);
+      Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveForward);
       if (time > forwardTime) {
         counter++;
       }
@@ -78,17 +80,20 @@ public class AutoClimb extends Command {
     case 3:
       Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveBackwards);
       Robot.climber.runClimberDemand(ClimberDemand.Down);
+      System.out.println("Case 3");
       if (time > driveUpTime) {
         Robot.climber.runClimberDemand(ClimberDemand.Stop);
         counter++;
       }
       break;
     case 4:
-      Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveBackwards);
+      Robot.drivetrain.driveDemand(ControlMode.PercentOutput, driveSleepy);
+      System.out.println("Case 4");
       if (time > driveSleepyTime) {
         Robot.drivetrain.stop();
         counter++;
       }
+      break;
     default:
       System.out.println("invalid auto climb state");
       break;
@@ -102,6 +107,7 @@ public class AutoClimb extends Command {
 
   @Override
   protected void end() {
+    System.out.println("Case: " + counter);
     timer.stop();
     Robot.climber.commandActive(false);
     Robot.drivetrain.commandActive(false);

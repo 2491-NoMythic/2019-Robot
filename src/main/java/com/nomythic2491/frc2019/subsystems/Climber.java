@@ -67,7 +67,7 @@ public class Climber extends Subsystem {
       } else if (Robot.controller.getLevel2Climb()) {
         hasAttemptedClimb = true;
         mState = ControlState.CommandControl;
-        climb = new AutoClimb(1.5, 1.1);
+        climb = new AutoClimb(.9, 1.2);
         climb.start();
       }
     }
