@@ -74,7 +74,8 @@ public class Drivetrain extends PIDSubsystem {
     private NetworkTable limelight;
     private NetworkTableEntry tx, ty, ta, tv;
     private boolean mBreak;
-
+    int _smoothing = 0;
+    
     private Drivetrain() {
 
         super("Drive", Variables.proportionalRotate, Variables.integralRotate, Variables.derivativeRotate);

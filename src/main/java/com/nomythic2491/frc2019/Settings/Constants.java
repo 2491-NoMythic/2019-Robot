@@ -82,17 +82,20 @@ public class Constants {
     }
 
     public static final class kDrive {
+        public static final int kCruiseVelocity = 3900;
+        public static final int kAcceleration = 3900;
+
         public static final int kRightDriveMasterId = 10;
         public static final int kRightDriveSlaveId = 11;
         public static final int kLeftDriveMasterId = 1;
         public static final int kLeftDriveSlaveId = 0;
 
-        public static final double kDrivekP = 1;
+        public static final double kDrivekP = 0;
         public static final double kDrivekI = 0;
         public static final int kDriveIZ = 0;
-        public static final double kDrivekD = 300;
-        public static final double kDrivekF = .05385; // calculated 0.0000487024 other:.05115
-        public static final double kWheelDiameterInches = 2491; // This is very, very important! Change this before
+        public static final double kDrivekD = 0;
+        public static final double kDrivekF = .05115; // calculated 0.0000487024 other:.05115
+        public static final double kWheelDiameterInches = 6; // This is very, very important! Change this before
                                                                 // trying
                                                                 // to
                                                                 // use the encoders to do anything.
@@ -176,6 +179,7 @@ public class Constants {
         public static final int kCargoOutButton = 3;
         public static final int kKillSwitchButton = 10;
         public static final int kKillSwitchButton2 = 5;
+        public static final int kMotionMagicButton = 
     }
 
     public static final class kJoystickOp {

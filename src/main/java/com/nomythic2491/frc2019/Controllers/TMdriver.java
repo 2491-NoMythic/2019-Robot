@@ -58,6 +58,11 @@ public class TMdriver implements IDriveController {
     }
 
     @Override
+    public boolean motionMagic() {
+        return mJoystick.getRawButton(kTM.kMotionMagicButton);
+    }
+
+    @Override
     public double getThrottle() {
         return -mJoystick.getRawAxis(kTM.kThrottleAxis);
     }
